@@ -47,7 +47,7 @@ const UserRegister = () => {
         console.log("going to call backend");
 
         // Send signup data + token to backend
-        const res = await fetch("http://localhost:5000/api/v1/users/signup", {
+        const res = await fetch(`http://localhost:${process.env.PORT}/api/v1/users/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const UserRegister = () => {
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 cursor-pointer"
           >
             {isRegistering ? "Creating Account..." : "Sign Up"}
           </button>
