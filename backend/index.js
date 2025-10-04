@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/authRoute");
+require("dotenv").config();
+
+
 
 const app = express();
 app.use(cors());
@@ -10,7 +13,7 @@ app.use(bodyParser.json());
 
 // Connect MongoDB
 mongoose
-  .connect("mongodb+srv://abhiacb94_db_user:Ktw1JHXYvUVU6cO6@mycluster.2va68x5.mongodb.net/", {
+  .connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
