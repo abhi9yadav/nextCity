@@ -1,39 +1,33 @@
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { auth } from "../../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-import {auth} from "../../firebase/firebase"
-import { useEffect } from "react";
+const AuthContext = createContext();
 
-
-const AuthContext =React.createContext();
-
-export function useAuth(){
+export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({children}){
-  const[currentUser, setCurrentUser] = useState(null);
-
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChange(auth, initializeUser);
+    const unsubscribe = onAuthStateChanged(auth, initializeUser);
 
-    return () => {
-      unsubscribe();
-    }
-  }, [])
-  async function initializeUser
-  (user) {
-    if(user){
-      setCurrentUser({...user});
+    return () => unsubscribe();
+  }, []);
+
+  async function initializeUser(user) {
+    if (user) {
+      setCurrentUser({ ...user });
       setUserLoggedIn(true);
-    }else{
+    } else {
       setCurrentUser(null);
       setUserLoggedIn(false);
     }
     setLoading(false);
-    
   }
 
   const value = { currentUser, userLoggedIn, loading };
@@ -44,4 +38,3 @@ export function AuthProvider({children}){
     </AuthContext.Provider>
   );
 }
-
