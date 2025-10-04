@@ -36,3 +36,6 @@ logs/
 *.swp
 *.bak
 *.tmp
+
+# Ignore Firebase/Google service keys
+backend/serviceAccountKey.json
