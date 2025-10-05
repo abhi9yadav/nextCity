@@ -54,7 +54,7 @@ const Login = () => {
   // ✅ New Function: Handles sending the token to your backend
   const handleBackendLogin = async (user) => {
     const idToken = await user.getIdToken();
-    const res = await fetch("http://localhost:5000/api/v1/users/login", {
+    const res = await fetch(`http://localhost:${process.env.PORT}/api/v1/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
