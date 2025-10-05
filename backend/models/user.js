@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     photoURL: { type: String },
     role: {
       type: String,
-      enum: ["citizen", "officer", "admin"],
+      required: true, // Must be set for all documents
       default: "citizen",
     },
   },
