@@ -1,11 +1,13 @@
+const dotenv = require("dotenv");
+const path = require("path");
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/authRoute");
-require("dotenv").config();
-
-
+const complaintRoutes = require("./routes/complaintRoutes");
 
 const app = express();
 app.use(cors());
@@ -23,5 +25,6 @@ mongoose
 // Routes
 console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/complaints", complaintRoutes);
 
 app.listen(process.env.PORT, () => console.log("🚀 Server running on port 5000"));
