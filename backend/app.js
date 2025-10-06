@@ -7,6 +7,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/authRoute");
 const superAdminRoutes = require("./routes/superAdminRoute");
+const complaintRoutes = require("./routes/complaintRoutes");
 
 const app = express();
 
