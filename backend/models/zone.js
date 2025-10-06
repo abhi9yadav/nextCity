@@ -1,6 +1,6 @@
 // Mongoose Model for the 'zones' collection
 // This model uses GeoJSON for geographical boundary storage, optimized for Leaflet integration.
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const ZoneSchema = new mongoose.Schema({
     // Primary Key: MongoDB automatically creates _id
@@ -43,4 +43,4 @@ const ZoneSchema = new mongoose.Schema({
 // Create a 2dsphere index for geospatial queries (crucial for mapping and location-based searches)
 ZoneSchema.index({ geographical_boundary: '2dsphere' });
 
-export default mongoose.model('Zone', ZoneSchema);
+modules.exports = mongoose.model('Zone', ZoneSchema);

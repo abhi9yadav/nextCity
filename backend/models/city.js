@@ -1,5 +1,5 @@
 // Mongoose Model for the 'cities' collection
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const CitySchema = new mongoose.Schema({
     // Primary Key: MongoDB automatically creates _id
@@ -16,4 +16,4 @@ const CitySchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-export default mongoose.model('City', CitySchema);
+module.exports = mongoose.model('City', CitySchema);
