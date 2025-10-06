@@ -8,21 +8,18 @@
 
 
 
-// const app = express();
-// app.use(cors());
-// app.use(bodyParser.json());
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
-// // Connect MongoDB
-// const DB = process.env.DATABASE_URL
-//   .replace('<USERNAME>', process.env.DATABASE_USER)
-//   .replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
-// mongoose
-//   .connect(DB, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("✅ MongoDB Connected"))
-//   .catch((err) => console.error("❌ MongoDB Error:", err));
+// Connect MongoDB
+mongoose
+  .connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Error:", err));
 
 // // Routes
 // console.log("Setting up routes...");
