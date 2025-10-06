@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/authRoute");
+const superAdminRoutes = require("./routes/superAdminRoute");
 require("dotenv").config();
 
 
@@ -23,5 +24,6 @@ mongoose
 // Routes
 console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/superAdmin", superAdminRoutes);
 
-app.listen(process.env.PORT, () => console.log("🚀 Server running on port 5000"));
+app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));
