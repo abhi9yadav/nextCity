@@ -1,5 +1,5 @@
 // Mongoose Model for the 'departments' collection
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const DepartmentSchema = new mongoose.Schema({
     // Primary Key: MongoDB automatically creates _id
@@ -13,7 +13,10 @@ const DepartmentSchema = new mongoose.Schema({
     description: {
         type: String,
         maxlength: 250
+    },
+    photoURL: {
+        type: String 
     }
 }, { timestamps: true });
 
-export default mongoose.model('Department', DepartmentSchema);
+module.exports = mongoose.model('Department', DepartmentSchema);
