@@ -4,8 +4,6 @@ const complaintController = require("../controllers/complaintController");
 const multer = require("multer");
 const authenticateUser = require("../middlewares/authMiddleware");
 
-// console.log("authenticateUser:", authenticateUser);
-
 // Configure Multer to store files in memory.
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
