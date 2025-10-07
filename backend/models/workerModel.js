@@ -1,7 +1,7 @@
 // Mongoose Discriminator for 'worker'
 // Requires linkage to a City, Department, and specific Zone.
 
-const User = require('./user');
+const User = require('./userModel');
 const mongoose = require('mongoose');
 
 const WorkerSchema = new mongoose.Schema({

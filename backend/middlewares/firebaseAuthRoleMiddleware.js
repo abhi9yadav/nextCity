@@ -1,8 +1,8 @@
 // Auth Middleware for validating Firebase tokens and checking user roles
 
 const admin = require('firebase-admin');
-const User = require('../models/user'); // Base User model
-const CityAdmin = require('../models/city_admin'); // CityAdmin discriminator
+const User = require('../models/userModel'); // Base User model
+const CityAdmin = require('../models/cityAdminModel'); // CityAdmin discriminator
 // ... require other discriminator models as needed
 
 // Initialize Firebase Admin (assuming service account is set up elsewhere)
