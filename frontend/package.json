@@ -13,6 +13,7 @@
     "@tailwindcss/cli": "^4.1.13",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
     "firebase": "^12.3.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
