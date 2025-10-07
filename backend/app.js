@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./routes/authRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
+const zoneRoutes = require("./routes/zoneRoutes");
 
 const app = express();
 
@@ -21,5 +22,6 @@ console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/superAdmin", superAdminRoutes);
 app.use("/api/v1/complaints", complaintRoutes);
+app.use("/api/v1/zones", zoneRoutes);
 
 module.exports = app;
