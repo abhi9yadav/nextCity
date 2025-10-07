@@ -40,4 +40,3 @@ logs/
 # Ignore Firebase/Google service keys
 backend/serviceAccountKey.json
 *.txt
-backend/utils/
