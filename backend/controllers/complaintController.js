@@ -1,5 +1,5 @@
 const Complaint = require("../models/complaintModel");
-const User = require("../models/user");
+const User = require("../models/userModel");
 const cloudinary = require("cloudinary").v2;
 
 // const getStream = require("get-stream");

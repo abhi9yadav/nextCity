@@ -1,7 +1,7 @@
 // Mongoose Discriminator for 'city_admin'
 // Requires linkage to a specific City.
 
-const User = require('./user');
+const User = require('./userModel');
 const mongoose = require('mongoose');
 
 // Ensure other models are available for referencing

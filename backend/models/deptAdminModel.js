@@ -1,7 +1,7 @@
 // Mongoose Discriminator for 'dept_admin'
 // Requires linkage to a specific City and Department.
 
-const User = require('./user');
+const User = require('./userModel');
 const mongoose = require('mongoose');
 
 const DeptAdminSchema = new mongoose.Schema({

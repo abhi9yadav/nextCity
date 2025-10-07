@@ -1,11 +1,11 @@
 // Controller functions for Super Admin tasks
 
-const City = require('../models/city');
-const Department = require('../models/department');
-const User = require('../models/user'); // Base for general queries
-const CityAdmin = require('../models/city_admin'); // Discriminator for creation
-const DeptAdmin = require('../models/dept_admin');
-const Worker = require('../models/worker');
+const City = require('../models/cityModel');
+const Department = require('../models/departmentModel');
+const User = require('../models/userModel'); // Base for general queries
+const CityAdmin = require('../models/cityAdminModel'); // Discriminator for creation
+const DeptAdmin = require('../models/deptAdminModel');
+const Worker = require('../models/workerModel');
 
 const admin = require('firebase-admin');
 const mongoose = require('mongoose');
