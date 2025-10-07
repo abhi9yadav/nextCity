@@ -1,46 +1,53 @@
-// Mongoose Model for the 'zones' collection
-// This model uses GeoJSON for geographical boundary storage, optimized for Leaflet integration.
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
-const ZoneSchema = new mongoose.Schema({
-    // Primary Key: MongoDB automatically creates _id
+const ZoneSchema = new mongoose.Schema(
+  {
     zone_name: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
     },
-
-    // Foreign Key Reference to City (Mandatory linkage)
+    description: {
+      type: String,
+      default: "",
+    },
     city_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'City',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "City",
+      required: true,
     },
-
-    // Foreign Key Reference to Department (Mandatory linkage)
     department_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Department',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      required: true,
     },
-
-    // GeoJSON structure for geographical boundary (Polygon or MultiPolygon)
-    // This allows us to query for complaints within a specific zone efficiently.
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // CityAdmin
+      required: true,
+    },
+    color: {
+      type: String,
+      default: "#3388ff",
+    },
     geographical_boundary: {
-        type: {
-            type: String,
-            enum: ['Polygon'], // We enforce that the boundaries must be defined as polygons
-            required: true
-        },
-        // Coordinates for the GeoJSON polygon, in format: [[[lng, lat], [lng, lat], ...]]
-        coordinates: {
-            type: [[[Number]]],
-            required: true
-        }
-    }
-}, { timestamps: true });
+      type: {
+        type: String,
+        enum: ["Polygon"],
+        required: true,
+      },
+      coordinates: {
+        type: [[[Number]]], // [[[lng, lat], [lng, lat], ...]]
+        required: true,
+      },
+    },
+  },
+  { timestamps: true }
+);
 
-// Create a 2dsphere index for geospatial queries (crucial for mapping and location-based searches)
-ZoneSchema.index({ geographical_boundary: '2dsphere' });
+ZoneSchema.index({ geographical_boundary: "2dsphere" });
 
-export default mongoose.model('Zone', ZoneSchema);
+const Zone = mongoose.model("Zone", ZoneSchema);
+
+module.exports = Zone;
