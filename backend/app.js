@@ -5,10 +5,9 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
-const userRoutes = require("./routes/authRoutes");
-const superAdminRoutes = require("./routes/superAdminRoutes");
+const userRoutes = require("./routes/authRoutes")
 const complaintRoutes = require("./routes/complaintRoutes");
+const superAdminRoutes = require("./routes/superAdminRoutes");
 const zoneRoutes = require("./routes/zoneRoutes");
 
 const app = express();
