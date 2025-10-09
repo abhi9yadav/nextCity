@@ -2,25 +2,20 @@ const Complaint = require("../models/complaintModel");
 const User = require("../models/userModel");
 const cloudinary = require("cloudinary").v2;
 
-// const getStream = require("get-stream");
 cloudinary.config();
 
-// Utility function to convert buffer to data URI for Cloudinary
 const bufferToDataUri = (file) => {
-  // Note: file.mimetype is available because Multer is configured to use memoryStorage()
   return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 };
 
 exports.createComplaint = async (req, res) => {
   try {
-    // Fetch the MongoDB user using Firebase UID
     const user = await User.findOne({ firebaseUid: req.user.uid });
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const uploadedFiles = req.files || [];
     const attachmentUrls = [];
 
-    // Upload files to Cloudinary
     for (const file of uploadedFiles) {
       const dataUri = bufferToDataUri(file);
       const result = await cloudinary.uploader.upload(dataUri, {
@@ -33,31 +28,24 @@ exports.createComplaint = async (req, res) => {
       });
     }
 
-    // Parse location
-    const loc = req.body.location
-      ? req.body.location
-      : {
-          lat: req.body["location[lat]"],
-          lng: req.body["location[lng]"],
-          address: req.body["location[address]"],
-        };
+    let loc = req.body.location;
+    if (typeof loc === "string") loc = JSON.parse(loc);
 
-    const parseCoordinate = (value) => {
-      if (value === null || value === undefined || value === "")
-        return undefined;
-      const num = parseFloat(value);
-      return isNaN(num) ? undefined : num;
-    };
+    const lng = parseFloat(loc.coordinates[0]);
+    const lat = parseFloat(loc.coordinates[1]);
 
-    // Build final complaint
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({ error: "Invalid latitude or longitude" });
+    }
+
     const finalComplaintData = {
       title: req.body.title,
       description: req.body.description,
-      type: req.body.type,
-      createdBy: user._id, // ✅ dynamically assign logged-in user
+      concernedDepartment: req.body.concernedDepartment,
+      createdBy: user._id,
       location: {
-        lat: parseCoordinate(loc.lat),
-        lng: parseCoordinate(loc.lng),
+        type: "Point",
+        coordinates: [lng, lat],
         address: loc.address || "",
       },
       attachments: attachmentUrls,
@@ -75,7 +63,6 @@ exports.createComplaint = async (req, res) => {
   }
 };
 
-// Get all complaints
 exports.getAllComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find();
@@ -85,7 +72,6 @@ exports.getAllComplaints = async (req, res) => {
   }
 };
 
-// Upvote complaint
 exports.upvoteComplaint = async (req, res) => {
   try {
     // console.log(req.params.id);
@@ -108,7 +94,6 @@ exports.upvoteComplaint = async (req, res) => {
   }
 };
 
-// Update complaint
 exports.updateComplaint = async (req, res) => {
   try {
     // console.log(req.params.id);
@@ -126,7 +111,6 @@ exports.updateComplaint = async (req, res) => {
   }
 };
 
-// Delete complaint
 exports.deleteComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findByIdAndDelete(req.params.id);

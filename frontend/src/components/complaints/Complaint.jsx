@@ -11,7 +11,7 @@ const CreateComplaint = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    type: "",
+    concernedDepartment: "",
     location: { lat: 0, lng: 0, address: "" },
   });
 
@@ -33,10 +33,16 @@ const CreateComplaint = () => {
     const uploadData = new FormData();
     uploadData.append("title", formData.title);
     uploadData.append("description", formData.description);
-    uploadData.append("type", formData.type);
-    uploadData.append("location[lat]", formData.location.lat);
-    uploadData.append("location[lng]", formData.location.lng);
-    uploadData.append("location[address]", formData.location.address);
+    uploadData.append("concernedDepartment", formData.concernedDepartment);
+
+    uploadData.append(
+      "location",
+      JSON.stringify({
+        type: "Point",
+        coordinates: [formData.location.lng, formData.location.lat],
+        address: formData.location.address,
+      })
+    );
 
     fileState.forEach((file) => {
       uploadData.append("attachments", file);
@@ -58,7 +64,7 @@ const CreateComplaint = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // ✅ Send Firebase token
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -81,6 +87,48 @@ const CreateComplaint = () => {
         Create Complaint
       </h2>
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Type */}
+        <div>
+          <label className="block text-gray-700 font-semibold mb-1">
+            Concerned Department
+          </label>
+          <select
+            name="concernedDepartment"
+            value={formData.concernedDepartment}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          >
+            <option value="" disabled selected hidden>
+              -- Select Concerned Department --
+            </option>
+            <option value="Department of Power Supply">
+              Department of Power Supply
+            </option>
+            <option value="Department of Water Management">
+              Department of Water Management
+            </option>
+            <option value="Department of Roads and Infrastructure">
+              Department of Roads and Infrastructure
+            </option>
+            <option value="Department of Sanitation and Waste Management">
+              Department of Sanitation and Waste Management
+            </option>
+            <option value="Department of Drainage and Sewage">
+              Department of Drainage and Sewage
+            </option>
+            <option value="Department of Parks and Green Spaces">
+              Department of Parks and Green Spaces
+            </option>
+            <option value="Department of Public Health">
+              Department of Public Health
+            </option>
+            <option value="Department of General Services">
+              Department of General Services (other)
+            </option>
+          </select>
+        </div>
+
         {/* Title */}
         <div>
           <label className="block text-gray-700 font-semibold mb-1">
@@ -111,26 +159,6 @@ const CreateComplaint = () => {
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-        </div>
-
-        {/* Type */}
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">Type</label>
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          >
-            <option value="" disabled>
-              Select
-            </option>
-            <option value="road">Road</option>
-            <option value="water">Water</option>
-            <option value="garbage">Garbage</option>
-            <option value="other">Other</option>
-          </select>
         </div>
 
         {/* Location */}

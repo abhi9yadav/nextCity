@@ -13,6 +13,8 @@ const superAdminRoutes = require("./routes/superAdminRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const rootDir = require('./utils/rootDir');
 const authRoutes = require("./routes/authRoutes");
+const cityAdminRoutes = require("./routes/cityAdminRoutes");
+const zoneRoutes = require("./routes/zoneRoutes");
 
 const app = express();
 
@@ -27,7 +29,9 @@ app.set('json spaces', 2); // nicely formatted JSON responses
 console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/superAdmin", superAdminRoutes);
+app.use("/api/v1/cityAdmin", cityAdminRoutes);
 app.use("/api/v1/complaints", complaintRoutes);
+app.use("/api/v1/zones", zoneRoutes);
 app.use('/api/v1/auth', authRoutes);
 
 app.all(/.*/, (req, res, next) => {
