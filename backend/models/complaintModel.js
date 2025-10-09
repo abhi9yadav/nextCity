@@ -10,14 +10,23 @@ const complaintSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    type: {
+    concernedDepartment: {
       type: String,
-      enum: ["road", "water", "garbage", "other"],
+      enum: [
+        "Department of Power Supply",
+        "Department of Water Management",
+        "Department of Roads and Infrastructure",
+        "Department of Sanitation and Waste Management",
+        "Department of Drainage and Sewage",
+        "Department of Parks and Green Spaces",
+        "Department of Public Health",
+        "Department of General Services",
+      ],
       required: true,
     },
     location: {
-      lat: { type: Number, required: true },
-      lng: { type: Number, required: true },
+      type: { type: String, enum: ["Point"], required: true, default: "Point" },
+      coordinates: { type: [Number], required: true },
       address: { type: String },
     },
     attachments: [
@@ -28,7 +37,7 @@ const complaintSchema = new mongoose.Schema(
           enum: ["image", "video"],
           required: true,
         },
-        thumbnail: { type: String }, // Optional: For video previews
+        thumbnail: { type: String },
       },
     ],
     status: {
@@ -36,12 +45,10 @@ const complaintSchema = new mongoose.Schema(
       enum: ["OPEN", "IN_PROGRESS", "RESOLVED"],
       default: "OPEN",
     },
-    // store an array of User IDs to track who voted (for your controller logic)
-    // The length of this array gives the total vote count.
     votes: {
-      type: [mongoose.Schema.Types.ObjectId], // Array of ObjectIds
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
-      default: [], // Default value is an empty array
+      default: [],
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -74,6 +81,8 @@ const complaintSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+complaintSchema.index({ location: "2dsphere" });
 
 const Complaint = mongoose.model("Complaint", complaintSchema);
 
