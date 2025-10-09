@@ -9,7 +9,7 @@ module.exports = class Email {
     this.firstName = user.name ? user.name.split(' ')[0] : 'there';
     this.url = url;
     this.from = `${process.env.APP_NAME} <${process.env.EMAIL_FROM}>`;
-    this.extraData = extraData; // for role, logoUrl, or other dynamic info
+    this.extraData = extraData;
   }
 
   newTransport() {
@@ -36,7 +36,7 @@ module.exports = class Email {
 
   // --- Read HTML template and replace placeholders ---
   getHtml(templateName) {
-    const templatePath = path.join(__dirname, '../views/emails', `${templateName}.html`);
+    const templatePath = path.join(__dirname, '../views/email', `${templateName}.html`);
     let html = fs.readFileSync(templatePath, 'utf-8');
 
     // Replace common placeholders
