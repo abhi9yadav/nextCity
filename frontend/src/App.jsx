@@ -9,6 +9,7 @@ import Home from "./components/home/home";
 import PrivateRoute from "./routes/PrivateRoute";
 import LandingPage from "./components/home/LandingPage";
 import Complaint from "./components/complaints/Complaint";
+import SetPassword from "./pages/SetPassword";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/signup-admin" element={<Admin />} />
             <Route path="/signup-officer" element={<OfficerRegister />} />
             <Route path="/create-complaint" element={<Complaint />} />
+            <Route path="/set-password" element={<SetPassword />} />
             <Route
               path="/home"
               element={
