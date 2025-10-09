@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      background: #e9ecef; 
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 30px auto; 
+      background: #ffffff; 
+      padding: 25px 30px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .logo { 
+      text-align: center; 
+      margin-bottom: 25px; 
+    }
+    .logo img { 
+      max-width: 150px; 
+    }
+    h2 { 
+      font-size: 22px; 
+      color: #333; 
+      margin-bottom: 15px; 
+    }
+    p { 
+      font-size: 16px; 
+      color: #555; 
+      line-height: 1.5; 
+      margin-bottom: 15px;
+    }
+    .btn { 
+      display: inline-block; 
+      padding: 14px 28px; 
+      margin-top: 20px; 
+      background-color: #3498db; 
+      color: #fff; 
+      text-decoration: none; 
+      border-radius: 5px; 
+      font-weight: bold; 
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover { 
+      background-color: #2980b9; 
+    }
+    hr { 
+      border: none; 
+      border-top: 1px solid #eee; 
+      margin: 20px 0; 
+    }
+    .footer { 
+      font-size: 12px; 
+      color: #999; 
+      text-align: center; 
+      margin-top: 20px; 
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="{{logoUrl}}" alt="{{appName}}">
+    </div>
+
+    <h2>Welcome {{firstName}}!</h2>
+    <p>You have been invited as a <strong>Department Admin</strong> in <strong>{{appName}}</strong>.</p>
+    <p>Click the button below to activate your account and set your password:</p>
+
+    <a href="{{url}}" class="btn">Set Your Password</a>
+
+    <p>If you did not expect this invitation, please ignore this email.</p>
+
+    <hr>
+
+    <p class="footer">
+      Thanks,<br>
+      {{appName}} Team
+    </p>
+  </div>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f4f4; }
+    .container { max-width: 600px; margin: 30px auto; background: #ffffff; padding: 20px; border-radius: 8px; }
+    .logo { text-align: center; margin-bottom: 20px; }
+    .btn { display:inline-block; padding:12px 24px; margin-top: 20px; background-color: #1abc9c; color:#fff; text-decoration:none; border-radius:5px; }
+    .footer { font-size: 12px; color: #888; text-align:center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="{{logoUrl}}" alt="{{appName}}" style="max-width:150px;">
+    </div>
+    <h2>Welcome {{firstName}}!</h2>
+    <p>You have been invited as a <strong>Department Admin</strong> in <strong>{{appName}}</strong>.</p>
+    <p>Click the button below to activate your account and set your password:</p>
+    <a href="{{url}}" class="btn">Set Your Password</a>
+    <p>If you did not expect this invitation, please ignore this email.</p>
+    <p class="footer">Thanks,<br>{{appName}} Team</p>
+  </div>
+</body>
+</html> -->
+
+
+<!-- alternative <!DOCTYPE html> -->
