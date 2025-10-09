@@ -1,6 +1,5 @@
 const dotenv = require("dotenv");
 const path = require("path");
-const rootDir = require('./utils/rootDir');
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -12,6 +11,8 @@ const globalErrorHandler = require("./controllers/errorController");
 const userRoutes = require("./routes/authRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
+const rootDir = require('./utils/rootDir');
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/superAdmin", superAdminRoutes);
 app.use("/api/v1/complaints", complaintRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 app.all(/.*/, (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
