@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
 const options = { 
-  discriminatorKey: "role", // tells Mongoose which model type
+  discriminatorKey: "role",
   timestamps: true 
 };
+
+const userRoles = ['superAdmin', 'city_admin', 'dept_admin', 'worker', 'citizen'];
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,6 +13,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      select: false,
     },
     name: { type: String, trim: true },
     email: {
@@ -25,12 +28,37 @@ const userSchema = new mongoose.Schema(
     photoURL: { type: String },
     role: {
       type: String,
-      required: true, // Must be set for all documents
+      required: true, 
+      enum: userRoles,
       default: "citizen",
     },
+    passwordChangedAt: { 
+      type: Date,
+      select: false,
+    },
+    passwordResetToken: { 
+      type: String, 
+      default: undefined,
+      select: false, 
+    },
+    passwordResetExpires: { 
+      type: Date, 
+      default: undefined,
+      select: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    invitationSent: { type: Boolean, default: false, select: false },
   },
   options
 );
+
+userSchema.query.withSensitiveFields = function() {
+  return this.select("+firebaseUid +passwordResetToken +passwordResetExpires +isActive");
+};
 
 const User = mongoose.model("User", userSchema);
 
