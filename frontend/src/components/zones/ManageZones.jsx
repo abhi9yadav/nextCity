@@ -4,7 +4,6 @@ import { FaGlobe, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 const ManageZones = () => {
   const navigate = useNavigate();
   const { cityId, departmentId } = useParams();
-  const token = localStorage.getItem("token");
 
   const actions = [
     {
@@ -12,28 +11,28 @@ const ManageZones = () => {
       icon: <FaGlobe size={24} />,
       bgColor: "bg-indigo-600",
       hoverColor: "hover:bg-indigo-700",
-      onClick: () => navigate(`/zones/view/${cityId}/${departmentId}`),
+      onClick: () => navigate(`/zones/view/${departmentId}`),
     },
     {
       title: "Create Zone",
       icon: <FaPlus size={24} />,
       bgColor: "bg-green-600",
       hoverColor: "hover:bg-green-700",
-      onClick: () => navigate(`/zones/create-zone/${cityId}/${departmentId}`),
+      onClick: () => navigate(`/zones/create-zone/${departmentId}`),
     },
     {
       title: "Update Zone",
       icon: <FaEdit size={24} />,
       bgColor: "bg-blue-600",
       hoverColor: "hover:bg-blue-700",
-      onClick: () => navigate(`/zones/update-zone/${cityId}/${departmentId}`),
+      onClick: () => navigate(`/zones/update-zone/${departmentId}`),
     },
     {
       title: "Delete Zone",
       icon: <FaTrash size={24} />,
       bgColor: "bg-red-600",
       hoverColor: "hover:bg-red-700",
-      onClick: () => navigate(`/zones/delete-zone/${cityId}/${departmentId}`),
+      onClick: () => navigate(`/zones/delete-zone/${departmentId}`),
     },
   ];
 
