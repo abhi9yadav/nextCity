@@ -25,6 +25,7 @@
     "react-leaflet": "^5.0.0",
     "react-leaflet-draw": "^0.21.0",
     "react-router-dom": "^7.9.3",
+    "react-toastify": "^11.0.5",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {

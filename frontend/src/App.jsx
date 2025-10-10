@@ -9,6 +9,7 @@ import Home from "./components/home/home";
 import PrivateRoute from "./routes/PrivateRoute";
 import LandingPage from "./components/home/LandingPage";
 import Complaint from "./components/complaints/Complaint";
+import SetPassword from "./pages/SetPassword";
 import ManageZones from "./components/zones/ManageZones";
 import CreateZone from "./components/zones/CreateZone";
 import UpdateZone from "./components/zones/UpdateZone";
@@ -38,6 +39,7 @@ function App() {
             <Route path="/zones/update-zone/:departmentId" element={<UpdateZone />} />
             <Route path="/zones/delete-zone/:departmentId" element={<DeleteZone />} />
             <Route path="/zones/view/:departmentId" element={<GetZones />} />
+            <Route path="/set-password" element={<SetPassword />}
             <Route
               path="/home"
               element={
