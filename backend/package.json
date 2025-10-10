@@ -20,6 +20,7 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",
     "mongoose": "^8.18.3",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "streamifier": "^0.1.1"
   }
 }
