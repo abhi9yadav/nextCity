@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "@tailwindcss/cli": "^4.1.13",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
     "dotenv": "^17.2.3",
     "firebase": "^12.3.0",
+    "framer-motion": "^12.23.23",
+    "gsap": "^3.13.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "leaflet-draw": "^1.0.4",
@@ -26,6 +29,10 @@
     "react-leaflet-draw": "^0.21.0",
     "react-router-dom": "^7.9.3",
     "react-toastify": "^11.0.5",
+    "react-hot-toast": "^2.6.0",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-loading-skeleton": "^3.5.0",
+    "react-swipeable": "^7.0.2",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {

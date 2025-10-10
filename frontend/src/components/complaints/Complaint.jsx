@@ -71,7 +71,7 @@ const CreateComplaint = () => {
 
       alert("Complaint created successfully!");
       console.log(res.data);
-      navigate("/create-complaint");
+      //navigate("citizen-dashboard/create-complaint");
     } catch (error) {
       console.error("Error:", error.response?.data || error);
       alert(

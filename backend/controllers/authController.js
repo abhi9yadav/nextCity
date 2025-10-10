@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 require("../models/citizenModel");
 
+
 const signup = async (req, res) => {
   try {
     // console.log("here");
