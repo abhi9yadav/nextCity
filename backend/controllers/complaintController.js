@@ -12,6 +12,11 @@ exports.createComplaint = async (req, res) => {
   try {
     const user = await User.findOne({ firebaseUid: req.user.uid });
     if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.role !== 'citizen') {
+      return res
+        .status(403)
+        .json({ error: "Only Citizens can create complaints." });
+    }
 
     const uploadedFiles = req.files || [];
     const attachmentUrls = [];

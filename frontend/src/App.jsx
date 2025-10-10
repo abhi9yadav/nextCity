@@ -15,6 +15,9 @@ import CreateZone from "./components/zones/CreateZone";
 import UpdateZone from "./components/zones/UpdateZone";
 import DeleteZone from "./components/zones/DeleteZone";
 import GetZones from "./components/zones/GetZones";
+import CityAdminDashboard from "./pages/CityAdminDashboard";
+import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
+import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
 
 function App() {
   return (
@@ -27,13 +30,16 @@ function App() {
             <Route path="/signup" element={<UserRegister />} />
             <Route path="/signup-admin" element={<Admin />} />
             <Route path="/signup-officer" element={<OfficerRegister />} />
+            <Route path="/city-admin" element={<CityAdminDashboard />} />
+            <Route path="/city-admin/:dept_id" element={<CityDepartmentComplaints />} />
+            <Route path="/city-admin/:dept_id/manage-dept-admin" element={<ManageDepartmentAdmins />} />
             <Route path="/create-complaint" element={<Complaint />} />
-            <Route path="/set-password" element={<SetPassword />} />
-            <Route path="/zones/manage/:cityId/:departmentId" element={<ManageZones />} />
-            <Route path="/zones/create-zone/:cityId/:departmentId" element={<CreateZone />} />
-            <Route path="/zones/update-zone/:cityId/:departmentId" element={<UpdateZone />} />
-            <Route path="/zones/delete-zone/:cityId/:departmentId" element={<DeleteZone />} />
-            <Route path="/zones/view/:cityId/:departmentId" element={<GetZones />} />
+            <Route path="/zones/manage/:departmentId" element={<ManageZones />} />
+            <Route path="/zones/create-zone/:departmentId" element={<CreateZone />} />
+            <Route path="/zones/update-zone/:departmentId" element={<UpdateZone />} />
+            <Route path="/zones/delete-zone/:departmentId" element={<DeleteZone />} />
+            <Route path="/zones/view/:departmentId" element={<GetZones />} />
+            <Route path="/set-password" element={<SetPassword />}
             <Route
               path="/home"
               element={
