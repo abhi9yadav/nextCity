@@ -39,7 +39,7 @@ function App() {
             <Route path="/zones/update-zone/:departmentId" element={<UpdateZone />} />
             <Route path="/zones/delete-zone/:departmentId" element={<DeleteZone />} />
             <Route path="/zones/view/:departmentId" element={<GetZones />} />
-            <Route path="/set-password" element={<SetPassword />}
+            <Route path="/set-password" element={<SetPassword />} />
             <Route
               path="/home"
               element={
