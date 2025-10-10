@@ -1,9 +1,10 @@
-import React from 'react';
+import React from "react";
+import CityAdminDashboardComponent from "../components/cityAdmin/CityAdminDashboardComponent";
 
 const CityAdminDashboard = ({ title, value }) => {
   return (
     <div className="card">
-      <h1>Welcome to the City Admin Dashboard</h1>
+      <CityAdminDashboardComponent />
     </div>
   );
 };
