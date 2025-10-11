@@ -5,6 +5,7 @@ const CityAdmin = require("../models/cityAdminModel");
 const DeptAdmin = require("../models/deptAdminModel");
 const Worker = require("../models/workerModel");
 const { sendInvitation } = require("./invitationController");
+const axios = require("axios");
 
 const admin = require("firebase-admin");
 const mongoose = require("mongoose");
@@ -16,16 +17,69 @@ const DISCRIMINATOR_MODELS = {
   worker: Worker,
 };
 
-// --- Core Resource Management ---
 exports.createCity = async (req, res) => {
   try {
-    const { city_name, country } = req.body;
+    let { city_name, state, country, boundary } = req.body;
 
-    if (!city_name) {
+    if (!city_name)
       return res.status(400).json({ message: "City name is required." });
+    if (!state) return res.status(400).json({ message: "State is required." });
+
+    if (!boundary) {
+      try {
+        const query = encodeURIComponent(
+          `${city_name}, ${state}, ${country || "India"}`
+        );
+        const nominatimRes = await axios.get(
+          `https://nominatim.openstreetmap.org/search.php?q=${query}&polygon_geojson=1&format=json`
+        );
+
+        if (!nominatimRes.data || nominatimRes.data.length === 0) {
+          return res.status(404).json({
+            message:
+              "Could not find city boundary automatically. Please draw manually.",
+          });
+        }
+
+        const cityData = nominatimRes.data[0];
+
+        if (!cityData.geojson || cityData.geojson.type !== "Polygon") {
+          return res.status(400).json({
+            message:
+              "City boundary is not available as a Polygon. Please draw manually.",
+          });
+        }
+
+        boundary = {
+          geographical_boundary: cityData.geojson,
+          center: {
+            lat: parseFloat(cityData.lat),
+            lng: parseFloat(cityData.lon),
+          },
+          address: cityData.display_name || "",
+        };
+      } catch (err) {
+        console.error("Error fetching automatic boundary:", err);
+        return res.status(500).json({
+          message:
+            "Failed to fetch city boundary automatically. Please draw manually.",
+        });
+      }
     }
 
-    const newCity = new City({ city_name, country });
+    if (!boundary || !boundary.coordinates || boundary.type !== "Polygon") {
+      return res.status(400).json({ message: "Invalid boundary data." });
+    }
+
+    const newCity = new City({
+      city_name,
+      state,
+      country: country || "India",
+      boundary: boundary,
+      center: boundary.center || null,
+      address: boundary.address || "",
+    });
+
     await newCity.save();
 
     res.status(201).json({
@@ -33,12 +87,10 @@ exports.createCity = async (req, res) => {
       city: newCity.toObject(),
     });
   } catch (error) {
-    if (error.code === 11000) {
-      // MongoDB duplicate key error
+    if (error.code === 11000)
       return res
         .status(409)
         .json({ message: "A city with this name already exists." });
-    }
     console.error("Error creating city:", error);
     res.status(500).json({ message: "Server error while creating city." });
   }

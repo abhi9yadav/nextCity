@@ -29,7 +29,7 @@ const authenticate = async (req, res, next) => {
         const firebaseUid = decodedToken.uid;
 
         // Step 2: Find the corresponding Mongoose User document (using the base model)
-        const user = await User.findOne({ firebaseUid }).exec();
+        const user = await User.findOne({ firebaseUid }).withSensitiveFields().exec();
 
         if (!user) {
             return res.status(404).json({ message: 'User not found in database.' });
