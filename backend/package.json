@@ -22,7 +22,7 @@
     "html-to-text": "^9.0.5",
     "mongoose": "^8.18.3",
     "multer": "^2.0.2",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
     "nodemailer": "^7.0.9"
   }
 }
