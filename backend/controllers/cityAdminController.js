@@ -103,7 +103,7 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
         location: { $geoWithin: { $geometry: boundary } },
       })),
     })
-      .populate({ path: "createdBy", model: "User", select: "name email" }) // 👈 use User
+      .populate({ path: "createdBy", model: "User", select: "name email" })
       .select(
         "title description status votes location createdBy createdAt attachments"
       );
@@ -185,7 +185,7 @@ exports.getDepartmentAdminByDepartmentId = async (req, res) => {
       role: "dept_admin",
       department_id: departmentId,
       city_id: cityAdmin.city_id,
-    }).populate("department_id", "department_name");
+    }).populate("department_id", "department_name").withSensitiveFields().exec();
 
     if (!departmentAdmin) {
       return res.status(404).json({

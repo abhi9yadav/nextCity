@@ -1,7 +1,5 @@
 import React from 'react';
 import SuperAdminDashboard from '../components/superAdmin/SuperAdminDashboard';
-import SuperAdminNavbar from '../components/superAdmin/SuperAdminNavbar';
-import SuperAdminFooter from '../components/superAdmin/superAdminFooter';
 
 
 function SuperAdminPage() {

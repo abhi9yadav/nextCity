@@ -15,8 +15,6 @@ import LandingPage from "./components/home/LandingPage";
 import CitizenDashboard from "./pages/CitizenDashboard";
 import CommunityFeed from "./components/citizenDashboard/CommunityFeed";
 import SuperAdminPage from "./pages/SuperAdminPage";
-import DeptAdminPage from "./pages/DeptAdminPage";
-import CityAdminPage from "./pages/CityAdminPage";
 import WorkerAdminPage from "./pages/WorkerDashboardPage";
 import LoginSignupPage from "./pages/LoginSignupPage";
 import Profile from "./components/citizenDashboard/Profile";
@@ -32,7 +30,8 @@ import GetZones from "./components/zones/GetZones";
 import CityAdminDashboard from "./pages/CityAdminDashboard";
 import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
 import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
-import ManageDepartment from "./components/cityAdmin/ManageDepartment"; 
+import ManageDepartment from "./components/cityAdmin/ManageDepartment";
+import CreateCityPage from "./components/superAdmin/CreateCityPage";
 
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
@@ -52,6 +51,7 @@ function AppContent() {
       <Route path="/LoginSignupForm" element={<LoginSignupPage />} />
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
       <Route path="/loading" element={<VideoBackground />} />
+      <Route path="/super-admin/create-city" element={<CreateCityPage />} />
       <Route
         path="/flower-animation"
         element={
@@ -75,7 +75,6 @@ function AppContent() {
       {/* City Admin  with nested layout*/}
       <Route element={<RoleBasedRoute allowedRoles={["city_admin"]} />}>
         <Route path="/city-admin" element={<MainLayout />}>
-          {/* <Route path="/city-admin-dashboard" element={<CityAdminPage />} /> */}
           <Route index element={<CityAdminDashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path=":dept_id" element={<ManageDepartment />} />
@@ -104,7 +103,6 @@ function AppContent() {
       {/* Department Admin */}
       <Route element={<RoleBasedRoute allowedRoles={["dept_admin"]} />}>
       <Route path="/dept-admin" element={<MainLayout />}>
-        <Route path="/dept-admin" element={<DeptAdminPage />} />
       </Route>
       </Route>
 
