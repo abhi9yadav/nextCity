@@ -5,14 +5,14 @@ import ProblemSolutionSection from './ProblemSolutionSection';
 import HowItWorksSection from './HowItWorksSection';
 import FlowerAnimation from '../flowerAnimation/FlowerAnimation';
 //import Footer from './components/Footer'; // You'll create this later
+import VideoBackground from './VideoBackground';
 
 function LandingPage() {
   return (
     <div className="min-h-screen font-sans antialiased">
+      <VideoBackground />
+
       
-      <FlowerAnimation />
-      <Navbar />
-      <HeroSection />
       <div className='top-40 relative'>
         <ProblemSolutionSection />
       </div>
