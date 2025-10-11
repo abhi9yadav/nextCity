@@ -20,7 +20,10 @@ export default defineConfig({
       },
       animation: {
         "pulse-slow": "pulseSlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "@keyframes fadeIn": { from: { opacity: 0 }, to: { opacity: 1 } },
+        ".animate-fadeIn": { animation: "fadeIn .15s ease-out" },
       },
+      
     },
   },
   server: {
