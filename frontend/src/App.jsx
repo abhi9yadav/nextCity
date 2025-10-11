@@ -26,6 +26,7 @@ import ManageZones from "./components/zones/ManageZones";
 import CreateZone from "./components/zones/CreateZone";
 import UpdateZone from "./components/zones/UpdateZone";
 import DeleteZone from "./components/zones/DeleteZone";
+import DashboardPage from './pages/deptAdmin/DashboardPage';
 import GetZones from "./components/zones/GetZones";
 import CityAdminDashboard from "./pages/CityAdminDashboard";
 import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
@@ -102,8 +103,8 @@ function AppContent() {
 
       {/* Department Admin */}
       <Route element={<RoleBasedRoute allowedRoles={["dept_admin"]} />}>
-      <Route path="/dept-admin" element={<MainLayout />}>
-      </Route>
+      {/* <Route path="/dept-admin" element={<MainLayout />}> */}
+      <Route path="/dept-admin/dashboard" element={<DashboardPage />} />
       </Route>
 
       {/* Worker */}

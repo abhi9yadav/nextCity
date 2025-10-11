@@ -20,9 +20,7 @@ exports.sendInvitation = async (req, res, isResend = false) => {
     );
 
     const tokenHash = hashToken(token);
-    console.log("tokenHash:", tokenHash);
 
-    
     user.passwordResetToken = tokenHash;
     user.passwordResetExpires = Date.now() + tokenExpiryMinutes * 60 * 1000;
     await user.save({ validateBeforeSave: false });

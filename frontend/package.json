@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fortawesome/react-fontawesome": "^3.1.0",
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "@tailwindcss/cli": "^4.1.13",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
@@ -36,6 +37,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-loading-skeleton": "^3.5.0",
     "react-swipeable": "^7.0.2",
+    "recharts": "^3.2.1",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
