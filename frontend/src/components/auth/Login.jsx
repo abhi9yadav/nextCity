@@ -1,91 +1,37 @@
-// src/components/auth/Login.jsx
-import React, { useState, useEffect } from 'react';
-import { loginUser, signInWithGoogle } from '../../firebase/auth';
-import { useAuth } from '../../contexts/authContext';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { loginUser, signInWithGoogle } from "../../firebase/auth";
+import { useAuth } from "../../contexts/authContext";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
-  const { currentUser, setCurrentUser, role, setRole, token, setToken } = useAuth();
+  const { currentUser, role } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Auto redirect if already logged in
+  const redirectMap = {
+    super_admin: "/super-admin",
+    city_admin: "/city-admin",
+    dept_admin: "/dept-admin",
+    worker: "/worker",
+    citizen: "/citizen",
+  };
+
   useEffect(() => {
-    if (currentUser && role) {
-      const redirectMap = {
-        super_admin: '/super-admin-dashboard',
-        city_admin: '/city-admin-dashboard',
-        dept_admin: '/dept-admin-dashboard',
-        worker: '/worker-dashboard',
-        citizen: '/citizen-dashboard',
-      };
-      navigate(redirectMap[role] || '/');
-    }
+    if (currentUser && role) navigate(redirectMap[role] || "/");
   }, [currentUser, role, navigate]);
 
-  //  Email/password login
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage('');
+  const handleLogin = async (loginFn) => {
     setIsSigningIn(true);
+    setErrorMessage("");
     try {
-      const userCredential = await loginUser(email, password);
-      await handleBackendLogin(userCredential.user);
+      await loginFn();
     } catch (error) {
       console.error(error);
       setErrorMessage(error.message);
-      setIsSigningIn(false);
-    }
-  };
-
-  //  Google Sign-In
-  const onGoogleSignIn = async () => {
-    setIsSigningIn(true);
-    try {
-      const userCredential = await signInWithGoogle();
-      await handleBackendLogin(userCredential.user);
-    } catch (error) {
-      console.error(error);
-      setErrorMessage(error.message);
-      setIsSigningIn(false);
-    }
-  };
-
-  // Verify with backend and redirect based on role
-  const handleBackendLogin = async (user) => {
-    try {
-      const idToken = await user.getIdToken();
-      const res = await fetch('http://localhost:5000/api/v1/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Backend login failed.');
-
-      console.log('User data from backend:', data.user);
-      setCurrentUser(data.user);
-      setRole(data.user.role);
-      localStorage.setItem('currentUser', JSON.stringify(data.user));
-
-      const redirectMap = {
-        super_admin: '/super-admin-dashboard',
-        city_admin: '/city-admin-dashboard',
-        dept_admin: '/dept-admin-dashboard',
-        worker: '/worker-dashboard',
-        citizen: '/citizen-dashboard',
-      };
-      navigate(redirectMap[data.user.role] || '/');
-    } catch (err) {
-      console.error('Login failed:', err);
-      setErrorMessage(err.message);
     } finally {
       setIsSigningIn(false);
     }
@@ -104,7 +50,13 @@ const Login = () => {
           </p>
         )}
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin(() => loginUser(email, password));
+          }}
+          className="space-y-4"
+        >
           <input
             type="email"
             placeholder="Email"
@@ -128,7 +80,7 @@ const Login = () => {
             disabled={isSigningIn}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {isSigningIn ? 'Signing in...' : 'Login'}
+            {isSigningIn ? "Signing in..." : "Login"}
           </button>
         </form>
 
@@ -139,7 +91,7 @@ const Login = () => {
         </div>
 
         <button
-          onClick={onGoogleSignIn}
+          onClick={() => handleLogin(signInWithGoogle)}
           disabled={isSigningIn}
           className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
         >
@@ -166,7 +118,7 @@ const Login = () => {
         </button>
 
         <p className="mt-6 text-center text-sm">
-          Don't have an account?{' '}
+          Do not have an account?{" "}
           <Link to="/signup" className="text-blue-600 hover:underline">
             Sign Up
           </Link>
