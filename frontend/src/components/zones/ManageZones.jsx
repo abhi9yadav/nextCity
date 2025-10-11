@@ -1,44 +1,46 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { FaGlobe, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate, useParams } from 'react-router-dom';
+import { FaGlobe, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const ManageZones = () => {
   const navigate = useNavigate();
-  const { cityId, departmentId } = useParams();
+  const { dept_id } = useParams();
 
   const actions = [
     {
-      title: "View All Zones",
+      title: 'View All Zones',
       icon: <FaGlobe size={24} />,
-      bgColor: "bg-indigo-600",
-      hoverColor: "hover:bg-indigo-700",
-      onClick: () => navigate(`/zones/view/${departmentId}`),
+      bgColor: 'bg-indigo-600',
+      hoverColor: 'hover:bg-indigo-700',
+      onClick: () => navigate(`/city-admin/${dept_id}/zones/view`),
     },
     {
-      title: "Create Zone",
+      title: 'Create Zone',
       icon: <FaPlus size={24} />,
-      bgColor: "bg-green-600",
-      hoverColor: "hover:bg-green-700",
-      onClick: () => navigate(`/zones/create-zone/${departmentId}`),
+      bgColor: 'bg-green-600',
+      hoverColor: 'hover:bg-green-700',
+      onClick: () => navigate(`/city-admin/${dept_id}/zones/create-zone`),
     },
     {
-      title: "Update Zone",
+      title: 'Update Zone',
       icon: <FaEdit size={24} />,
-      bgColor: "bg-blue-600",
-      hoverColor: "hover:bg-blue-700",
-      onClick: () => navigate(`/zones/update-zone/${departmentId}`),
+      bgColor: 'bg-blue-600',
+      hoverColor: 'hover:bg-blue-700',
+      onClick: () => navigate(`/city-admin/${dept_id}/zones/update-zone`),
     },
     {
-      title: "Delete Zone",
+      title: 'Delete Zone',
       icon: <FaTrash size={24} />,
-      bgColor: "bg-red-600",
-      hoverColor: "hover:bg-red-700",
-      onClick: () => navigate(`/zones/delete-zone/${departmentId}`),
+      bgColor: 'bg-red-600',
+      hoverColor: 'hover:bg-red-700',
+      onClick: () => navigate(`/city-admin/${dept_id}/zones/delete-zone`),
     },
   ];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold mb-12 text-gray-800">Zone Management</h1>
+      <h1 className="text-3xl font-bold mb-12 text-gray-800">
+        Zone Management
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-5xl">
         {actions.map((action) => (
