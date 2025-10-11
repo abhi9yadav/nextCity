@@ -18,6 +18,7 @@ import GetZones from "./components/zones/GetZones";
 import CityAdminDashboard from "./pages/CityAdminDashboard";
 import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
 import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
+import CreateCityPage from "./components/superAdmin/CreateCityPage";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/zones/delete-zone/:departmentId" element={<DeleteZone />} />
             <Route path="/zones/view/:departmentId" element={<GetZones />} />
             <Route path="/set-password" element={<SetPassword />} />
+            <Route path="/super-admin/create-city" element={<CreateCityPage />} />
             <Route
               path="/home"
               element={
