@@ -1,19 +1,7 @@
-// Auth Middleware for validating Firebase tokens and checking user roles
-
 const admin = require('firebase-admin');
-const User = require('../models/userModel'); // Base User model
-const CityAdmin = require('../models/cityAdminModel'); // CityAdmin discriminator
-// ... require other discriminator models as needed
+const User = require('../models/userModel');
+const CityAdmin = require('../models/cityAdminModel');
 
-// Initialize Firebase Admin (assuming service account is set up elsewhere)
-// For simplicity, we'll assume the initialization happens here if not globally.
-// const serviceAccount = require('../../path/to/your/serviceAccountKey.json');
-// admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-
-/**
- * 1. Verifies the Firebase ID token and authenticates the user.
- * 2. Fetches the Mongoose User document and attaches it to req.user.
- */
 const authenticate = async (req, res, next) => {
     const header = req.headers.authorization;
 
@@ -29,7 +17,7 @@ const authenticate = async (req, res, next) => {
         const firebaseUid = decodedToken.uid;
 
         // Step 2: Find the corresponding Mongoose User document (using the base model)
-        const user = await User.findOne({ firebaseUid }).exec();
+        const user = await User.findOne({ firebaseUid }).withSensitiveFields().exec();
 
         if (!user) {
             return res.status(404).json({ message: 'User not found in database.' });
@@ -45,13 +33,8 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-/**
- * Middleware to check if the authenticated user has one of the required roles.
- * @param {Array<string>} requiredRoles - An array of roles (e.g., ['super_admin', 'city_admin'])
- */
 const roleCheck = (requiredRoles) => {
     return (req, res, next) => {
-        // Ensure authenticate middleware ran first and attached req.user
         if (!req.user || !req.user.role) {
             return res.status(500).json({ message: 'Role check failed: User context missing.' });
         }
