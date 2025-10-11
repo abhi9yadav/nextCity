@@ -1,3 +1,4 @@
+// authMiddleware.js
 const admin = require("../config/firebase");
 const User = require("../models/userModel");
 
@@ -27,4 +28,31 @@ const requireRole = (allowedRoles) => {
   };
 };
 
-module.exports = { verifyToken, requireRole };
+const roleCheck = (allowedRoles) => {
+    return async (req, res, next) => {
+        const firebaseUid = req.user.uid; // Get UID from the `authenticate` middleware
+
+        try {
+            // Find the user in your MongoDB to get their role
+            const userProfile = await User.findOne({ firebaseUid: firebaseUid });
+
+            if (!userProfile) {
+                return res.status(404).json({ message: 'User not found in the database.' });
+            }
+
+            // Check if the user's role is in the list of allowed roles
+            if (allowedRoles.includes(userProfile.role)) {
+                // User has the required role, proceed to the controller
+                next();
+            } else {
+                // User does not have the required role
+                return res.status(403).json({ message: 'Forbidden: You do not have the required permissions.' });
+            }
+        } catch (error) {
+            console.error('Error during role check:', error);
+            return res.status(500).json({ message: 'Server error during authorization.' });
+        }
+    };
+};
+
+module.exports = { verifyToken, requireRole, roleCheck };

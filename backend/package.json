@@ -23,8 +23,8 @@
     "html-to-text": "^9.0.5",
     "mongoose": "^8.18.3",
     "multer": "^2.0.2",
-    "node-fetch": "^2.7.0",
     "nodemailer": "^7.0.9",
+    "node-fetch": "^2.7.0",
     "streamifier": "^0.1.1"
   }
 }

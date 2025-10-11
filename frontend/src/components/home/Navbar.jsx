@@ -2,16 +2,16 @@ import React from 'react';
 import './landing.css'; // Optional: if you have specific styles for Navbar
 function Navbar() {
   return (
-    <nav className="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
+    <nav className="bg-transparent shadow-sm py-4 px-6 flex items-center justify-between z-50 relative  border-b-1 border-gray-400">
       <div className="color font-bold text-xl">NEXTGEN CITY</div>
       <div className="hidden md:flex space-x-8">
-        <a href="#features" className="text-gray-600 hover:text-blue-700">Features</a>
-        <a href="#how-it-works" className="text-gray-600 hover:text-blue-700">How It Works</a>
-        <a href="#download" className="text-gray-600 hover:text-blue-700">Download</a>
+        <a href="#features" className="text-gray-600 hover:text-green-700">Features</a>
+        <a href="#how-it-works" className="text-gray-600 hover:text-amber-400">How It Works</a>
+        <a href="#download" className="text-gray-600 hover:text-fuchsia-700">Download</a>
       </div>
       <div className="hidden md:flex space-x-4 items-center">
-        <a href="/login" className="text-gray-600 hover:text-blue-700">Login</a>
-        <a href="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Sign Up</a>
+        <a href="/login" className="text-gray-600 hover:text-cyan-700">Login</a>
+        <a href="/signup" className="bg-cyan-900 text-white px-4 py-2 rounded-md hover:bg-cyan-700">Sign Up</a>
       </div>
       {/* Mobile Menu Icon (Hamburger) */}
       <div className="md:hidden">

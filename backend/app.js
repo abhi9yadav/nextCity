@@ -15,6 +15,7 @@ const rootDir = require('./utils/rootDir');
 const authRoutes = require("./routes/authRoutes");
 const cityAdminRoutes = require("./routes/cityAdminRoutes");
 const zoneRoutes = require("./routes/zoneRoutes");
+const workerRoutes = require("./routes/workerRoutes");
 
 const app = express();
 
@@ -22,8 +23,8 @@ const app = express();
 app.use(express.static(path.join(rootDir, 'public')));
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for form submissions
-app.set('json spaces', 2); // nicely formatted JSON responses
+app.use(express.urlencoded({ extended: true }));
+app.set('json spaces', 2);
 
 // Routes
 console.log("Setting up routes...");
@@ -33,6 +34,7 @@ app.use("/api/v1/cityAdmin", cityAdminRoutes);
 app.use("/api/v1/complaints", complaintRoutes);
 app.use("/api/v1/zones", zoneRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/worker', workerRoutes);
 
 app.all(/.*/, (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

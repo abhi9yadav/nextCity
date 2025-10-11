@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 require("../models/citizenModel");
 
+
 const signup = async (req, res) => {
   try {
     // console.log("here");
@@ -38,10 +39,10 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    // console.log("req.user:", req.user);
+    //console.log("req.user:", req.user);
     const { firebaseUid } = req.user;
     let user = await User.findOne({ firebaseUid });
-    // console.log("user:"+user);
+    //console.log("user:"+user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found, please signup" });

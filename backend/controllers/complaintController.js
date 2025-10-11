@@ -91,7 +91,7 @@ exports.upvoteComplaint = async (req, res) => {
         .status(400)
         .json({ message: "You already voted this complaint" });
     }
-
+    complaint.votes.push(req.user.id);
     await complaint.save();
     res.json({ message: "Vote added", votes: complaint.votes.length });
   } catch (error) {
@@ -126,3 +126,26 @@ exports.deleteComplaint = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//mycomplaints
+exports.getMyComplaints = async (req, res) => {
+  console.log("request ", req);
+  const { id } = req.params;
+  console.log("id is here ", id);
+
+ 
+  try {
+    
+    
+    const myComplaints = await Complaint.find({ createdBy: id })
+      .sort({ createdAt: -1 })
+      .populate("createdBy", "name email role");
+    console.log("my complaints are here ", myComplaints);
+    res.status(200).json(myComplaints);
+  } catch (error) {
+    console.error("Error fetching user's complaints:", error);
+    res.status(500).json({ error: "Failed to fetch user complaints" });
+  }
+};
+
+
