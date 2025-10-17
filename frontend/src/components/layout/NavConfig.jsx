@@ -41,6 +41,7 @@ const navConfig = {
   super_admin: [
     { name: "Dashboard", href: "/super-admin", icon: "📊" },
     { name: "Cities", href: "/super-admin/cities", icon: "🏙️" },
+    { name: "City Admins", href: "/super-admin/city-admins", icon: "🧑‍💼" },
     { name: "Departments", href: "/super-admin/departments", icon: "🏢" },
     { name: "Profile", href: "/super-admin/profile", icon: "👤" },
   ],
