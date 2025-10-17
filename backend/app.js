@@ -35,7 +35,7 @@ console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/superAdmin", superAdminRoutes);
 app.use("/api/v1/cityAdmin", cityAdminRoutes);
-app.use("/api/v1/deptAdmin", deptAdminRoutes);
+app.use("/api/v1/dept-admin", deptAdminRoutes);
 app.use("/api/v1/complaints", complaintRoutes);
 app.use("/api/v1/zones", zoneRoutes);
 app.use('/api/v1/auth', authRoutes);
