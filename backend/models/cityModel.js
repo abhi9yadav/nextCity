@@ -5,7 +5,6 @@ const CitySchema = new mongoose.Schema(
     city_name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     state: {
@@ -36,8 +35,15 @@ const CitySchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    city_admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "city_admin",
+      unique: true,
+    },
   },
   { timestamps: true }
 );
+
+CitySchema.index({ city_name: 1, state: 1 }, { unique: true });
 
 module.exports = mongoose.model("City", CitySchema);
