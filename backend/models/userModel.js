@@ -49,9 +49,8 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
-      select: false,
     },
-    invitationSent: { type: Boolean, default: false, select: false },
+    invitationSent: { type: Boolean, default: false },
   },
   options
 );
@@ -59,6 +58,19 @@ const userSchema = new mongoose.Schema(
 userSchema.query.withSensitiveFields = function() {
   return this.select("+firebaseUid +passwordResetToken +passwordResetExpires +isActive");
 };
+
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.passwordChangedAt;
+    delete ret.passwordResetToken;
+    delete ret.passwordResetExpires;
+    delete ret.firebaseUid,
+    delete ret.__v;
+    return ret;
+  },
+});
+
 
 const User = mongoose.model("User", userSchema);
 

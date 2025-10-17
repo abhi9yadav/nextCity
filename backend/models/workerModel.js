@@ -26,12 +26,20 @@ const WorkerSchema = new mongoose.Schema(
     assignedCount: { type: Number, default: 0 },
     isAvailable: { type: Boolean, default: true },
     skills: [{ type: String }],
-    meta: { type: mongoose.Schema.Types.Mixed },  // extensible
+    meta: { type: mongoose.Schema.Types.Mixed },
   },
   { timestamps: true }
 );
 
 WorkerSchema.index({ city_id: 1, department_id: 1, zone_id: 1 });
+
+WorkerSchema.set("toJSON", { virtuals: true });
+WorkerSchema.set("toObject", { virtuals: true });
+
+WorkerSchema.virtual("status").get(function () {
+  if (!this.invitationSent) return "pending";
+  return this.isActive ? "active" : "inactive";
+});
 
 const Worker = User.discriminator("worker", WorkerSchema);
 module.exports = Worker;
