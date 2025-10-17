@@ -16,12 +16,14 @@ const CommunityFeedPage = () => {
   const [direction, setDirection] = useState(0);
   const [page, setPage] = useState(1);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const isMobile = window.innerWidth < 768;
 
   const fetchComplaints = async (pageNum = 1) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/v1/complaints/allcomplaints?page=${pageNum}&limit=${PAGE_SIZE}`
+        `${BASE_URL}/complaints/allcomplaints?page=${pageNum}&limit=${PAGE_SIZE}`
       );
       return res.data || [];
     } catch (err) {

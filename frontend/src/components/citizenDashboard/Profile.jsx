@@ -11,7 +11,7 @@ const Profile = () => {
   const [newProfileImageFile, setNewProfileImageFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  console.log("Current User in Profile:", currentUser);
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
   useEffect(() => {
     if (currentUser) {
@@ -64,11 +64,9 @@ const Profile = () => {
         payload.append(key, formData[key]);
       });
       if (newProfileImageFile) payload.append("photo", newProfileImageFile);
-      console.log("Payload being sent:", payload);
-      console.log("Token:", token);
-
+      
       const res = await axios.put(
-        "http://localhost:5000/api/v1/users/update",
+        `${BASE_URL}/users/update`,
         payload,
         {
           headers: {

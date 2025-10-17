@@ -11,6 +11,10 @@ const DepartmentSchema = new mongoose.Schema({
         type: String,
         maxlength: 250
     },
+    isActive:{
+        type: Boolean,
+        default: true
+    },
     photoURL: {
         type: String 
     }

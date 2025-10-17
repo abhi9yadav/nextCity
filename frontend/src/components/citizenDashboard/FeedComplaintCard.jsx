@@ -102,7 +102,7 @@ const CitizenComplaintCard = ({ complaint, onUpvote }) => {
         <div className="flex items-center justify-between mt-3 border-t border-gray-100 pt-2">
           <button
             onClick={onUpvote}
-            className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition"
+            className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition cursor-pointer"
           >
             <ThumbsUp size={16} /> {upvoteCount}
           </button>

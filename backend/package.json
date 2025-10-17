@@ -25,7 +25,8 @@
     "mongoose": "^8.18.3",
     "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
-    "nodemailer": "^7.0.9",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "recharts": "^3.2.1",
+    "nodemailer": "^7.0.9"
   }
 }
