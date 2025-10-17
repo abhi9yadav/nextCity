@@ -13,13 +13,17 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(localStorage.getItem("role") || null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Helper to fetch and store user data from backend
+  // Helper to fetch and store user data from backend
   const fetchBackendUser = async (firebaseUser) => {
     const idToken = await firebaseUser.getIdToken();
     setToken(idToken);
     localStorage.setItem("idToken", idToken);
-
-    const res = await fetch("http://localhost:5000/api/v1/users/me", {
+    let BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    if (!BASE_URL) {
+      console.error("VITE_API_BASE_URL is not defined in the environment variables.");
+      BASE_URL = "http://localhost:5001/api/v1";
+    }
+    const res = await fetch(`${BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${idToken}` },
     });
 
@@ -35,7 +39,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem("currentUser", JSON.stringify(fullUser));
   };
 
-  // 🔹 Listen for Firebase auth changes
+  //Listen for Firebase auth changes
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
       try {
