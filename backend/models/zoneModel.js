@@ -6,7 +6,6 @@ const ZoneSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     description: {
       type: String,
@@ -24,7 +23,7 @@ const ZoneSchema = new mongoose.Schema(
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // CityAdmin
+      ref: "User",
       required: true,
     },
     color: {
@@ -38,7 +37,7 @@ const ZoneSchema = new mongoose.Schema(
         required: true,
       },
       coordinates: {
-        type: [[[Number]]], // [[[lng, lat], [lng, lat], ...]]
+        type: [[[Number]]],
         required: true,
       },
     },
