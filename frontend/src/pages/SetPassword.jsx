@@ -1,4 +1,3 @@
-// src/pages/SetPassword.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -12,7 +11,7 @@ export default function SetPassword() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [status, setStatus] = useState("loading"); // loading | ready | error
+  const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const auth = getAuth();
@@ -28,9 +27,9 @@ export default function SetPassword() {
     }
     const token = decodeURIComponent(encodedToken);
     setToken(token);
-
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     axios
-      .get(`http://localhost:5001/api/v1/auth/validate-token`, { params: { token } })
+      .get(`${BASE_URL}/auth/validate-token`, { params: { token } })
       .then((res) => {
         setEmail(res.data.email);
         setStatus("ready");
@@ -59,7 +58,7 @@ export default function SetPassword() {
     }
 
     try {
-      await axios.post(`http://localhost:5001/api/v1/auth/set-password`, {
+      await axios.post(`${BASE_URL}/auth/set-password`, {
         token,
         password,
       });
