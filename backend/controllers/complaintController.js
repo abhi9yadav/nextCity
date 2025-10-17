@@ -1,6 +1,8 @@
 const Complaint = require("../models/complaintModel");
 const User = require("../models/userModel");
 const cloudinary = require("cloudinary").v2;
+const Zone = require("../models/zoneModel");
+const Department = require("../models/departmentModel");
 
 cloudinary.config();
 
@@ -55,6 +57,25 @@ exports.createComplaint = async (req, res) => {
       },
       attachments: attachmentUrls,
     };
+
+    const department_id = await Department.findOne({department_name: req.body.concernedDepartment}).select('_id');
+    if(!department_id) {
+      return res.status(400).json({ error: "Invalid concernedDepartment" });
+    }
+    finalComplaintData.department_id = department_id._id;
+
+    const zone = await Zone.findOne({
+      department_id, 
+      geographical_boundary: {
+        $geoIntersects: { $geometry: finalComplaintData.location },
+      },
+    });
+    
+    if (zone) { 
+      finalComplaintData.zone_id = zone._id;
+      const city_id = zone ? zone.city_id : null;
+      finalComplaintData.city_id = city_id;
+    }
 
     const complaint = new Complaint(finalComplaintData);
     await complaint.save();

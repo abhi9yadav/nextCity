@@ -29,6 +29,18 @@ const complaintSchema = new mongoose.Schema(
       coordinates: { type: [Number], required: true },
       address: { type: String },
     },
+    zone_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Zone",
+    },
+    department_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+    },
+    city_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "City",
+    },
     attachments: [
       {
         url: { type: String, required: true },
@@ -42,7 +54,7 @@ const complaintSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ["OPEN", "IN_PROGRESS", "RESOLVED"],
+      enum: ["OPEN", "IN_PROGRESS", "RESOLVED", "REOPENED"],
       default: "OPEN",
     },
     votes: {
@@ -52,7 +64,7 @@ const complaintSchema = new mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Citizen",
+      ref: "User",
       required: true,
     },
     assignedTo: {
@@ -69,7 +81,6 @@ const complaintSchema = new mongoose.Schema(
         },
         action: {
           type: String,
-          enum: ["status_changed", "comment"],
           required: true,
         },
         from: { type: String },
@@ -83,6 +94,11 @@ const complaintSchema = new mongoose.Schema(
 );
 
 complaintSchema.index({ location: "2dsphere" });
+complaintSchema.index({ city_id: 1 });
+complaintSchema.index({ department_id: 1 });
+complaintSchema.index({ city_id: 1, department_id: 1 });
+complaintSchema.index({ city_id: 1, department_id: 1, status: 1 });
+complaintSchema.index({ zone_id: 1 });
 
 const Complaint = mongoose.model("Complaint", complaintSchema);
 
