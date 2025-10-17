@@ -152,10 +152,17 @@ const CityBoundaryPicker = ({
     const state = addressInfo.state || "";
     const countryName = addressInfo.country || "";
 
+    const coords = polygonCoords.map(([lat, lng]) => [lng, lat]);
+    const first = coords[0];
+    const last = coords[coords.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) {
+      coords.push(first);
+    }
+
     onSelect({
       boundary: {
         type: "Polygon",
-        coordinates: [polygonCoords.map(([lat, lng]) => [lng, lat])],
+        coordinates: [coords],
       },
       center: { lat: avgLat, lng: avgLng },
       address: { city, state, country: countryName },

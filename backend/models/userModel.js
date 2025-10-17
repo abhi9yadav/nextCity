@@ -49,7 +49,6 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
-      select: false,
     },
     invitationSent: { type: Boolean, default: false, select: false },
   },

@@ -32,6 +32,9 @@ import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentCompl
 import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
 import ManageDepartment from "./components/cityAdmin/ManageDepartment";
 import CreateCityPage from "./components/superAdmin/CreateCityPage";
+import AllCities from "./components/superAdmin/AllCIties";
+import AllCityAdmins from "./components/superAdmin/AllCityAdmins";
+import AllDepartments from "./components/superAdmin/AllDepartments";
 
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
@@ -51,7 +54,6 @@ function AppContent() {
       <Route path="/LoginSignupForm" element={<LoginSignupPage />} />
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
       <Route path="/loading" element={<VideoBackground />} />
-      <Route path="/super-admin/create-city" element={<CreateCityPage />} />
       <Route
         path="/flower-animation"
         element={
@@ -118,11 +120,15 @@ function AppContent() {
         <Route path="/super-admin" element={<MainLayout />}>
           <Route index element={<SuperAdminPage />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="cities" element={<AllCities />} />
+          <Route path="city-admins" element={<AllCityAdmins />} />
+          <Route path="departments" element={<AllDepartments />} />
+          <Route path="create-city" element={<CreateCityPage />} />
         </Route>
       </Route>
 
       {/* ---------- CATCH-ALL ---------- */}
-      <Route path="*" element={<Navigate to="/notfound" />} />
+      <Route path="*" element={<Navigate to="/flower-animation" />} />
     </Routes>
   );
 }

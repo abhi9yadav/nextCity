@@ -9,7 +9,6 @@ const Zone = require("../models/zoneModel");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
-// Helper to upload file to Cloudinary
 const uploadToCloudinary = async (fileBuffer, folder) => {
   return await new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -85,6 +84,13 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
 
     const { departmentId } = req.params;
 
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Department not found" });
+    }
+
     const zones = await Zone.find({
       department_id: departmentId,
       city_id: cityAdmin.city_id,
@@ -99,6 +105,7 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
     const zoneBoundaries = zones.map((z) => z.geographical_boundary);
 
     const complaints = await Complaint.find({
+      concernedDepartment: department.department_name,
       $or: zoneBoundaries.map((boundary) => ({
         location: { $geoWithin: { $geometry: boundary } },
       })),
@@ -108,7 +115,6 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
         "title description status votes location createdBy createdAt attachments"
       );
 
-    // Convert votes array to votes count
     const formattedComplaints = complaints.map((c) => {
       const cObj = c.toObject();
       return {
@@ -124,7 +130,6 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
   }
 };
 
-// Get complaints for a specific zone in a department
 exports.getComplaintsByDepartmentZone = async (req, res) => {
   try {
     const cityAdminUid = req.user.firebaseUid;
@@ -136,6 +141,13 @@ exports.getComplaintsByDepartmentZone = async (req, res) => {
     }
 
     const { departmentId, zoneId } = req.params;
+
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Department not found" });
+    }
 
     const zone = await Zone.findOne({
       _id: zoneId,
@@ -150,6 +162,7 @@ exports.getComplaintsByDepartmentZone = async (req, res) => {
     }
 
     const complaints = await Complaint.find({
+      concernedDepartment: department.department_name,
       location: { $geoWithin: { $geometry: zone.geographical_boundary } },
     }).populate({ path: "createdBy", model: "User", select: "name email" });
 
@@ -169,7 +182,6 @@ exports.getComplaintsByDepartmentZone = async (req, res) => {
 };
 
 exports.getDepartmentAdminByDepartmentId = async (req, res) => {
-  // console.log("here...");
   try {
     const cityAdminUid = req.user.firebaseUid;
     const cityAdmin = await CityAdmin.findOne({ firebaseUid: cityAdminUid });
@@ -185,7 +197,10 @@ exports.getDepartmentAdminByDepartmentId = async (req, res) => {
       role: "dept_admin",
       department_id: departmentId,
       city_id: cityAdmin.city_id,
-    }).populate("department_id", "department_name").withSensitiveFields().exec();
+    })
+      .populate("department_id", "department_name")
+      .withSensitiveFields()
+      .exec();
 
     if (!departmentAdmin) {
       return res.status(404).json({
@@ -200,7 +215,6 @@ exports.getDepartmentAdminByDepartmentId = async (req, res) => {
   }
 };
 
-// Create Department Admin
 exports.createDepartmentAdmin = async (req, res) => {
   try {
     const cityAdminUid = req.user.firebaseUid;
@@ -272,7 +286,6 @@ exports.createDepartmentAdmin = async (req, res) => {
   }
 };
 
-// Update Department Admin
 exports.updateDepartmentAdmin = async (req, res) => {
   try {
     const cityAdminUid = req.user.firebaseUid;

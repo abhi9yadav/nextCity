@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import BoundaryPicker from '../../map/BoundaryPicker';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import BoundaryPicker from "../../map/BoundaryPicker";
+import { useNavigate, useParams } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
 const UpdateZone = () => {
   const navigate = useNavigate();
   const { dept_id } = useParams();
 
   const [zones, setZones] = useState([]);
-  const [selectedZoneId, setSelectedZoneId] = useState('');
-  const [zoneName, setZoneName] = useState('');
-  const [description, setDescription] = useState('');
-  const [color, setColor] = useState('#3b82f6');
+  const [selectedZoneId, setSelectedZoneId] = useState("");
+  const [zoneName, setZoneName] = useState("");
+  const [description, setDescription] = useState("");
+  const [color, setColor] = useState("#3b82f6");
   const [updatedBoundary, setUpdatedBoundary] = useState(null);
   const [center, setCenter] = useState(null);
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState("");
   const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const UpdateZone = () => {
       });
       setZones(res.data.zones);
     } catch (err) {
-      console.error('Failed to fetch zones:', err);
+      console.error("Failed to fetch zones:", err);
     }
   };
 
@@ -42,17 +42,17 @@ const UpdateZone = () => {
     if (zone) {
       setZoneName(zone.zone_name);
       setDescription(zone.description);
-      setColor(zone.color || '#3b82f6');
+      setColor(zone.color || "#3b82f6");
       setUpdatedBoundary(zone.geographical_boundary || null);
       setCenter(zone.center || null);
-      setAddress(zone.address || '');
+      setAddress(zone.address || "");
     }
   };
 
   const handleUpdate = async () => {
-    if (!selectedZoneId) return alert('Please select a zone!');
-    if (!zoneName.trim()) return alert('Zone name is required!');
-    if (!updatedBoundary) return alert('Please draw a boundary!');
+    if (!selectedZoneId) return alert("Please select a zone!");
+    if (!zoneName.trim()) return alert("Zone name is required!");
+    if (!updatedBoundary) return alert("Please draw a boundary!");
 
     let coords = updatedBoundary.coordinates?.[0];
     if (
@@ -69,7 +69,7 @@ const UpdateZone = () => {
       description,
       color,
       geographical_boundary: {
-        type: 'Polygon',
+        type: "Polygon",
         coordinates: [coords],
       },
       center,
@@ -84,11 +84,15 @@ const UpdateZone = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('✅ Zone updated successfully!');
+      alert("✅ Zone updated successfully!");
       navigate(-1);
     } catch (err) {
       console.error(err);
-      alert('❌ Failed to update zone');
+      const backendMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Failed to create zone";
+      alert(`❌ ${backendMsg}`);
     }
   };
 
@@ -171,11 +175,11 @@ const UpdateZone = () => {
             {updatedBoundary && (
               <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50 space-y-1">
                 <p>
-                  <strong>Boundary type:</strong>{' '}
-                  {updatedBoundary.type || 'Polygon'}
+                  <strong>Boundary type:</strong>{" "}
+                  {updatedBoundary.type || "Polygon"}
                 </p>
                 <p>
-                  <strong>Coordinates:</strong>{' '}
+                  <strong>Coordinates:</strong>{" "}
                   {updatedBoundary.coordinates?.[0]?.length || 0} points
                 </p>
                 {center && (
