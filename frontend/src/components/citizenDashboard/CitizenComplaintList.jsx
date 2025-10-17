@@ -15,6 +15,7 @@ const CitizenComplaintList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const fetchMyComplaints = useCallback(async () => {
     if (!currentUser) return;
@@ -23,9 +24,8 @@ const CitizenComplaintList = () => {
       setLoading(true);
       setError(null);
 
-      console.log("📡 Fetching complaints for:", currentUser._id);
       const res = await axios.get(
-        `http://localhost:5000/api/v1/complaints/${currentUser._id}/my`,
+        `${BASE_URL}/complaints/${currentUser._id}/my`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -33,7 +33,6 @@ const CitizenComplaintList = () => {
 
       const complaints = res.data?.data || res.data || [];
       setMyComplaints(complaints);
-      console.log("✅ Complaints fetched:", complaints);
     } catch (err) {
       console.error("❌ Error fetching complaints:", err);
       setError("Failed to load complaints. Please try again later.");
