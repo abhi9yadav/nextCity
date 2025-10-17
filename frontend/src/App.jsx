@@ -46,6 +46,9 @@ import AddWorkerPage from './pages/deptAdmin/AddWorkerPage';
 import ComplaintsPage from "./pages/deptAdmin/ComplaintsPage";
 import AnalyticsPage from "./pages/deptAdmin/AnalyticsPage";
 import WorkerDetailWrapper from "./pages/deptAdmin/WorkerDetailWrapper";
+import AllCities from "./components/superAdmin/AllCIties";
+import AllCityAdmins from "./components/superAdmin/AllCityAdmins";
+import AllDepartments from "./components/superAdmin/AllDepartments";
 
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
@@ -72,10 +75,14 @@ function AppContent() {
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
       <Route path="/loading" element={<VideoBackground />} />
       <Route path="/super-admin/create-city" element={<CreateCityPage />} />
-      <Route path="/" element={<MainLayout />}>
-          <Route path="flower-animation" element={<FlowerAnimation />} />
-        </Route>
-    
+      <Route
+        path="/flower-animation"
+        element={
+          <MainLayout>
+            <FlowerAnimation />
+          </MainLayout>
+        }
+      />
       <Route path="/set-password" element={<SetPassword />}/>
       {/* <Route path="/notfound" element={<Animated404Page />} /> */}
 
@@ -138,6 +145,10 @@ function AppContent() {
         <Route path="/super-admin" element={<MainLayout />}>
           <Route index element={<SuperAdminPage />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="cities" element={<AllCities />} />
+          <Route path="city-admins" element={<AllCityAdmins />} />
+          <Route path="departments" element={<AllDepartments />} />
+          <Route path="create-city" element={<CreateCityPage />} />
         </Route>
       </Route>
 

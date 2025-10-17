@@ -1,14 +1,18 @@
-const User = require('./userModel');
-const mongoose = require('mongoose');
+const User = require("./userModel");
+const mongoose = require("mongoose");
 
 const CityAdminSchema = new mongoose.Schema({
-    city_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'City',
-        required: true
-    },
+  city_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "City",
+    required: true,
+  },
+  city_name: {
+    type: String,
+    required: true,
+  },
 });
 
-const CityAdmin = User.discriminator('city_admin', CityAdminSchema);
+const CityAdmin = User.discriminator("city_admin", CityAdminSchema);
 
 module.exports = CityAdmin;

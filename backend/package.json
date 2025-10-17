@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@turf/turf": "^7.2.0",
     "axios": "^1.12.2",
     "body-parser": "^2.2.0",
     "cloudinary": "^2.7.0",
@@ -23,9 +24,9 @@
     "html-to-text": "^9.0.5",
     "mongoose": "^8.18.3",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.9",
     "node-fetch": "^2.7.0",
     "streamifier": "^0.1.1",
-    "recharts": "^3.2.1"
+    "recharts": "^3.2.1",
+    "nodemailer": "^7.0.9"
   }
 }
