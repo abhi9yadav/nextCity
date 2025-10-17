@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import BoundaryPicker from '../../map/BoundaryPicker';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
+import React, { useState } from "react";
+import BoundaryPicker from "../../map/BoundaryPicker";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
 const CreateZone = () => {
   const { dept_id } = useParams();
   const navigate = useNavigate();
 
-  const [zoneName, setZoneName] = useState('');
-  const [description, setDescription] = useState('');
-  const [color, setColor] = useState('#3b82f6');
+  const [zoneName, setZoneName] = useState("");
+  const [description, setDescription] = useState("");
+  const [color, setColor] = useState("#3b82f6");
   const [zoneData, setZoneData] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -20,8 +20,8 @@ const CreateZone = () => {
   };
 
   const handleCreateZone = async () => {
-    if (!zoneData) return alert('Please draw a zone boundary first!');
-    if (!zoneName.trim()) return alert('Zone name is required!');
+    if (!zoneData) return alert("Please draw a zone boundary first!");
+    if (!zoneName.trim()) return alert("Zone name is required!");
 
     let coordinates = zoneData.geographical_boundary.coordinates[0];
 
@@ -34,7 +34,7 @@ const CreateZone = () => {
     }
 
     const geoJSON = {
-      type: 'Polygon',
+      type: "Polygon",
       coordinates: [coordinates],
     };
 
@@ -50,15 +50,19 @@ const CreateZone = () => {
         geographical_boundary: geoJSON,
       };
 
-      await axios.post('/api/v1/zones', payload, {
+      await axios.post("/api/v1/zones", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('✅ Zone created successfully!');
+      alert("✅ Zone created successfully!");
       navigate(-1);
     } catch (err) {
-      console.error('Error creating zone:', err.response || err);
-      alert('❌ Failed to create zone');
+      console.error("Error creating zone:", err.response || err);
+      const backendMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Failed to create zone";
+      alert(`❌ ${backendMsg}`);
     }
   };
 
@@ -122,7 +126,7 @@ const CreateZone = () => {
           {zoneData && (
             <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
               <p>
-                <strong>Center:</strong> {zoneData.center.lat},{' '}
+                <strong>Center:</strong> {zoneData.center.lat},{" "}
                 {zoneData.center.lng}
               </p>
               <p>
