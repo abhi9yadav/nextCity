@@ -3,7 +3,10 @@ const Zone = require("../models/zoneModel");
 // ✅ Get all zones for a department of the logged-in city admin
 exports.getZones = async (req, res) => {
   try {
-    const { departmentId } = req.params;
+    let { departmentId } = req.params;
+    if(!departmentId){
+      departmentId = req.user.department_id;
+    }
     const city_id = req.user.city_id; // get from authenticated CityAdmin
 
     if (!city_id) {
@@ -12,7 +15,11 @@ exports.getZones = async (req, res) => {
 
     const zones = await Zone.find({ city_id, department_id: departmentId });
 
-    res.status(200).json({ success: true, zones });
+    res.status(200).json({
+      status: 'success',
+      results: zones.length,
+      zones,
+    });
   } catch (error) {
     console.error("Error fetching zones:", error);
     res.status(500).json({ success: false, message: "Failed to fetch zones" });
