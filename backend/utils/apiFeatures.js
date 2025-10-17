@@ -1,14 +1,28 @@
+const mongoose = require("mongoose");
 class APIFeatures {
-  constructor(query, queryString, isAggregation = false) {
+  constructor(
+    query,
+    queryString,
+    isAggregation = false,
+    searchFields = ["name", "email"]
+  ) {
     this.query = query; // aggregation pipeline or mongoose query
     this.queryString = queryString;
     this.isAggregation = Array.isArray(query);
+    this.searchFields = searchFields;
   }
 
   //Filter
   filter() {
     const queryObj = { ...this.queryString };
-    const excludeFields = ["page", "sort", "limit", "fields", "sortByVotes"];
+    const excludeFields = [
+      "page",
+      "sort",
+      "limit",
+      "fields",
+      "sortByVotes",
+      "search",
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
 
     if (queryObj.zoneId) {
@@ -24,16 +38,51 @@ class APIFeatures {
       delete queryObj.departmentId;
     }
 
+    if (queryObj.status && queryObj.status === "PENDING_ASSIGN") {
+      queryObj.status = { $in: ["OPEN", "REOPENED"] };
+    } else if (queryObj.status) {
+      queryObj.status = queryObj.status.toUpperCase();
+    }
+
     // Advanced filtering for gte, gt, lte, lt
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    const filterObj = JSON.parse(queryStr);
+    let filterObj = JSON.parse(queryStr);
+
+    for (const key in filterObj) {
+      if (
+        key.endsWith("_id") &&
+        mongoose.Types.ObjectId.isValid(filterObj[key])
+      ) {
+        filterObj[key] = new mongoose.Types.ObjectId(filterObj[key]);
+      }
+    }
+
+    // Multi-Field Search (now context-aware)
+    if (this.queryString.search && this.searchFields.length > 0) {
+      const searchTerm = this.queryString.search.trim();
+      const searchRegex = new RegExp(searchTerm, "i");
+
+      const orConditions = this.searchFields.map((field) => {
+        if (field === "_id") {
+          if (mongoose.Types.ObjectId.isValid(searchTerm)) {
+            return { [field]: new mongoose.Types.ObjectId(searchTerm) };
+          }
+          return { [field]: { $regex: searchRegex } };
+        }
+        return { [field]: { $regex: searchRegex } };
+      });
+
+      const multiFieldSearch = { $or: orConditions };
+
+      // Merge the new multi-field search with existing filters
+      filterObj = { ...filterObj, ...multiFieldSearch };
+    }
 
     if (this.isAggregation) {
-      // For aggregation pipelines
-      this.query.unshift({ $match: filterObj });
+      // 🧠 Instead of unshift, push to the END so it runs after lookups
+      this.query.push({ $match: filterObj });
     } else {
-      // Merge new filter with existing query conditions ✅
       this.query = this.query.find({ ...this.query._conditions, ...filterObj });
     }
 
