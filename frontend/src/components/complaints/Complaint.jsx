@@ -57,9 +57,9 @@ const CreateComplaint = () => {
       }
 
       const token = await user.getIdToken();
-
+      const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api/v1/";
       const res = await axios.post(
-        "http://localhost:5000/api/v1/complaints",
+        `${BASE_URL}complaints`,
         uploadData,
         {
           headers: {
@@ -70,8 +70,6 @@ const CreateComplaint = () => {
       );
 
       alert("Complaint created successfully!");
-      console.log(res.data);
-      //navigate("citizen-dashboard/create-complaint");
     } catch (error) {
       console.error("Error:", error.response?.data || error);
       alert(
