@@ -78,7 +78,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isSigningIn}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer"
           >
             {isSigningIn ? "Signing in..." : "Login"}
           </button>
@@ -93,7 +93,7 @@ const Login = () => {
         <button
           onClick={() => handleLogin(signInWithGoogle)}
           disabled={isSigningIn}
-          className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer"
         >
           <svg className="w-5 h-5" viewBox="0 0 48 48">
             <path

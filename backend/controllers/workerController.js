@@ -37,7 +37,6 @@ exports.updateComplaintStatus = async (req, res) => {
     const complaint = await Complaint.findById(complaintId);
     if (!complaint)
       return res.status(404).json({ message: 'Complaint not found.' });
-    //console.log('complaint found:', complaint);
 
     // Authorization Check
     if (!complaint.assignedTo)
@@ -84,7 +83,6 @@ exports.updateComplaintStatus = async (req, res) => {
 exports.getWorkerStats = async (req, res) => {
   try {
     const workerId = req.user._id;
-    //console.log('Worker ID we are finding worker complaints for:', workerId);
 
     const totalAssigned = await Complaint.countDocuments({
       assigned_worker_id: workerId,

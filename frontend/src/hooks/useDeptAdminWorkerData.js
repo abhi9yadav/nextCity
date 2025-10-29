@@ -169,7 +169,6 @@ const useDeptAdminWorkerData = () => {
     setLoading(true);
     try {
       const res = await apiResendInvitation(workerId);
-      console.log(`returned with response: `, res);
       toast.info(res.data.message);
       await loadWorkers();
     } catch (err) {

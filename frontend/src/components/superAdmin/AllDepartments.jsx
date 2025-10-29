@@ -11,6 +11,8 @@ const AllDepartments = () => {
   const [selectedDept, setSelectedDept] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -20,7 +22,7 @@ const AllDepartments = () => {
 
         const idToken = await currentUser.getIdToken(true);
         const res = await axios.get(
-          "http://localhost:5000/api/v1/superAdmin/departments",
+          `${BASE_URL}/superAdmin/departments`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
 
@@ -96,7 +98,7 @@ const AllDepartments = () => {
                         const auth = getAuth();
                         const idToken = await auth.currentUser.getIdToken(true);
                         await axios.delete(
-                          `http://localhost:5000/api/v1/superAdmin/departments/${dept._id}`,
+                          `${BASE_URL}/superAdmin/departments/${dept._id}`,
                           { headers: { Authorization: `Bearer ${idToken}` } }
                         );
                         setDepartments((prev) =>

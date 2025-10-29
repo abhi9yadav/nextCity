@@ -18,6 +18,7 @@ const ManageDeptAdminPage = () => {
     photo: null,
   });
   const [preview, setPreview] = useState(null);
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +30,7 @@ const ManageDeptAdminPage = () => {
 
         try {
           const adminRes = await axios.get(
-            `http://localhost:5000/api/v1/cityAdmin/${dept_id}`,
+            `${BASE_URL}/cityAdmin/${dept_id}`,
             { headers: { Authorization: `Bearer ${idToken}` } }
           );
           setDeptAdmin(adminRes.data.departmentAdmin);
@@ -65,7 +66,7 @@ const ManageDeptAdminPage = () => {
 
       if (!deptAdmin) {
         await axios.post(
-          `http://localhost:5000/api/v1/cityAdmin/${dept_id}/createDeptAdmin`,
+          `${BASE_URL}/cityAdmin/${dept_id}/createDeptAdmin`,
           form,
           {
             headers: {
@@ -77,7 +78,7 @@ const ManageDeptAdminPage = () => {
         alert("Department Admin created successfully!");
       } else {
         await axios.patch(
-          `http://localhost:5000/api/v1/cityAdmin/updateDeptAdmin/${deptAdmin.firebaseUid}`,
+          `${BASE_URL}/cityAdmin/updateDeptAdmin/${deptAdmin.firebaseUid}`,
           form,
           {
             headers: {
@@ -102,7 +103,7 @@ const ManageDeptAdminPage = () => {
       const auth = getAuth();
       const idToken = await auth.currentUser.getIdToken(true);
       await axios.delete(
-        `http://localhost:5000/api/v1/cityAdmin/deleteDeptAdmin/${deptAdmin.firebaseUid}`,
+        `${BASE_URL}/cityAdmin/deleteDeptAdmin/${deptAdmin.firebaseUid}`,
         { headers: { Authorization: `Bearer ${idToken}` } }
       );
       alert("Department Admin deleted successfully!");

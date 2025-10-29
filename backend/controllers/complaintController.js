@@ -100,13 +100,10 @@ exports.getAllComplaints = async (req, res) => {
 
 exports.upvoteComplaint = async (req, res) => {
   try {
-    // console.log(req.params.id);
     const complaint = await Complaint.findById(req.params.id);
-    // console.log("complaint"+complaint);
     if (!complaint)
       return res.status(404).json({ message: "Complaint not found" });
 
-    // console.log(req.user);
     if (complaint.votes.includes(req.user.id)) {
       return res
         .status(400)
@@ -122,8 +119,6 @@ exports.upvoteComplaint = async (req, res) => {
 
 exports.updateComplaint = async (req, res) => {
   try {
-    // console.log(req.params.id);
-    // console.log(req.body);
     const complaint = await Complaint.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -150,10 +145,7 @@ exports.deleteComplaint = async (req, res) => {
 
 //mycomplaints
 exports.getMyComplaints = async (req, res) => {
-  console.log("request ", req);
   const { id } = req.params;
-  console.log("id is here ", id);
-
  
   try {
     
@@ -161,7 +153,6 @@ exports.getMyComplaints = async (req, res) => {
     const myComplaints = await Complaint.find({ createdBy: id })
       .sort({ createdAt: -1 })
       .populate("createdBy", "name email role");
-    console.log("my complaints are here ", myComplaints);
     res.status(200).json(myComplaints);
   } catch (error) {
     console.error("Error fetching user's complaints:", error);

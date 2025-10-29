@@ -36,7 +36,6 @@ exports.updateProfile = async (req, res) => {
     });
 
     // Handle photo upload
-    console.log("req.file:going to upload photo😎😎😎😎😎", req.file);
     if (req.file) {
       const fileDataUri = bufferToDataUri(req.file);
       const uploadResult = await cloudinary.uploader.upload(fileDataUri, {

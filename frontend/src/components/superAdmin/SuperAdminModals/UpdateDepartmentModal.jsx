@@ -11,6 +11,8 @@ const UpdateDepartmentModal = ({ isOpen, onClose, department, onUpdate }) => {
   const [preview, setPreview] = useState(department.imageUrl || "");
   const [loading, setLoading] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     if (department) {
       setName(department.department_name || "");
@@ -39,7 +41,7 @@ const UpdateDepartmentModal = ({ isOpen, onClose, department, onUpdate }) => {
       if (image) formData.append("photo", image); // ✅ field name matches backend multer setup
 
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/superAdmin/departments/${department._id}`,
+        `${BASE_URL}/superAdmin/departments/${department._id}`,
         formData,
         {
           headers: {

@@ -140,7 +140,6 @@ const AllWorkersListPage = () => {
   };
 
   const handleEditFormSubmit = async (data) => {
-    console.log(`goint to update with data`, data);
     try {
       await updateWorker(data);
       setIsEditModalOpen(false);
@@ -365,7 +364,7 @@ const AllWorkersListPage = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 cursor-pointer"
                 >
                   <span className="sr-only">Previous</span>
                   <i
@@ -381,7 +380,7 @@ const AllWorkersListPage = () => {
                       key={page}
                       onClick={() => handlePageChange(page)}
                       aria-current={currentPage === page ? "page" : undefined}
-                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer ${
                         currentPage === page
                           ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
                           : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
@@ -394,7 +393,7 @@ const AllWorkersListPage = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium cursor-pointer text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Next</span>
                   <i

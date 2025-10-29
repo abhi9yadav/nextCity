@@ -30,6 +30,8 @@ const CityAdminDashboardComponent = () => {
   const [cityAdminName, setCityAdminName] = useState("");
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchDepartmentsAndProfile = async () => {
       try {
@@ -39,16 +41,16 @@ const CityAdminDashboardComponent = () => {
 
         const idToken = await currentUser.getIdToken(true);
 
-        // 1️⃣ Fetch cityAdmin name from backend
+        // 1️ Fetch cityAdmin name from backend
         const profileRes = await axios.get(
-          "http://localhost:5000/api/v1/cityAdmin/me",
+          `${BASE_URL}/cityAdmin/me`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
         setCityAdminName(profileRes.data.name || "City Admin");
 
-        // 2️⃣ Fetch departments
+        // 2️ Fetch departments
         const res = await axios.get(
-          "http://localhost:5000/api/v1/cityAdmin/departments",
+          `${BASE_URL}/cityAdmin/departments`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
         setDepartments(res.data);

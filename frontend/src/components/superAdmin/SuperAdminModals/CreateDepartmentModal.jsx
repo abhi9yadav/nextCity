@@ -19,6 +19,8 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
     }
   };
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleCreate = async () => {
     if (!name.trim()) return alert("Department name is required.");
     try {
@@ -32,7 +34,7 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
       if (image) formData.append("photo", image);
 
       const res = await axios.post(
-        "http://localhost:5000/api/v1/superAdmin/departments",
+        `${BASE_URL}/superAdmin/departments`,
         formData,
         {
           headers: {

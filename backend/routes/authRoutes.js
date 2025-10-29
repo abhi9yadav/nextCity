@@ -9,7 +9,6 @@ const userController = require("../controllers/userController");
 const upload = require("../middlewares/uploadMiddleware");
 
 router.post("/signup", verifyToken, signup);
-console.log("going for verify token 2 has reached logining........\n");
 router.post("/login", authenticate, login);
 router.get('/validate-token', tokenController.validateToken);
 router.post('/set-password', passwordController.setPasswordWithToken);
