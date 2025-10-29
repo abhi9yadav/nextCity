@@ -27,6 +27,8 @@ const AllCities = () => {
     photo: null,
   });
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -40,7 +42,7 @@ const AllCities = () => {
         }
         const token = await user.getIdToken();
         const res = await axios.get(
-          "http://localhost:5000/api/v1/superAdmin/cities",
+          `${BASE_URL}/superAdmin/cities`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -85,7 +87,7 @@ const AllCities = () => {
       const user = auth.currentUser;
       const token = await user.getIdToken();
       await axios.delete(
-        `http://localhost:5000/api/v1/superAdmin/city/${cityId}`,
+        `${BASE_URL}/superAdmin/city/${cityId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -106,7 +108,7 @@ const AllCities = () => {
       const token = await user.getIdToken();
 
       const res = await axios.get(
-        `http://localhost:5000/api/v1/superAdmin/cityAdmin/${cityAdminId}`,
+        `${BASE_URL}/superAdmin/cityAdmin/${cityAdminId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -140,7 +142,7 @@ const AllCities = () => {
       if (newUser.photo) formData.append("photo", newUser.photo);
 
       const res = await axios.post(
-        "http://localhost:5000/api/v1/superAdmin/users/create",
+        `${BASE_URL}/superAdmin/users/create`,
         formData,
         {
           headers: {

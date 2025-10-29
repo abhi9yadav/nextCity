@@ -23,7 +23,6 @@ const api = {
         return { success: true };
     }
 };
-// --- END MOCK ---
 
 
 const StatusBadge = ({ status }) => {

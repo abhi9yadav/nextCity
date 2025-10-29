@@ -34,17 +34,13 @@ const UserRegister = () => {
       try {
         // ✅ Correction: Capture the userCredential object
         const userCredential = await registerUser(email, password);
-        console.log("register firebase se laut aaye");
         const user = userCredential.user;
-        console.log("Firebase user:", user);
 
         if (!user) {
           throw new Error("User registration failed.");
         }
         // Get Firebase ID token (JWT)
         const idToken = await user.getIdToken();
-        console.log("we got idToken and is: ", idToken);
-        console.log("going to call backend");
 
         // Send signup data + token to backend
         const res = await fetch(`http://localhost:${process.env.PORT}/api/v1/users/signup`, {
@@ -55,7 +51,7 @@ const UserRegister = () => {
           },
           body: JSON.stringify({
             email,
-            role: "citizen", // or officer, etc.
+            role: "citizen",
           }),
         });
 
@@ -67,7 +63,6 @@ const UserRegister = () => {
         }
 
         const data = await res.json();
-        console.log("Backend response:", data);
         // The navigate will be handled by the auth context state change and useEffect
       } catch (error) {
         setErrorMessage(error.message);

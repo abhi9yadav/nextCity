@@ -17,6 +17,8 @@ const AllCityAdmins = () => {
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchAdmins = async () => {
       setLoading(true);
@@ -27,12 +29,11 @@ const AllCityAdmins = () => {
 
         const token = await user.getIdToken(true);
         const res = await axios.get(
-          "http://localhost:5000/api/v1/superAdmin/cityAdmins",
+          `${BASE_URL}/superAdmin/cityAdmins`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         setAdmins(res.data.admins);
-        console.log("All admins:", res.data.admins);
       } catch (error) {
         console.error("Error fetching city admins:", error);
       } finally {
@@ -58,7 +59,7 @@ const AllCityAdmins = () => {
       const token = await auth.currentUser.getIdToken(true);
 
       await axios.delete(
-        `http://localhost:5000/api/v1/superAdmin/users/${firebaseUid}`,
+        `${BASE_URL}/superAdmin/users/${firebaseUid}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -105,7 +106,7 @@ const AllCityAdmins = () => {
       if (photo) formData.append("photo", photo);
 
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/superAdmin/users/${selectedAdmin.firebaseUid}`,
+        `${BASE_URL}/superAdmin/users/${selectedAdmin.firebaseUid}`,
         formData,
         {
           headers: {

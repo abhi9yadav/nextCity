@@ -20,7 +20,7 @@ const UpvoteButton = ({ complaintId, initialVoted = false, initialCount = 0 }) =
 
       // Send vote/unvote API request
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/complaints/${complaintId}/vote`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${complaintId}/vote`,
         { vote: newVoted }
       );
 

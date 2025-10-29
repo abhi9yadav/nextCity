@@ -51,7 +51,6 @@ export const updateWorker = ({workerId, workerData}) => {
 };
 
 export const deleteWorker = (workerId) => {
-    console.log(`goint to delete worker id: ${workerId}`);
     return api.delete(`/dept-admin/workers/${workerId}`);
 };
 

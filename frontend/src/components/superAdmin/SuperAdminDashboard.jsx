@@ -23,6 +23,8 @@ const SuperAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("cities");
   const [isModalOpen, setIsModalOpen] = useState({ type: null, isOpen: false });
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -38,13 +40,13 @@ const SuperAdminDashboard = () => {
         };
 
         const [citiesRes, deptsRes, adminsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/v1/superAdmin/cities", config),
+          axios.get(`${BASE_URL}/superAdmin/cities`, config),
           axios.get(
-            "http://localhost:5000/api/v1/superAdmin/departments",
+            `${BASE_URL}/superAdmin/departments`,
             config
           ),
           axios.get(
-            "http://localhost:5000/api/v1/superAdmin/cityAdmins",
+            `${BASE_URL}/superAdmin/cityAdmins`,
             config
           ),
         ]);

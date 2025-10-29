@@ -10,6 +10,8 @@ const CityDepartmentComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchZonesAndComplaints = async () => {
       try {
@@ -21,7 +23,7 @@ const CityDepartmentComplaints = () => {
 
         // Fetch zones
         const zonesRes = await axios.get(
-          `http://localhost:5000/api/v1/cityAdmin/${dept_id}/zones`,
+          `${BASE_URL}/cityAdmin/${dept_id}/zones`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
 
@@ -50,13 +52,13 @@ const CityDepartmentComplaints = () => {
 
       if (zoneId === "all") {
         const res = await axios.get(
-          `http://localhost:5000/api/v1/cityAdmin/${dept_id}/complaints`,
+          `${BASE_URL}/cityAdmin/${dept_id}/complaints`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
         setComplaints(res.data.complaints || []);
       } else {
         const res = await axios.get(
-          `http://localhost:5000/api/v1/cityAdmin/${dept_id}/complaints/${zoneId}`,
+          `${BASE_URL}/cityAdmin/${dept_id}/complaints/${zoneId}`,
           { headers: { Authorization: `Bearer ${idToken}` } }
         );
         setComplaints(res.data.complaints || []);

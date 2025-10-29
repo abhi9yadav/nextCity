@@ -12,8 +12,8 @@ const upload = multer({ storage: storage });
 router.get("/allcomplaints", complaintController.getAllComplaints);
 
 // Getmy all complaints
-console.log("going for verify token 2 has reached for my complaints\n");
 router.get("/:id/my", complaintController.getMyComplaints);
+
 // Create a new complaint
 router.post(
   "/",

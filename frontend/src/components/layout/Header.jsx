@@ -32,8 +32,8 @@ const Header = () => {
 
   const goToProfile = () => {
     switch (role) {
-      case "superadmin":
-        navigate("/superadmin-dashboard/profile");
+      case "super_admin":
+        navigate("/super-admin/profile");
         break;
       case "cityadmin":
         navigate("/cityadmin-dashboard/profile");
@@ -57,14 +57,14 @@ const Header = () => {
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left: Logo and Role Label */}
-            <div className="flex items-center gap-3 cursor-pointer">
-              <a href="/" className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <a href="/" className="flex items-center gap-2 cursor-auto">
                 <img
                   src={nextcityLogo}
                   alt="nextcity Logo"
-                  className="w-20 h-16 object-contain"
+                  className="w-20 h-16 object-contain cursor-pointer"
                 />
-                <span className="text-xl font-bold text-cyan-500">
+                <span className="text-xl font-bold text-cyan-500 cursor-pointer">
                   NextCity
                 </span>
               </a>
@@ -96,7 +96,7 @@ const Header = () => {
 
               {/* Notification Bell */}
               <button
-                className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="relative p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                 title="Notifications"
               >
                 <Bell className="h-6 w-6 text-gray-600" />
@@ -132,7 +132,7 @@ const Header = () => {
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                 title="Logout"
               >
                 <LogOut className="h-6 w-6 text-gray-600" />

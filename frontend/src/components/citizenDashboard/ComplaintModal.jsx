@@ -1,4 +1,3 @@
-// ComplaintModal.jsx
 import React, { useState } from "react";
 import { X, Pencil, Trash } from "lucide-react";
 import axios from "axios";
@@ -17,6 +16,8 @@ const ComplaintModal = ({ complaint, token, onClose, onUpdate, onDelete }) => {
     concernedDepartment: complaint.concernedDepartment || "",
     location: complaint.location || { type: "Point", coordinates: [complaint.location?.coordinates?.[0] || 0, complaint.location?.coordinates?.[1] || 0], address: complaint.location?.address || "" },
   });
+
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
   const [showMapPicker, setShowMapPicker] = useState(false);
 
@@ -47,7 +48,7 @@ const ComplaintModal = ({ complaint, token, onClose, onUpdate, onDelete }) => {
       };
 
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/complaints/${complaint._id}`,
+        `${BASE_URL}/complaints/${complaint._id}`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -68,7 +69,7 @@ const ComplaintModal = ({ complaint, token, onClose, onUpdate, onDelete }) => {
     if (!confirm("Are you sure you want to delete this complaint? This action cannot be undone.")) return;
     setLoadingDelete(true);
     try {
-      await axios.delete(`http://localhost:5000/api/v1/complaints/${complaint._id}`, {
+      await axios.delete(`${BASE_URL}/complaints/${complaint._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       onDelete(complaint._id);
