@@ -22,6 +22,41 @@ router.get(
 );
 
 router.get(
+  "/departments/stats",
+  authenticate,
+  roleCheck(["city_admin"]),
+  cityAdminController.getCityDepartmentStats
+);
+
+router.get(
+  "/departments/:departmentId",
+  authenticate,
+  roleCheck(["city_admin"]),
+  cityAdminController.getDepartmentById
+);
+
+router.get(
+  "/departments/:departmentId/stats",
+  authenticate,
+  roleCheck(["city_admin"]),
+  cityAdminController.getDepartmentStats
+);
+
+router.get(
+  "/departments/:departmentId/recent-activity",
+  authenticate,
+  roleCheck(["city_admin"]),
+  cityAdminController.getDepartmentRecentActivity
+);
+
+router.get(
+  "/complaints/stats",
+  authenticate,
+  roleCheck(["city_admin"]),
+  cityAdminController.getCityComplaintStats
+);
+
+router.get(
   "/:departmentId/zones",
   authenticate,
   roleCheck(["city_admin"]),

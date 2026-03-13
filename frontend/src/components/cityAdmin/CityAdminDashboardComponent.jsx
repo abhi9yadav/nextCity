@@ -3,26 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 
-import generalServices_dept from "../../assets/department_images/generalServices_dept.png";
-import health_dept from "../../assets/department_images/health_dept.png";
-import park_dept from "../../assets/department_images/park_dept.png";
-import powerSupply_dept from "../../assets/department_images/powerSupply_dept.png";
-import road_dept from "../../assets/department_images/road_dept.png";
-import sewage_dept from "../../assets/department_images/sewage_dept.png";
-import waste_dept from "../../assets/department_images/waste_dept.png";
-import water_dept from "../../assets/department_images/water_dept.png";
-
-const departmentImages = [
-  generalServices_dept,
-  health_dept,
-  park_dept,
-  powerSupply_dept,
-  road_dept,
-  sewage_dept,
-  waste_dept,
-  water_dept,
-];
-
 const CityAdminDashboardComponent = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,8 +59,8 @@ const CityAdminDashboardComponent = () => {
         <p className="text-center text-gray-500">No departments found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {departments.map((dept, index) => {
-            const bgImage = departmentImages[index % departmentImages.length];
+          {departments.map((dept) => {
+            const bgImage = dept.photoURL;
             const isExpanded = expandedDeptId === dept._id;
 
             return (
