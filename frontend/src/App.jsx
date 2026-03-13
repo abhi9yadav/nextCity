@@ -38,6 +38,7 @@ import CityAdminDashboard from "./pages/CityAdminDashboard";
 import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
 import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
 import ManageDepartment from "./components/cityAdmin/ManageDepartment";
+import CityComplaints from "./components/cityAdmin/CityComplaints";
 import CreateCityPage from "./components/superAdmin/CreateCityPage";
 import DashboardPage from './pages/deptAdmin/DashboardPage';
 import WorkersLandingPage from './pages/deptAdmin/WorkersLandingPage';
@@ -94,6 +95,7 @@ function AppContent() {
       <Route element={<RoleBasedRoute allowedRoles={["city_admin"]} />}>
         <Route path="/city-admin" element={<MainLayout />}>
           <Route index element={<CityAdminDashboard />} />
+          <Route path="complaints" element={<CityComplaints />} />
           <Route path="profile" element={<Profile />} />
           <Route path=":dept_id" element={<ManageDepartment />} />
           <Route path=":dept_id/complaints" element={<CityDepartmentComplaints />} />
