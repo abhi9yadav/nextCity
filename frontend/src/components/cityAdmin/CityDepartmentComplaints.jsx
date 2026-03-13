@@ -91,7 +91,7 @@ const CityDepartmentComplaints = () => {
             <select
               value={selectedZone}
               onChange={handleZoneChange}
-              className="border border-gray-300 rounded-md px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="border border-gray-500 rounded-md px-2 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="all">All Zones</option>
               {zones.map((zone) => (
