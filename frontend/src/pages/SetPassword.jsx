@@ -56,16 +56,24 @@ export default function SetPassword() {
       toast.error("Passwords do not match!");
       return;
     }
-
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     try {
-      await axios.post(`${BASE_URL}/auth/set-password`, {
+      const res = await axios.post(`${BASE_URL}/auth/set-password`, {
         token,
         password,
       });
-
+      const role = res.data.role;
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Password set successfully! Redirecting to dashboard...");
-      setTimeout(() => navigate("/"), 1000);
+      const redirectMap = {
+        super_admin: "/super-admin",
+        city_admin: "/city-admin",
+        dept_admin: "/dept-admin",
+        worker: "/worker",
+        citizen: "/citizen",
+      };
+      
+      setTimeout(() => navigate(redirectMap[role] || "/"), 1000);
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to set password";
       toast.error(msg);

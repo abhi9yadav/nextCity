@@ -84,6 +84,15 @@ const Login = () => {
           </button>
         </form>
 
+        <p className="text-right text-sm mt-2">
+        <Link
+          to="/forgot-password"
+          className="text-blue-600 hover:underline"
+        >
+          Forgot Password?
+        </Link>
+      </p>
+
         <div className="my-4 flex items-center">
           <div className="flex-grow border-t border-gray-300"></div>
           <span className="flex-shrink mx-4 text-gray-400">OR</span>

@@ -24,8 +24,8 @@ module.exports = class Email {
     }
 
     return nodemailer.createTransport({
-      // host: process.env.MAILTRAP_HOST || 'sandbox.smtp.mailtrap.io',
-      // port: process.env.MAILTRAP_PORT || 587,
+      host: process.env.MAILTRAP_HOST || 'sandbox.smtp.mailtrap.io',
+      port: process.env.MAILTRAP_PORT || 587,
       secure: false,
       auth: {
         user: process.env.MAILTRAP_USER,

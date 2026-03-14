@@ -6,6 +6,6 @@ const citizenSchema = new mongoose.Schema({
   complaints: [{ type: mongoose.Schema.Types.ObjectId, ref: "Complaint" }]
 });
 
-const Citizen = User.discriminator("Citizen", citizenSchema);
+const Citizen = User.discriminator("citizen", citizenSchema);
 
 module.exports = Citizen;

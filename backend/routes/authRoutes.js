@@ -10,8 +10,12 @@ const upload = require("../middlewares/uploadMiddleware");
 
 router.post("/signup", verifyToken, signup);
 router.post("/login", authenticate, login);
-router.get('/validate-token', tokenController.validateToken);
+
+router.post("/forgot-password", passwordController.forgotPassword);
 router.post('/set-password', passwordController.setPasswordWithToken);
+
+router.get('/validate-token', tokenController.validateToken);
+
 router.get("/me", authenticate, userController.getMe);
 router.put('/update', authenticate, upload.single("photo"), userController.updateProfile);
 module.exports = router;
