@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { registerUser } from "../../firebase/auth";
+import { registerUser, signInWithGoogle } from "../../firebase/auth";
 import { useAuth } from "../../contexts/authContext";
-import { useNavigate, Link } from "react-router-dom"; // Import Link
+import { useNavigate, Link } from "react-router-dom";
 
 const UserRegister = () => {
-  const { userLoggedIn } = useAuth();
+  const { currentUser } = useAuth();
+  const userLoggedIn = !!currentUser;
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -13,62 +14,125 @@ const UserRegister = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ✅ Improvement: Use useEffect for side-effects like navigation
   useEffect(() => {
     if (userLoggedIn) {
-      navigate("/home");
+      navigate("/citizen");
     }
   }, [userLoggedIn, navigate]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear previous errors
+    setErrorMessage("");
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match!");
       return;
     }
 
-    if (!isRegistering) {
-      setIsRegistering(true);
-      try {
-        // ✅ Correction: Capture the userCredential object
-        const userCredential = await registerUser(email, password);
-        const user = userCredential.user;
+    if (isRegistering) return;
 
-        if (!user) {
-          throw new Error("User registration failed.");
-        }
-        // Get Firebase ID token (JWT)
-        const idToken = await user.getIdToken();
+    setIsRegistering(true);
 
-        // Send signup data + token to backend
-        const res = await fetch(`http://localhost:${process.env.PORT}/api/v1/users/signup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${idToken}`, // ✅ add "Bearer " prefix
-          },
-          body: JSON.stringify({
-            email,
-            role: "citizen",
-          }),
-        });
+    let user = null;
 
+    try {
+      const userCredential = await registerUser(email, password);
+      user = userCredential.user;
 
-        if (!res.ok) {
-          // Handle non-2xx responses from your backend
-          const errorData = await res.json();
-          throw new Error(errorData.message || "Failed to register on backend.");
-        }
-
-        const data = await res.json();
-        // The navigate will be handled by the auth context state change and useEffect
-      } catch (error) {
-        setErrorMessage(error.message);
-      } finally {
-        setIsRegistering(false);
+      if (!user) {
+        throw new Error("User registration failed.");
       }
+
+      const idToken = await user.getIdToken();
+
+      let BASE_URL =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/v1";
+
+      const res = await fetch(`${BASE_URL}/users/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          email,
+          role: "citizen",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Backend signup failed.");
+      }
+
+      await user.getIdToken(true);
+    } catch (error) {
+
+      // rollback firebase user
+      if (user) {
+        try {
+          await user.delete();
+          console.log("Firebase user rolled back.");
+        } catch (deleteError) {
+          console.error("Failed to delete Firebase user:", deleteError);
+        }
+      }
+
+      if (error.code === "auth/email-already-in-use") {
+        setErrorMessage("This email is already registered. Please login.");
+      } else if (error.code === "auth/weak-password") {
+        setErrorMessage("Password should be at least 6 characters.");
+      } else {
+        setErrorMessage(error.message || "Something went wrong. Please try again.");
+      }
+
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setErrorMessage("");
+
+    try {
+      const user = await signInWithGoogle();
+
+      if (!user) {
+        throw new Error("Google sign-in failed.");
+      }
+
+      const idToken = await user.getIdToken();
+
+      let BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      if (!BASE_URL) {
+        console.error("VITE_API_BASE_URL not defined.");
+        BASE_URL = "http://localhost:5001/api/v1";
+      }
+
+      const res = await fetch(`${BASE_URL}/users/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          email: user.email,
+          role: "citizen",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Backend signup failed");
+      }
+
+    } catch (error) {
+      if (user) {
+        await user.delete();
+      }
+      setErrorMessage(error.message);
     }
   };
 
@@ -123,9 +187,22 @@ const UserRegister = () => {
           </button>
         </form>
 
+        <div className="mt-4">
+          <button
+            onClick={handleGoogleSignup}
+            className="w-full flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="google"
+              className="w-5 h-5"
+            />
+            Sign Up with Google
+          </button>
+        </div>
+
         <p className="mt-4 text-center text-sm">
           Already have an account?{" "}
-          {/* ✅ Improvement: Use Link for client-side routing */}
           <Link to="/login" className="text-blue-600 hover:underline">
             Login
           </Link>

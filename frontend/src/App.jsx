@@ -54,6 +54,7 @@ import AllDepartments from "./components/superAdmin/AllDepartments";
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
 import VideoBackground from "./components/home/VideoBackground";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 
 function AppContent() {
@@ -84,6 +85,7 @@ function AppContent() {
           </MainLayout>
         }
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/set-password" element={<SetPassword />}/>
       {/* <Route path="/notfound" element={<Animated404Page />} /> */}
 

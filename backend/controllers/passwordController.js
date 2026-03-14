@@ -16,7 +16,7 @@ exports.setPasswordWithToken = async (req, res) => {
     const user = await User.findOne({
       firebaseUid: decoded.uid,
       passwordResetToken,
-    }).withSensitiveFields();;
+    }).withSensitiveFields();
 
     if (!user)
       return res.status(400).json({ message: "Invalid or already used token" });
@@ -44,6 +44,7 @@ exports.setPasswordWithToken = async (req, res) => {
     return res.json({
       message: "Password set and account activated",
       email: user.email,
+      role : user.role,
     });
   } catch (err) {
     console.error("setPasswordWithToken error", err);
@@ -54,10 +55,10 @@ exports.setPasswordWithToken = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+firebaseUid");
     if (!user) return res.status(404).json({ message: "No user found with that email" });
 
-    const tokenExpiryMinutes = process.env.TOKEN_EXPIRES_MINUTES || 60;
+    const tokenExpiryMinutes = parseInt(process.env.TOKEN_EXPIRES_MINUTES || "60", 10);
     const token = signToken(
       { uid: user.firebaseUid, purpose: "reset" },
       `${tokenExpiryMinutes}m`
@@ -67,10 +68,37 @@ exports.forgotPassword = async (req, res) => {
     user.passwordResetExpires = Date.now() + tokenExpiryMinutes * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
-    const resetLink = `${process.env.FRONTEND_URL}/set-password?token=${encodeURIComponent(token)}`;
-    await new Email({ email: user.email, name: user.name }, resetLink).sendPasswordReset();
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetLink = `${frontendUrl}/set-password?token=${encodeURIComponent(token)}`;
+    
+    // console.log(resetLink);
 
-    res.json({ message: "Password reset email sent successfully" });
+    // 4️ Try sending the email
+    try {
+      const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
+      const emailInstance = new Email(
+        { email: user.email, name: user.name },
+        resetLink,
+        { role: user.role, logoUrl }
+      );
+      await emailInstance.sendPasswordReset();
+
+      await user.save({ validateBeforeSave: false });
+
+      return res.status(200).json({
+        message: "Password reset email sent successfully.",
+        resetLink,
+      });
+
+    } catch (emailError) {
+      console.error("Email failed to send:", emailError);
+
+      return res.status(500).json({
+        message: "Email sending failed",
+        firebaseUid,
+        resetLink,
+      });
+    }
   } catch (err) {
     console.error("forgotPassword error", err);
     res.status(500).json({ message: "Failed to send password reset email" });
