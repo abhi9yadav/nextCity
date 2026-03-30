@@ -64,7 +64,7 @@ const CitizenDashboard = ({ title }) => {
 ];
 
   return (
-    <div className="bg-green-500/10 ">
+    <div>
       {/* <Header title={title} /> */}
       <CitizenComplaintList complaints={mockComplaints} />
       {/* <Footer /> */}
