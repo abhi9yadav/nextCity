@@ -5,12 +5,12 @@ function Navbar() {
     <nav className="bg-transparent shadow-sm py-4 px-6 flex items-center justify-between z-50 relative  border-b-1 border-gray-400">
       <div className="color font-bold text-xl">NEXTGEN CITY</div>
       <div className="hidden md:flex space-x-8">
-        <a href="#features" className="text-gray-600 hover:text-green-700">Features</a>
-        <a href="#how-it-works" className="text-gray-600 hover:text-amber-400">How It Works</a>
-        <a href="#download" className="text-gray-600 hover:text-fuchsia-700">Download</a>
+        <a href="#features" className="text-cyan-900 hover:text-green-700 text-2xl font-bold">Features</a>
+        <a href="#how-it-works" className="text-cyan-900 hover:text-amber-400 text-2xl font-bold">How It Works</a>
+        <a href="#download" className="text-cyan-900 hover:text-fuchsia-700 text-2xl font-bold">Download</a>
       </div>
       <div className="hidden md:flex space-x-4 items-center">
-        <a href="/login" className="text-gray-600 hover:text-cyan-700">Login</a>
+        <a href="/login" className="text-cyan-900 hover:text-cyan-700">Login</a>
         <a href="/signup" className="bg-cyan-900 text-white px-4 py-2 rounded-md hover:bg-cyan-700">Sign Up</a>
       </div>
       {/* Mobile Menu Icon (Hamburger) */}

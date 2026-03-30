@@ -2,28 +2,28 @@ import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import navConfig from "./NavConfig";
+import { useTheme } from '../../hooks/useTheme'; // 1. Import useTheme
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const { currentUser } = useAuth();
   const location = useLocation();
+  const { theme } = useTheme(); // 2. Get the theme object
 
   const rawRole = currentUser?.role || "citizen";
-
-  const navLinks = navConfig[rawRole
-
-  ] || navConfig["citizen"] || [];
+  const navLinks = navConfig[rawRole] || navConfig["citizen"] || [];
 
   return (
     <aside
-      className={`hidden md:flex flex-col bg-white shadow-lg fixed top-[64px] left-0 h-[calc(100vh-64px)] z-30
+      // 3. Apply theme to the main sidebar container
+      className={`hidden md:flex flex-col ${theme.sectionBg} ${theme.cardShadow} fixed top-[64px] left-0 h-[calc(100vh-64px)] z-30
         transition-all duration-300 ${isCollapsed ? "w-20" : "w-64"}`}
-      aria-hidden={false}
     >
-      {/* Collapse Button (placed top-right inside sidebar) */}
-      <div className="flex justify-end p-2">
+      {/* Collapse Button */}
+      <div className={`flex p-2 ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="px-2 py-1 rounded-md bg-cyan-900 text-white hover:bg-cyan-700 transition"
+          // 4. Apply theme to the collapse button
+          className={`px-3 py-1 rounded-md ${theme.buttonSecondaryText} bg-gradient-to-r ${theme.buttonSecondaryBgFrom} ${theme.buttonSecondaryBgTo} ${theme.buttonSecondaryHoverBgFrom} ${theme.buttonSecondaryHoverBgTo} transition-all duration-300`}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
@@ -39,11 +39,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             <Link
               key={link.name}
               to={link.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors relative
+              // 5. Apply theme to nav links (active and inactive states)
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors relative ${
+                isCollapsed ? 'justify-center' : ''
+              }
                 ${
                   isActive
-                    ? "bg-cyan-100 text-cyan-600 font-semibold"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? `${theme.navActiveBg} ${theme.primaryAccentText} font-semibold shadow-inner ${theme.navActiveShadow}`
+                    : `${theme.textSubtle} ${theme.navButtonHoverBg}`
                 }`}
               title={isCollapsed ? link.name : ""}
             >
@@ -55,7 +58,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       </nav>
 
       {/* Profile Section */}
-      <div className="px-3 py-4 border-t flex items-center gap-3">
+      {/* 6. Apply theme to the profile section border */}
+      <div className={`px-3 py-4 border-t ${theme.footerBorder} flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
         <img
           className="h-10 w-10 rounded-full object-cover"
           src={
@@ -65,11 +69,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           alt="User"
         />
         {!isCollapsed && (
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-800 truncate">
+          <div className="flex-1 overflow-hidden">
+            {/* 7. Apply theme to profile text */}
+            <p className={`text-sm font-semibold ${theme.textDefault} truncate`}>
               {currentUser?.name || "User Name"}
             </p>
-            <span className="text-xs text-gray-500 mt-1 block capitalize">
+            <span className={`text-xs ${theme.textSubtle} mt-1 block capitalize`}>
               {rawRole}
             </span>
           </div>

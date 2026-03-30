@@ -3,11 +3,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MapPicker from "../../map/MapPicker";
 import { getAuth } from "firebase/auth";
+import { useTheme } from "../../hooks/useTheme"; // 1. Import useTheme
 
 const CreateComplaint = () => {
   const navigate = useNavigate();
+  const { theme } = useTheme(); // 2. Get the theme object
   const [showMap, setShowMap] = useState(false);
   const [fileState, setFileState] = useState([]);
+  const [aiProcessing, setAiProcessing] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,236 +19,191 @@ const CreateComplaint = () => {
     location: { lat: 0, lng: 0, address: "" },
   });
 
+  // ... (rest of your component logic remains the same)
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (["lat", "lng", "address"].includes(name)) {
-      setFormData((prev) => ({
-        ...prev,
-        location: { ...prev.location, [name]: value },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+    const { name, value } = e.target;
+    if (["lat", "lng", "address"].includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        location: { ...prev.location, [name]: value },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleAIAnalysis = async () => {
+    if (fileState.length === 0) return;
+    setAiProcessing(true);
 
-    const uploadData = new FormData();
-    uploadData.append("title", formData.title);
-    uploadData.append("description", formData.description);
-    uploadData.append("concernedDepartment", formData.concernedDepartment);
+    try {
+      const aiForm = new FormData();
+      aiForm.append("file", fileState[0]);
 
-    uploadData.append(
-      "location",
-      JSON.stringify({
-        type: "Point",
-        coordinates: [formData.location.lng, formData.location.lat],
-        address: formData.location.address,
-      })
-    );
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/ai/gemini-analyze",
+        aiForm,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-    fileState.forEach((file) => {
-      uploadData.append("attachments", file);
-    });
+      const { title, description, department } = res.data;
 
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) {
-        alert("You must be logged in to submit a complaint.");
-        return;
-      }
+      setFormData((prev) => ({
+        ...prev,
+        title: title || prev.title,
+        description: description || prev.description,
+        concernedDepartment: department || prev.concernedDepartment,
+      }));
+    } catch (err) {
+      console.error("AI analysis failed:", err.response?.data || err);
+      alert("Failed to analyze complaint with Gemini AI.");
+    } finally {
+      setAiProcessing(false);
+    }
+  };
 
-      const token = await user.getIdToken();
-      const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api/v1/";
-      const res = await axios.post(
-        `${BASE_URL}complaints`,
-        uploadData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      alert("Complaint created successfully!");
-    } catch (error) {
-      console.error("Error:", error.response?.data || error);
-      alert(
-        "Failed to create complaint: " +
-          (error.response?.data?.error || error.message)
-      );
-    }
-  };
+ 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const uploadData = new FormData();
+    uploadData.append("title", formData.title);
+    uploadData.append("description", formData.description);
+    uploadData.append("concernedDepartment", formData.concernedDepartment);
+    uploadData.append(
+      "location",
+      JSON.stringify({
+        type: "Point",
+        coordinates: [formData.location.lng, formData.location.lat],
+        address: formData.location.address,
+      })
+    );
+
+    fileState.forEach((file) => uploadData.append("attachments", file));
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return alert("You must be logged in.");
+
+      const token = await user.getIdToken();
+
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/complaints",
+        uploadData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Complaint submitted successfully!");
+      navigate("/citizen");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit complaint.");
+    }
+  };
+
+
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+    // 3. Themed main container
+    <div className={`max-w-3xl mx-auto p-6 rounded-lg mt-10 ${theme.cardBg} ${theme.cardBorder} ${theme.cardShadow}`}>
+      <h2 className={`text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r ${theme.headingGradientFrom} ${theme.headingGradientTo}`}>
         Create Complaint
       </h2>
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Type */}
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Concerned Department
-          </label>
-          <select
-            name="concernedDepartment"
-            value={formData.concernedDepartment}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          >
-            <option value="" disabled selected hidden>
-              -- Select Concerned Department --
-            </option>
-            <option value="Department of Power Supply">
-              Department of Power Supply
-            </option>
-            <option value="Department of Water Management">
-              Department of Water Management
-            </option>
-            <option value="Department of Roads and Infrastructure">
-              Department of Roads and Infrastructure
-            </option>
-            <option value="Department of Sanitation and Waste Management">
-              Department of Sanitation and Waste Management
-            </option>
-            <option value="Department of Drainage and Sewage">
-              Department of Drainage and Sewage
-            </option>
-            <option value="Department of Parks and Green Spaces">
-              Department of Parks and Green Spaces
-            </option>
-            <option value="Department of Public Health">
-              Department of Public Health
-            </option>
-            <option value="Department of General Services">
-              Department of General Services (other)
-            </option>
-          </select>
-        </div>
+        {/* Helper function for input class names */}
+        {(() => {
+          const inputClasses = `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-transparent ${theme.cardBorder} ${theme.textDefault} focus:${theme.navActiveBorder}`;
 
-        {/* Title */}
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Enter complaint title"
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+          return (
+            <>
+              {/* Concerned Department */}
+              <div>
+                <label className={`block mb-1 font-semibold ${theme.textSubtle}`}>Concerned Department</label>
+                <select name="concernedDepartment" value={formData.concernedDepartment} onChange={handleChange} className={inputClasses} required>
+                  <option value="" disabled hidden>-- Select Department --</option>
+                  <option>Department of Power Supply</option>
+                  <option>Department of Water Management</option>
+                  <option>Department of Roads and Infrastructure</option>
+                  <option>Department of Sanitation and Waste Management</option>
+                  <option>Department of Drainage and Sewage</option>
+                  <option>Department of Parks and Green Spaces</option>
+                  <option>Department of Public Health</option>
+                  <option>Department of General Services</option>
+                </select>
+              </div>
 
-        {/* Description */}
-        <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Describe your complaint in detail..."
-            rows={4}
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+              {/* Title */}
+              <div>
+                <label className={`block mb-1 font-semibold ${theme.textSubtle}`}>Title</label>
+                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Enter complaint title" required className={inputClasses}/>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className={`block mb-1 font-semibold ${theme.textSubtle}`}>Description</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} placeholder="Describe your complaint" rows={4} required className={inputClasses}/>
+              </div>
+            </>
+          );
+        })()}
 
         {/* Location */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-1">
-            Location
-          </label>
-          <button
-            type="button"
-            onClick={() => setShowMap(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded mb-2"
-          >
+          <label className={`block mb-1 font-semibold ${theme.textSubtle}`}>Location</label>
+          <button type="button" onClick={() => setShowMap(true)} className={`px-4 py-2 rounded-lg font-semibold mb-2 ${theme.buttonSecondaryText} bg-gradient-to-r ${theme.buttonSecondaryBgFrom} ${theme.buttonSecondaryBgTo} ${theme.buttonSecondaryHoverBgFrom} ${theme.buttonSecondaryHoverBgTo}`}>
             Select Location on Map
           </button>
           {formData.location.address && (
-            <p>
-              Selected: {formData.location.address} (Lat:{" "}
-              {formData.location.lat}, Lng: {formData.location.lng})
+            <p className={theme.textCardDescription}>
+              Selected: {formData.location.address} (Lat: {formData.location.lat}, Lng: {formData.location.lng})
             </p>
           )}
         </div>
 
-        {/* Map Picker */}
         {showMap && (
-          <MapPicker
-            onSelect={(loc) => {
-              setFormData((prev) => ({ ...prev, location: loc }));
-              setShowMap(false);
-            }}
-            onCancel={() => setShowMap(false)}
-          />
+          <MapPicker onSelect={(loc) => { setFormData((prev) => ({ ...prev, location: loc })); setShowMap(false); }} onCancel={() => setShowMap(false)}/>
         )}
 
         {/* Attachments */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">
-            Attachments
-          </label>
-
-          <label className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors w-full block">
-            <input
-              type="file"
-              name="attachments"
-              accept="image/*,video/*"
-              multiple
-              onChange={(e) => {
-                const files = Array.from(e.target.files);
-                setFileState(files);
-              }}
-              className="hidden"
-            />
-            <p className="text-gray-500">
-              Click here or drag files to upload (Images & Videos)
-            </p>
+          <label className={`block mb-2 font-semibold ${theme.textSubtle}`}>Attachments</label>
+          <label className={`border-2 border-dashed p-6 block text-center cursor-pointer transition-colors ${theme.cardBorder} hover:${theme.navActiveBorder} hover:${theme.sectionBgTranslucent}`}>
+            <input type="file" accept="image/*,video/*" multiple className="hidden" onChange={(e) => setFileState(Array.from(e.target.files))}/>
+            <p className={theme.textSubtle}>Click or drag files to upload</p>
           </label>
 
           {fileState.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {fileState.map((file, idx) => (
-                <div
-                  key={idx}
-                  className="w-20 h-20 border rounded-lg overflow-hidden relative"
-                >
-                  {file.type.startsWith("image") ? (
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`attachment-${idx}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <video
-                      src={URL.createObjectURL(file)}
-                      className="w-full h-full object-cover"
-                      controls
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {fileState.map((file, idx) => (
+                  <div key={idx} className={`w-20 h-20 border rounded overflow-hidden ${theme.cardBorder}`}>
+                    {file.type.startsWith("image") ? (
+                      <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <video src={URL.createObjectURL(file)} className="w-full h-full object-cover" controls />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Gemini AI Analyze Button */}
+              <button type="button" onClick={handleAIAnalysis} disabled={aiProcessing} className={`mt-3 px-4 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${theme.buttonSecondaryText} bg-gradient-to-r ${theme.buttonSecondaryBgFrom} ${theme.buttonSecondaryBgTo} ${theme.buttonSecondaryHoverBgFrom} ${theme.buttonSecondaryHoverBgTo}`}>
+                {aiProcessing ? "Analyzing..." : "Analyze with Gemini AI"}
+              </button>
+            </>
           )}
         </div>
 
         {/* Submit */}
         <div className="text-center mt-6">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
-          >
+          <button type="submit" className={`px-6 py-2 rounded-lg font-semibold ${theme.buttonPrimaryText} bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} ${theme.buttonPrimaryHoverBgFrom} ${theme.buttonPrimaryHoverBgTo}`}>
             Submit Complaint
           </button>
         </div>
