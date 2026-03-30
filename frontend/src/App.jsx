@@ -50,12 +50,11 @@ import WorkerDetailWrapper from "./pages/deptAdmin/WorkerDetailWrapper";
 import AllCities from "./components/superAdmin/AllCIties";
 import AllCityAdmins from "./components/superAdmin/AllCityAdmins";
 import AllDepartments from "./components/superAdmin/AllDepartments";
-
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
 import VideoBackground from "./components/home/VideoBackground";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-
+import WorkerDailyTasks from "./components/workerDashboard/wokerdash";
 
 function AppContent() {
   const { loading } = useAuth();
@@ -71,6 +70,7 @@ function AppContent() {
     <Routes>
       {/* ---------- PUBLIC ROUTES ---------- */}
       <Route path="/" element={<LandingPage />} />
+      
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<UserRegister />} />
       <Route path="/LoginSignupForm" element={<LoginSignupPage />} />
@@ -80,9 +80,9 @@ function AppContent() {
       <Route
         path="/flower-animation"
         element={
-          <MainLayout>
+          
             <FlowerAnimation />
-          </MainLayout>
+
         }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -140,7 +140,9 @@ function AppContent() {
       {/* Worker */}
       <Route element={<RoleBasedRoute allowedRoles={["worker"]} />}>
       <Route path="/worker" element={<MainLayout />}>
-        <Route path="/worker" element={<WorkerAdminPage />} />
+        <Route index element={<WorkerAdminPage />} />
+        <Route path="tasks" element={<WorkerDailyTasks />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
       </Route>
 

@@ -109,8 +109,11 @@ exports.upvoteComplaint = async (req, res) => {
         .status(400)
         .json({ message: "You already voted this complaint" });
     }
-    complaint.votes.push(req.user.id);
+    console.log("al;foahif eii😵‍💫🚫🚫🚫❤️❤️❤️",req.user.id);
+    complaint.votes.push(req.user._id);
+    console.log("data is pushed");
     await complaint.save();
+    console.log("now saved in database is pushed");
     res.json({ message: "Vote added", votes: complaint.votes.length });
   } catch (error) {
     res.status(500).json({ error: error.message });
