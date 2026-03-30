@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
     let BASE_URL = import.meta.env.VITE_API_BASE_URL;
     if (!BASE_URL) {
       console.error("VITE_API_BASE_URL is not defined in the environment variables.");
-      BASE_URL = "http://localhost:5001/api/v1";
+      BASE_URL = "http://localhost:5000/api/v1";
     }
     const res = await fetch(`${BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${idToken}` },
