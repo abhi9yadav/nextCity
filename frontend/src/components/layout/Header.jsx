@@ -34,24 +34,34 @@ const Header = () => {
   }, [location.pathname]);
 
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef();
 
   const role = currentUser?.role || "citizen";
-  // State to manage the theme switcher dropdown visibility
+
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-  // Ref to detect clicks outside the dropdown
-  const dropdownRef = useRef(null);
+  const themeDropdownRef = useRef(null);
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      if (
+        themeDropdownRef.current &&
+        !themeDropdownRef.current.contains(e.target)
+      ) {
+        setDropdownOpen(false);
+      }
+
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(e.target)
+      ) {
         setOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   
   const handleLogout = async () => {
@@ -90,19 +100,6 @@ const Header = () => {
     }
     setOpen(!open);
   };
-  const notificationCount = 0;
-  // Effect to close the dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
 
 
   return (
@@ -140,7 +137,7 @@ const Header = () => {
             <div className="flex items-center gap-2 sm:gap-4">
 
               {/* ----- THEME SWITCHER START ----- */}
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={themeDropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!isDropdownOpen)}
                   className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors`}
@@ -169,7 +166,7 @@ const Header = () => {
               {/* ----- THEME SWITCHER END ----- */}
 
               {/* Notification Bell */}
-              <div ref={dropdownRef} className="relative">
+              <div ref={notificationRef} className="relative">
                 <button
                   onClick={handleToggle}
                   className="relative p-2 rounded-full hover:bg-gray-100 cursor-pointer"

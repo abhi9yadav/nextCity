@@ -5,6 +5,8 @@ import MapPicker from "../../map/MapPicker";
 import { getAuth } from "firebase/auth";
 import { useTheme } from "../../hooks/useTheme"; // 1. Import useTheme
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const CreateComplaint = () => {
   const navigate = useNavigate();
   const { theme } = useTheme(); // 2. Get the theme object
@@ -41,7 +43,7 @@ const CreateComplaint = () => {
       aiForm.append("file", fileState[0]);
 
       const res = await axios.post(
-        "http://localhost:5000/api/v1/ai/gemini-analyze",
+        `${API_BASE}/ai/gemini-analyze`,
         aiForm,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -90,7 +92,7 @@ const CreateComplaint = () => {
       const token = await user.getIdToken();
 
       const res = await axios.post(
-        "http://localhost:5000/api/v1/complaints",
+        `${API_BASE}/complaints`,
         uploadData,
         {
           headers: {
