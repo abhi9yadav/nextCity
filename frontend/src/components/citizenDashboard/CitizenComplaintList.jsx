@@ -35,7 +35,6 @@ const CitizenComplaintList = () => {
       );
 
       const complaints = res.data?.data || res.data || [];
-      console.log("Fetched complaints:", complaints);
       setMyComplaints(complaints);
     } catch (err) {
       console.error("❌ Error fetching complaints:", err);

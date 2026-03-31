@@ -27,52 +27,31 @@ mongoose
 // Create HTTP server for Express + Socket.IO
 const server = http.createServer(app);
 
-// Initialize Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: ["http://localhost:5173", "http://localhost:5000"], // your frontend URLs
-    methods: ["GET", "POST"],
-  },
-});
-
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 global.io = io;
 
+// Store worker locations
+let workerLocations = {};
+
+
 io.on("connection", (socket) => {
   console.log("🔌 User connected:", socket.id);
 
-  // Join room based on userId
+  // Join room
   socket.on("join", (userId) => {
     socket.join(userId);
     console.log(`User joined room: ${userId}`);
   });
 
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
-  });
-});
-
-process.on('unhandledRejection', (err) => {
-  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-  console.log(err.name, err.message);
-  server.close(() => {
-    process.exit(1);
-// Store worker live locations (temporary memory)
-let workerLocations = {}; // { workerId: { lat, lng, ts } }
-
-// 🔹 Socket.IO logic
-io.on("connection", (socket) => {
-  console.log("🟢😎😎😎🫡 Socket connected:", socket.id);
-
-  // Worker emits its live location
+  // Worker sends live location
   socket.on("worker-location", (data) => {
-    // expected: { workerId, lat, lng }
     if (!data || !data.workerId) return;
 
     const payload = {
@@ -82,25 +61,22 @@ io.on("connection", (socket) => {
       ts: Date.now(),
       meta: data.meta || null,
     };
-    console.log("payload is here boys",payload);
 
-    // Save latest position
     workerLocations[data.workerId] = payload;
 
-    // Broadcast to all connected dashboards
     io.emit("location-update", payload);
   });
 
-  // Dashboard requests last known locations
+  // Send last known locations
   socket.on("request-last-locations", () => {
     socket.emit("last-locations", Object.values(workerLocations));
   });
 
-  // When a socket disconnects
   socket.on("disconnect", () => {
-    console.log("🔴 Socket disconnected:", socket.id);
+    console.log("❌ User disconnected:", socket.id);
   });
 });
+
 
 // Start server after DB connection
 const port = process.env.PORT || 5000;
