@@ -9,6 +9,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Worker = mongoose.model("worker");
+const Notification = require("../models/notificationModel");
 
 //For Dashboard Data
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
@@ -990,6 +991,24 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
 
     await session.commitTransaction();
     session.endSession();
+
+    //Real-time notification (Socket.IO)
+
+    const newNotification = await Notification.create({
+      userId: complaint.createdBy._id,
+      complaintId: complaint._id,
+      type: "COMPLAINT_ASSIGNED",
+      message: `Your complaint has been assigned to ${assignedWorker.name}`,
+    });
+
+    global.io.to(complaint.createdBy._id.toString()).emit("notification", {
+      _id: newNotification._id,
+      type: newNotification.type,
+      message: newNotification.message,
+      complaintId: newNotification.complaintId,
+      isRead: newNotification.isRead,
+      createdAt: newNotification.createdAt,
+    });
 
     // 7️ Send notification emails (best-effort)
     // try {

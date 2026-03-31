@@ -225,7 +225,7 @@ const ComplaintsPage = () => {
           <TableBody>
             {data.map((complaint) => {
               const isAssignable =
-                complaint.status === "OPEN" || complaint.status === "REOPENED";
+                complaint.status === "OPEN" || complaint.status === "REOPENED" || complaint.status === "IN_PROGRESS";
               return (
                 <TableRow key={complaint._id} hover>
                   <TableCell>
@@ -257,7 +257,7 @@ const ComplaintsPage = () => {
                         onClick={(e) => handleOpenActionMenu(e, complaint._id)}
                         sx={{ mr: 1 }}
                       >
-                        ASSIGN
+                        {complaint.status === "IN_PROGRESS" ? "REASSIGN" : "ASSIGN"}
                       </Button>
                     )}
                     <IconButton

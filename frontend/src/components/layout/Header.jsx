@@ -4,6 +4,10 @@ import { Bell, LogOut, Palette } from "lucide-react"; // Added Palette icon
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import nextcityLogo from "../../assets/logo.png";
+import { useNotification } from "../../contexts/NotificationContext";
+import { useLocation } from "react-router-dom";
+
+
 import { useTheme } from '../../hooks/useTheme';
 import { themes } from '../../constants/Themes'; 
 import { useAuth } from "../../contexts/authContext";
@@ -20,13 +24,36 @@ const Header = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { currentUser } = useAuth();
-  const role = currentUser?.role || "citizen"; // Default to citizen if no role found
+
+
+  const location = useLocation();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotification();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef();
+
+  const role = currentUser?.role || "citizen";
   // State to manage the theme switcher dropdown visibility
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   // Ref to detect clicks outside the dropdown
   const dropdownRef = useRef(null);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  
   const handleLogout = async () => {
     try {
       await doSignOut();
@@ -55,6 +82,13 @@ const Header = () => {
       default:
         navigate("/citizen/profile");
     }
+  };
+
+  const handleToggle = () => {
+    if (open) {
+      markAllAsRead();
+    }
+    setOpen(!open);
   };
   const notificationCount = 0;
   // Effect to close the dropdown when clicking outside
@@ -135,23 +169,62 @@ const Header = () => {
               {/* ----- THEME SWITCHER END ----- */}
 
               {/* Notification Bell */}
-              <button
-                className="relative p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
-                title="Notifications"
-              >
-                <Bell className="h-6 w-6 text-gray-600" />
+              <div ref={dropdownRef} className="relative">
+                <button
+                  onClick={handleToggle}
+                  className="relative p-2 rounded-full hover:bg-gray-100 cursor-pointer"
+                >
+                  <Bell className="h-6 w-6 text-gray-600" />
 
-                {/* Notification Count (only visible when count > 0) */}
-                {notificationCount > 0 && (
-                  <span
-                    className="absolute -top-1.5 -right-1.5 flex items-center justify-center 
-                 h-5 w-5 text-xs font-semibold text-white bg-red-500 
-                 rounded-full border-2 border-white"
-                  >
-                    {notificationCount}
-                  </span>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 text-xs text-white bg-red-500 rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {open && (
+                  <div className="absolute right-0 mt-2 w-96 bg-white shadow-xl rounded-xl border z-50">
+                    
+                    {/* Header */}
+                    <div className="p-3 font-semibold border-b flex justify-between">
+                      Notifications
+                      <span className="text-xs text-gray-500">
+                        {unreadCount} new
+                      </span>
+                    </div>
+
+                    {/* List */}
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-gray-500 text-center">
+                          No notifications
+                        </div>
+                      ) : (
+                        notifications.map((n) => (
+                          <div
+                            key={n._id}
+                            onClick={() => {
+                              if (!n.isRead) markAsRead(n._id);
+
+                              // Optional: navigate to complaint
+                              // navigate(`/citizen/complaint/${n.complaintId}`);
+                            }}
+                            className={`p-3 border-b cursor-pointer hover:bg-gray-50 transition ${
+                              !n.isRead ? "bg-blue-50" : "bg-white"
+                            }`}
+                          >
+                            <p className="text-sm">{n.message}</p>
+                            <p className="text-xs text-gray-400">
+                              {new Date(n.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
                 )}
-              </button>
+              </div>
 
               {/* Profile Button */}
               <button

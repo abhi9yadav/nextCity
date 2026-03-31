@@ -35,6 +35,34 @@ const io = new Server(server, {
   },
 });
 
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  },
+});
+
+global.io = io;
+
+io.on("connection", (socket) => {
+  console.log("🔌 User connected:", socket.id);
+
+  // Join room based on userId
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`User joined room: ${userId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
 // Store worker live locations (temporary memory)
 let workerLocations = {}; // { workerId: { lat, lng, ts } }
 
