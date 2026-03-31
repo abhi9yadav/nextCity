@@ -17,6 +17,7 @@ const cityAdminRoutes = require("./routes/cityAdminRoutes");
 const zoneRoutes = require("./routes/zoneRoutes");
 const workerRoutes = require("./routes/workerRoutes");
 const deptAdminRoutes = require("./routes/deptAdminRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use("/api/v1/complaints", complaintRoutes);
 app.use("/api/v1/zones", zoneRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/worker', workerRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
 // Catch-all for undefined routes
 app.all(/.*/, (req, res, next) => {

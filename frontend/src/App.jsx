@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/authContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import { useNavigate } from "react-router-dom";
 import { setNavigate } from "./utils/navigateHelper";
 import React from "react";
@@ -76,14 +77,7 @@ function AppContent() {
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
       <Route path="/loading" element={<VideoBackground />} />
       <Route path="/super-admin/create-city" element={<CreateCityPage />} />
-      <Route
-        path="/flower-animation"
-        element={
-          <MainLayout>
-            <FlowerAnimation />
-          </MainLayout>
-        }
-      />
+      <Route path="/flower-animation" element={<FlowerAnimation />}/>
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/set-password" element={<SetPassword />}/>
       {/* <Route path="/notfound" element={<Animated404Page />} /> */}
@@ -163,10 +157,12 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme='colored'/>
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <AppContent />
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme='colored'/>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
