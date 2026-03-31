@@ -9,11 +9,10 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@turf/turf": "^7.2.0",
+    "@google/genai": "^1.24.0",
+    "@google/generative-ai": "^0.24.1",
+    "@turf/turf": "^6.5.0",
     "axios": "^1.12.2",
     "body-parser": "^2.2.0",
     "cloudinary": "^2.7.0",
@@ -27,7 +26,12 @@
     "node-fetch": "^2.7.0",
     "nodemailer": "^7.0.9",
     "recharts": "^3.2.1",
-    "socket.io": "^4.8.3",
+    "redis": "^5.8.3",
+    "socket.io": "^4.8.1",
     "streamifier": "^0.1.1"
+  },
+  "overrides": {
+    "concaveman": "1.2.0",
+    "kdbush": "3.0.0"
   }
 }

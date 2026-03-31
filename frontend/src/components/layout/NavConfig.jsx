@@ -62,8 +62,9 @@ const navConfig = {
   ],
 
   worker: [
+    {name: "Dashboard", href: "/worker", icon: "📊"},
     { name: "Tasks", href: "/worker/tasks", icon: "🧰" },
-    { name: "Report", href: "/worker/report", icon: "⚙️" },
+    
     { name: "Profile", href: "/worker/profile", icon: "👤" },
   ],
 };

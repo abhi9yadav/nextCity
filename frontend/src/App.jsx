@@ -39,6 +39,7 @@ import CityAdminDashboard from "./pages/CityAdminDashboard";
 import CityDepartmentComplaints from "./components/cityAdmin/CityDepartmentComplaints";
 import ManageDepartmentAdmins from "./components/cityAdmin/ManageDepartmentAdmins";
 import ManageDepartment from "./components/cityAdmin/ManageDepartment";
+import CityComplaints from "./components/cityAdmin/CityComplaints";
 import CreateCityPage from "./components/superAdmin/CreateCityPage";
 import DashboardPage from './pages/deptAdmin/DashboardPage';
 import WorkersLandingPage from './pages/deptAdmin/WorkersLandingPage';
@@ -50,12 +51,11 @@ import WorkerDetailWrapper from "./pages/deptAdmin/WorkerDetailWrapper";
 import AllCities from "./components/superAdmin/AllCIties";
 import AllCityAdmins from "./components/superAdmin/AllCityAdmins";
 import AllDepartments from "./components/superAdmin/AllDepartments";
-
 import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
 import VideoBackground from "./components/home/VideoBackground";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-
+import WorkerDailyTasks from "./components/workerDashboard/wokerdash";
 
 function AppContent() {
   const { loading } = useAuth();
@@ -71,13 +71,16 @@ function AppContent() {
     <Routes>
       {/* ---------- PUBLIC ROUTES ---------- */}
       <Route path="/" element={<LandingPage />} />
+      
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<UserRegister />} />
       <Route path="/LoginSignupForm" element={<LoginSignupPage />} />
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
       <Route path="/loading" element={<VideoBackground />} />
       <Route path="/super-admin/create-city" element={<CreateCityPage />} />
+
       <Route path="/flower-animation" element={<FlowerAnimation />}/>
+
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/set-password" element={<SetPassword />}/>
       {/* <Route path="/notfound" element={<Animated404Page />} /> */}
@@ -90,6 +93,7 @@ function AppContent() {
       <Route element={<RoleBasedRoute allowedRoles={["city_admin"]} />}>
         <Route path="/city-admin" element={<MainLayout />}>
           <Route index element={<CityAdminDashboard />} />
+          <Route path="complaints" element={<CityComplaints />} />
           <Route path="profile" element={<Profile />} />
           <Route path=":dept_id" element={<ManageDepartment />} />
           <Route path=":dept_id/complaints" element={<CityDepartmentComplaints />} />
@@ -132,7 +136,9 @@ function AppContent() {
       {/* Worker */}
       <Route element={<RoleBasedRoute allowedRoles={["worker"]} />}>
       <Route path="/worker" element={<MainLayout />}>
-        <Route path="/worker" element={<WorkerAdminPage />} />
+        <Route index element={<WorkerAdminPage />} />
+        <Route path="tasks" element={<WorkerDailyTasks />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
       </Route>
 

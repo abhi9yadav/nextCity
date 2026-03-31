@@ -72,20 +72,32 @@ const complaintSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
-    history: [
+     history: [
       {
         by: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "User", // Worker/Official
           required: true,
         },
         action: {
           type: String,
+          enum: ["status_changed", "comment", "resolved_proof"], // Action type for clarity
           required: true,
         },
-        from: { type: String },
-        to: { type: String },
-        note: { type: String },
+        from: { type: String }, // Old status
+        to: { type: String },   // New status
+        note: { type: String }, // Worker's text proof
+        
+        attachments: [ // Worker's photo/video proof
+          {
+            url: { type: String, required: true },
+            type: {
+              type: String,
+              enum: ["image", "video"],
+              required: true,
+            },
+          },
+        ],
         timeStamp: { type: Date, default: Date.now },
       },
     ],

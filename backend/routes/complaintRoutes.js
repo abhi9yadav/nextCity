@@ -3,11 +3,19 @@ const router = express.Router();
 const complaintController = require("../controllers/complaintController");
 const multer = require("multer");
 const authenticateUser = require("../middlewares/authMiddleware");
+const {authenticate }=require('../middlewares/firebaseAuthRoleMiddleware')
 
 // Configure Multer to store files in memory.
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Upvote a complaint
+console.log("we are lhere to go post resul");
+router.post(
+  "/:id/vote",
+  authenticate,
+  complaintController.upvoteComplaint
+);
 // Get all complaints
 router.get("/allcomplaints", complaintController.getAllComplaints);
 
@@ -22,12 +30,7 @@ router.post(
   complaintController.createComplaint
 );
 
-// Upvote a complaint
-router.post(
-  "/:id/vote",
-  authenticateUser.verifyToken,
-  complaintController.upvoteComplaint
-);
+
 
 // Update complaint
 router.patch("/:id", complaintController.updateComplaint);

@@ -16,7 +16,7 @@ const uploadToCloudinary = async (fileBuffer, folder) => {
       (err, result) => {
         if (err) return reject(err);
         resolve(result.secure_url);
-      }
+      },
     );
     streamifier.createReadStream(fileBuffer).pipe(uploadStream);
   });
@@ -112,7 +112,7 @@ exports.getAllComplaintsByDepartment = async (req, res) => {
     })
       .populate({ path: "createdBy", model: "User", select: "name email" })
       .select(
-        "title description status votes location createdBy createdAt attachments"
+        "title description status votes location createdBy createdAt attachments",
       );
 
     const formattedComplaints = complaints.map((c) => {
@@ -311,7 +311,7 @@ exports.updateDepartmentAdmin = async (req, res) => {
     if (req.file) {
       deptAdmin.photoURL = await uploadToCloudinary(
         req.file.buffer,
-        "department_admins"
+        "department_admins",
       );
     }
 
@@ -382,5 +382,233 @@ exports.deleteDepartmentAdmin = async (req, res) => {
     res
       .status(500)
       .json({ message: "Server error during DepartmentAdmin deletion." });
+  }
+};
+
+exports.getDepartmentById = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(departmentId)) {
+      return res.status(400).json({ message: "Invalid department ID" });
+    }
+
+    const department = await Department.findById(departmentId).select("-__v");
+
+    if (!department) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+
+    res.status(200).json(department);
+  } catch (error) {
+    console.error("Error fetching department:", error);
+    res.status(500).json({ message: "Server error fetching department" });
+  }
+};
+
+exports.getDepartmentStats = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(departmentId)) {
+      return res.status(400).json({ message: "Invalid department ID" });
+    }
+
+    const department = await Department.findById(departmentId);
+
+    if (!department) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+
+    const activeComplaints = await Complaint.countDocuments({
+      concernedDepartment: department.department_name,
+      status: { $in: ["OPEN", "IN_PROGRESS"] },
+    });
+
+    const resolvedThisMonth = await Complaint.countDocuments({
+      concernedDepartment: department.department_name,
+      status: "RESOLVED",
+      updatedAt: {
+        $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      },
+    });
+
+    const zonesManaged = await Zone.countDocuments({
+      department_id: departmentId,
+    });
+
+    const newCount = await Complaint.countDocuments({
+      concernedDepartment: department.department_name,
+      status: "OPEN",
+    });
+
+    const inProgress = await Complaint.countDocuments({
+      concernedDepartment: department.department_name,
+      status: "IN_PROGRESS",
+    });
+
+    const resolved = await Complaint.countDocuments({
+      concernedDepartment: department.department_name,
+      status: "RESOLVED",
+    });
+
+    res.status(200).json({
+      activeComplaints,
+      resolvedThisMonth,
+      zonesManaged,
+      new: newCount,
+      inProgress,
+      resolved,
+    });
+  } catch (error) {
+    console.error("Error fetching department stats:", error);
+    res.status(500).json({ message: "Server error fetching stats" });
+  }
+};
+
+exports.getDepartmentRecentActivity = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(departmentId)) {
+      return res.status(400).json({ message: "Invalid department ID" });
+    }
+
+    const department = await Department.findById(departmentId);
+
+    const complaints = await Complaint.find({
+      concernedDepartment: department.department_name,
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("createdBy", "name");
+
+    const activity = complaints.map((c) => ({
+      message: `Complaint "${c.title}" filed by ${c.createdBy?.name || "User"}`,
+    }));
+
+    res.status(200).json(activity);
+  } catch (error) {
+    console.error("Error fetching activity:", error);
+    res.status(500).json({ message: "Server error fetching activity" });
+  }
+};
+
+exports.getCityComplaintStats = async (req, res) => {
+  try {
+    const firebaseUid = req.user.firebaseUid;
+
+    const user = await User.findOne({ firebaseUid });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const cityId = user.city_id;
+    const cityName = user.city_name;
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const activeComplaints = await Complaint.countDocuments({
+      city_id: cityId,
+      status: { $in: ["OPEN", "IN_PROGRESS", "REOPENED"] },
+    });
+
+    const resolvedLast30Days = await Complaint.countDocuments({
+      city_id: cityId,
+      status: "RESOLVED",
+      updatedAt: { $gte: thirtyDaysAgo },
+    });
+
+    res.status(200).json({
+      activeComplaints,
+      resolvedLast30Days,
+      cityName,
+    });
+  } catch (error) {
+    console.error("Error fetching city stats:", error);
+    res.status(500).json({ message: "Server error fetching stats" });
+  }
+};
+
+exports.getCityDepartmentStats = async (req, res) => {
+  try {
+    const firebaseUid = req.user.firebaseUid;
+
+    const user = await User.findOne({ firebaseUid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const cityId = user.city_id;
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Get all departments of the city
+    const departments = await Department.find({});
+
+    // Aggregations
+    const activeAgg = await Complaint.aggregate([
+      {
+        $match: {
+          city_id: cityId,
+          status: { $in: ["OPEN", "IN_PROGRESS", "REOPENED"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$concernedDepartment",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const resolvedAgg = await Complaint.aggregate([
+      {
+        $match: {
+          city_id: cityId,
+          status: "RESOLVED",
+          updatedAt: { $gte: thirtyDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: "$concernedDepartment",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Convert aggregation to maps
+    const activeMap = {};
+    activeAgg.forEach((d) => {
+      activeMap[d._id.toString()] = d.count;
+    });
+
+    const resolvedMap = {};
+    resolvedAgg.forEach((d) => {
+      resolvedMap[d._id.toString()] = d.count;
+    });
+
+    // Build final arrays including zero departments
+    const activeByDept = departments.map((dept) => ({
+      _id: dept.department_name,
+      count: activeMap[dept.department_name] || 0,
+    }));
+
+    const resolvedByDept = departments.map((dept) => ({
+      _id: dept.department_name,
+      count: resolvedMap[dept.department_name] || 0,
+    }));
+
+    res.status(200).json({
+      activeByDept,
+      resolvedByDept,
+    });
+  } catch (error) {
+    console.error("Error fetching department stats:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

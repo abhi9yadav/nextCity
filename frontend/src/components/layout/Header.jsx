@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { doSignOut } from "../../firebase/auth";
-import { Bell, LogOut, Settings, UserCog } from "lucide-react";
+import { Bell, LogOut, Palette } from "lucide-react"; // Added Palette icon
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/authContext";
 import toast, { Toaster } from "react-hot-toast";
 import nextcityLogo from "../../assets/logo.png";
 import { useNotification } from "../../contexts/NotificationContext";
 import { useLocation } from "react-router-dom";
 
 
+import { useTheme } from '../../hooks/useTheme';
+import { themes } from '../../constants/Themes'; 
+import { useAuth } from "../../contexts/authContext";
 const roleTitles = {
   citizen: "Citizen Dashboard",
   superadmin: "Super Admin Panel",
@@ -17,9 +19,12 @@ const roleTitles = {
   worker: "Worker Dashboard",
 };
 
+
 const Header = () => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const { currentUser } = useAuth();
+
 
   const location = useLocation();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotification();
@@ -32,6 +37,11 @@ const Header = () => {
   const dropdownRef = useRef();
 
   const role = currentUser?.role || "citizen";
+  // State to manage the theme switcher dropdown visibility
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  // Ref to detect clicks outside the dropdown
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -80,50 +90,83 @@ const Header = () => {
     }
     setOpen(!open);
   };
+  const notificationCount = 0;
+  // Effect to close the dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
 
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <nav className="bg-white shadow-md sticky top-0 left-0 z-50">
+
+      {/* Applying theme styles to the navbar */}
+      <nav className={`sticky top-0 left-0 z-50 border-b ${theme.navBg} ${theme.navBorder} ${theme.cardShadow}`}>
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left: Logo and Role Label */}
             <div className="flex items-center gap-3">
-              <a href="/" className="flex items-center gap-2 cursor-auto">
-                <img
-                  src={nextcityLogo}
-                  alt="nextcity Logo"
-                  className="w-20 h-16 object-contain cursor-pointer"
-                />
-                <span className="text-xl font-bold text-cyan-500 cursor-pointer">
-                  NextCity
-                </span>
+              <a href="/" className="flex items-center gap-2">
+                <svg
+                  // Use a theme color for the logo icon
+                  className={`h-8 w-8 ${theme.primaryAccentText}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+                {/* Use theme text colors */}
+                <span className={`text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${theme.headingGradientFrom} ${theme.headingGradientTo}`}>NextCity</span>
               </a>
-              <span className="hidden sm:block text-sm text-gray-600 font-medium ml-2">
-                {roleTitles[role]}
-              </span>
             </div>
 
             {/* Right side icons */}
-            <div className="flex items-center gap-4">
-              {/* Settings or Role-Specific Shortcut */}
-              {role === "superadmin" || role === "cityadmin" ? (
+            <div className="flex items-center gap-2 sm:gap-4">
+
+              {/* ----- THEME SWITCHER START ----- */}
+              <div className="relative" ref={dropdownRef}>
                 <button
-                  onClick={() => navigate(`/${role}-dashboard/settings`)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  title="Settings"
+                  onClick={() => setDropdownOpen(!isDropdownOpen)}
+                  className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors`}
+                  title="Change Theme"
                 >
-                  <Settings className="h-6 w-6 text-gray-600" />
+                  <Palette className={`h-6 w-6 ${theme.textSubtle}`} />
                 </button>
-              ) : role === "worker" ? (
-                <button
-                  onClick={() => navigate("/worker-dashboard/tasks")}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  title="My Tasks"
-                >
-                  <UserCog className="h-6 w-6 text-gray-600" />
-                </button>
-              ) : null}
+
+                {isDropdownOpen && (
+                  <div className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${theme.sectionBg} ring-1 ring-black ring-opacity-5 z-50 border ${theme.cardBorder}`}>
+                    {Object.keys(themes).map((key) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          toggleTheme(key);
+                          setDropdownOpen(false);
+                        }}
+                        className={`block w-full text-left px-4 py-2 text-sm ${theme.textDefault} ${theme.navButtonHoverBg}`}
+                      >
+                        {themes[key].name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* ----- THEME SWITCHER END ----- */}
 
               {/* Notification Bell */}
               <div ref={dropdownRef} className="relative">
@@ -202,10 +245,10 @@ const Header = () => {
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors`}
                 title="Logout"
               >
-                <LogOut className="h-6 w-6 text-gray-600" />
+                <LogOut className={`h-6 w-6 ${theme.textSubtle}`} />
               </button>
             </div>
           </div>

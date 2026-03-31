@@ -4,12 +4,12 @@ import React from 'react';
 
 function HeroSection() {
   return (
-    <section className="bg-transparent border  shadow-md md:py-24 px-6 text-center md:text-left z-50 relative min-h-full flex items-center md:full md:h-full">
+    <section className="bg-transparent   shadow-md md:py-24 px-6 text-center md:text-left z-50 relative min-h-full flex items-center md:full md:h-full">
       <div className="bg-transparent max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between ">
         {/* Left Content */}
-        <div className="md:w-1/2 mb-10 md:mb-0 border border-gray-300 p-6 rounded-lg shadow-lg ">
+        <div className="md:w-1/2 mb-10  ">
           <h1 className="text-4xl md:text-5xl font-extrabold text-cyan-600 leading-tight mb-4">
-            NEXTGEN CITY: <span className="text-cyan-900 ">Your Voice, Your Future City</span>
+            NEXTGEN CITY: <span className="text-cyan-100 ">Your Voice, Your Future City</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-100 mb-8">
             Connecting Citizens with Solutions for a Smarter Urban Tomorrow.
