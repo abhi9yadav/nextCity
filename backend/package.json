@@ -27,7 +27,7 @@
     "nodemailer": "^7.0.9",
     "recharts": "^3.2.1",
     "redis": "^5.8.3",
-    "socket.io": "^4.8.1",
+    "socket.io": "^4.8.3",
     "streamifier": "^0.1.1"
   },
   "overrides": {
