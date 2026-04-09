@@ -267,7 +267,7 @@ exports.getAllCityAdmins = async (req, res) => {
     const cityAdmins = await CityAdmin.find({})
       .populate({ path: "city_id", select: "city_name" })
       .select("+firebaseUid -__v")
-      .exec();
+      .lean();
 
     res.status(200).json({
       total: cityAdmins.length,

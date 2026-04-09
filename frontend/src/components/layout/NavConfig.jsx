@@ -48,9 +48,9 @@ const navConfig = {
   ],
 
   city_admin: [
-    { name: "Dashboard", href: "/city-admin", icon: "📊" },
-    { name: "Complaints", href: "/city-admin/complaints", icon: "📋" },
-    { name: "Profile", href: "/city-admin/profile", icon: "👤" },
+    { name: "Dashboard", href: "/city-admin", icon: <MdDashboard size={20} /> },
+    { name: "Analytics", href: "/city-admin/complaints", icon: <MdAnalytics size={20} /> },
+    { name: "Profile", href: "/city-admin/profile", icon: <MdPerson size={20} /> },
   ],
 
   dept_admin: [
