@@ -25,8 +25,15 @@ const CommunityFeedPage = () => {
   // ... (rest of your logic remains the same)
   const fetchComplaints = async (pageNum = 1) => {
     try {
+      const idToken = localStorage.getItem("idToken");
       const res = await axios.get(
-        `${BASE_URL}/complaints/allcomplaints?page=${pageNum}&limit=${PAGE_SIZE}`
+        `${BASE_URL}/complaints/allcomplaints?page=${pageNum}&limit=${PAGE_SIZE}`,
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+          withCredentials: true, // optional if using cookies/session also
+        }
       );
       return res.data || [];
     } catch (err) {

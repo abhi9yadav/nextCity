@@ -55,7 +55,8 @@ import MainLayout from "./components/layout/MainLayout";
 import LoadingAnimation from "./components/loadingAnimation/LoadingAnimation";
 import VideoBackground from "./components/home/VideoBackground";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-import WorkerDailyTasks from "./components/workerDashboard/wokerdash";
+import WorkerDailyTasks from "./components/workerDashboard/WorkerDailyTask";
+import ComplaintDetailPage from "./components/workerDashboard/ComplaintDetailDrawer";
 
 function AppContent() {
   const { loading } = useAuth();
@@ -138,6 +139,7 @@ function AppContent() {
       <Route path="/worker" element={<MainLayout />}>
         <Route index element={<WorkerAdminPage />} />
         <Route path="tasks" element={<WorkerDailyTasks />} />
+        <Route path="complaints/:id" element={<ComplaintDetailPage />} />
         <Route path="profile" element={<Profile />} />
       </Route>
       </Route>

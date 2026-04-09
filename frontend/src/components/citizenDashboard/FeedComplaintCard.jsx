@@ -1,72 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, ThumbsUp, MessageCircle, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
-import {
-  ThumbsUp,
-  MessageCircle,
-  Share2,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/authContext';
-import { useTheme } from '../../hooks/useTheme'; // 1. Import useTheme
+import { useTheme } from '../../hooks/useTheme';
 
 const CitizenComplaintCard = ({ complaint }) => {
-  const { theme } = useTheme(); // 2. Get the theme object
+  const { theme } = useTheme();
   const { currentUser } = useAuth();
-  
-  // Create a new status style map using the theme
-  const themedStatusStyles = {
-    OPEN: `${theme.statusOpenBg} ${theme.statusOpenText}`,
-    IN_PROGRESS: `${theme.statusInProgressBg} ${theme.statusInProgressText}`,
-    CLOSED: `${theme.statusClosedBg} ${theme.statusClosedText}`,
-  };
 
   const {
     title,
     description,
     status,
     createdAt,
-    attachments,
+    attachments = [],
     location,
-    votes,
+    votes = [], // Backend array of user IDs
     _id,
   } = complaint;
 
+  // --- States ---
   const [currentMedia, setCurrentMedia] = useState(0);
   const [descExpanded, setDescExpanded] = useState(false);
-  const [upvotes, setUpvotes] = useState(votes.length);
+  const [upvotesCount, setUpvotesCount] = useState(votes.length);
+  const [isVoting, setIsVoting] = useState(false);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
 
-  // ... (rest of your logic remains the same)
+  // User ID normalize (Firebase uid or MongoDB _id)
+  const userId = currentUser?.uid || currentUser?._id;
+
+  // 🔥 FIX: Refresh hone par ya complaint change hone par upvote status check karo
+  useEffect(() => {
+    if (userId && votes && Array.isArray(votes)) {
+      // Check if user ID exists in the votes array
+      const alreadyVoted = votes.some(id => String(id) === String(userId));
+      setHasUpvoted(alreadyVoted);
+      setUpvotesCount(votes.length);
+    }
+  }, [votes, userId]);
+
+  const themedStatusStyles = {
+    OPEN: `${theme.statusOpenBg || 'bg-blue-500/20'} ${theme.statusOpenText || 'text-blue-400'}`,
+    IN_PROGRESS: `${theme.statusInProgressBg || 'bg-orange-500/20'} ${theme.statusInProgressText || 'text-orange-400'}`,
+    CLOSED: `${theme.statusClosedBg || 'bg-gray-500/20'} ${theme.statusClosedText || 'text-gray-400'}`,
+    RESOLVED: `bg-green-500/20 text-green-400`,
+  };
+
   const nextMedia = () => setCurrentMedia((prev) => (prev + 1) % attachments.length);
   const prevMedia = () => setCurrentMedia((prev) => (prev - 1 + attachments.length) % attachments.length);
+
+  // --- Upvote Logic ---
   const handleUpvote = async () => {
-    const idToken = currentUser.accessToken;
+    // Agar user logged in nahi hai, ya voting process mein hai, ya pehle hi vote kar chuka hai
+    if (!currentUser || isVoting || hasUpvoted) return;
+
+    setIsVoting(true);
+
+    // 🚀 Optimistic Update (UI pe turant dikhao)
+    const prevCount = upvotesCount;
+    setHasUpvoted(true);
+    setUpvotesCount(prevCount + 1);
+
     try {
+      const idToken = currentUser.accessToken;
       const res = await axios.post(
-        `http://localhost:5000/api/v1/complaints/${_id}/vote`, {}, 
+        `http://localhost:5000/api/v1/complaints/${_id}/vote`, 
+        {}, 
         { headers: { Authorization: `Bearer ${idToken}` } }
       );
+      
+      // Backend response se sync karo
       if (res.data?.votes) {
-        setUpvotes(res.data.votes.length);
+        // Agar backend pura array bhej raha hai:
+        const updatedVotes = Array.isArray(res.data.votes) ? res.data.votes : [];
+        setUpvotesCount(updatedVotes.length || res.data.votes); // count handling
       }
     } catch (err) {
-      console.error('Error upvoting complaint:', err);
+      console.error('Error upvoting:', err);
+      // Fail hone par purani state wapas lao
+      setHasUpvoted(false);
+      setUpvotesCount(prevCount);
+    } finally {
+      setIsVoting(false);
     }
   };
 
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/complaints/${_id}`;
+    const shareData = {
+      title: `Citizen Complaint: ${title}`,
+      text: `Check out this complaint: ${title}`,
+      url: shareUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
 
   return (
-    // 3. Themed main card container
-    <div className={`rounded-2xl overflow-hidden transition-all max-w-md mx-auto relative ${theme.cardBg} ${theme.cardBorder} ${theme.cardShadow} ${theme.cardHoverShadow}`}>
-      {/* --- Media Carousel --- */}
+    <div className={`rounded-2xl overflow-hidden transition-all max-w-md mx-auto relative border ${theme.cardBg} ${theme.cardBorder} ${theme.cardShadow} ${theme.cardHoverShadow}`}>
+      
+      {/* Media Carousel */}
       {attachments.length > 0 && (
         <div className={`relative w-full h-64 ${theme.sectionBgTranslucent}`}>
-          <AnimatePresence>
+          <AnimatePresence mode='wait'>
             <motion.img
-              key={attachments[currentMedia]?.url || currentMedia}
+              key={currentMedia}
               src={attachments[currentMedia]?.url || attachments[currentMedia]}
-              alt="Complaint media"
+              alt="Complaint"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="w-full h-64 object-cover"
             />
@@ -74,36 +124,28 @@ const CitizenComplaintCard = ({ complaint }) => {
 
           {attachments.length > 1 && (
             <>
-              <button onClick={prevMedia} className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black/40 text-white rounded-full p-1 hover:bg-black/60">
-                <ChevronLeft size={22} />
-              </button>
-              <button onClick={nextMedia} className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black/40 text-white rounded-full p-1 hover:bg-black/60">
-                <ChevronRight size={22} />
-              </button>
+              <button onClick={prevMedia} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/50 text-white rounded-full p-1 backdrop-blur-sm"><ChevronLeft size={20} /></button>
+              <button onClick={nextMedia} className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/50 text-white rounded-full p-1 backdrop-blur-sm"><ChevronRight size={20} /></button>
             </>
           )}
-
-          <div className="absolute bottom-2 right-2 bg-black/40 text-white text-xs px-2 py-0.5 rounded">
-            {currentMedia + 1}/{attachments.length}
-          </div>
         </div>
       )}
 
-      {/* --- Content --- */}
-      <div className="p-4">
-        <div className="flex justify-between items-start">
-          <h3 className={`font-semibold text-lg line-clamp-2 ${theme.textDefault}`}>
+      {/* Content */}
+      <div className="p-5">
+        <div className="flex justify-between items-start gap-3">
+          <h3 className={`font-semibold text-lg leading-snug ${theme.textDefault}`}>
             {title}
           </h3>
-          {/* 4. Use the new themed status styles */}
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${themedStatusStyles[status] || ''}`}>
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border border-current ${themedStatusStyles[status] || 'bg-gray-500/20 text-gray-400'}`}>
             {status}
           </span>
         </div>
 
-        <p className={`text-sm mt-1 ${theme.textSubtle} ${descExpanded ? 'line-clamp-none' : 'line-clamp-3'}`}>
+        <p className={`text-sm mt-3 ${theme.textSubtle} ${descExpanded ? '' : 'line-clamp-3'}`}>
           {description}
         </p>
+        
         {description?.length > 120 && (
           <button onClick={() => setDescExpanded(!descExpanded)} className={`text-xs font-semibold mt-1 ${theme.primaryAccentText}`}>
             {descExpanded ? 'Show Less' : 'Read More'}
@@ -111,22 +153,41 @@ const CitizenComplaintCard = ({ complaint }) => {
         )}
 
         {location?.address && (
-          <p className={`text-xs mt-2 ${theme.textCardDescription}`}>📍 {location.address}</p>
+          <div className={`flex items-start gap-1.5 mt-4 ${theme.textCardDescription}`}>
+            <MapPin size={14} className="mt-0.5" />
+            <p className="text-xs">{location.address}</p>
+          </div>
         )}
 
-        {/* --- Footer Actions --- */}
-        <div className={`flex items-center justify-between mt-3 border-t pt-2 ${theme.footerBorder}`}>
-          {/* 5. Themed action buttons */}
-          <button onClick={handleUpvote} className={`flex items-center gap-1 transition ${theme.textSubtle} hover:${theme.primaryAccentText}`}>
-            <ThumbsUp size={16} /> {upvotes}
+        {/* Footer Actions */}
+        <div className={`flex items-center justify-between mt-5 border-t pt-4 ${theme.cardBorder}`}>
+          
+          <button 
+            onClick={handleUpvote} 
+            disabled={isVoting}
+            className={`flex cursor-pointer items-center gap-1.5 font-medium transition-all ${
+              hasUpvoted 
+                ? `${theme.primaryAccentText} font-bold scale-105` 
+                : `${theme.textSubtle} hover:${theme.primaryAccentText}`
+            }`}
+          >
+            <ThumbsUp 
+              size={19} 
+              className={hasUpvoted ? "fill-current" : ""} 
+              strokeWidth={hasUpvoted ? 2.5 : 1.5} 
+            /> 
+            {upvotesCount}
           </button>
-          <button className={`flex items-center gap-1 transition ${theme.textSubtle} hover:${theme.primaryAccentText}`}>
-            <MessageCircle size={16} /> 0
+
+          <button className={`flex items-center cursor-pointer gap-1.5 font-medium ${theme.textSubtle} hover:${theme.primaryAccentText}`}>
+            <MessageCircle size={18} /> 0
           </button>
-          <button className={`flex items-center gap-1 transition ${theme.textSubtle} hover:${theme.primaryAccentText}`}>
-            <Share2 size={16} /> Share
+          
+          <button onClick={handleShare} className={`flex items-center cursor-pointer gap-1.5 font-medium ${theme.textSubtle} hover:${theme.primaryAccentText}`}>
+            <Share2 size={18} /> Share
           </button>
-          <span className={`text-xs ${theme.textCardDescription}`}>
+          
+          <span className={`text-[10px] ${theme.textCardDescription}`}>
             {new Date(createdAt).toLocaleDateString()}
           </span>
         </div>

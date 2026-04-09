@@ -17,7 +17,6 @@ export function AuthProvider({ children }) {
   const fetchBackendUser = async (firebaseUser) => {
     const idToken = await firebaseUser.getIdToken();
     setToken(idToken);
-    localStorage.setItem("idToken", idToken);
     let BASE_URL = import.meta.env.VITE_API_BASE_URL;
     if (!BASE_URL) {
       console.error("VITE_API_BASE_URL is not defined in the environment variables.");
@@ -34,9 +33,7 @@ export function AuthProvider({ children }) {
     const fullUser = { ...firebaseUser, ...user };
 
     setRole(user.role || null);
-    localStorage.setItem("role", user.role || "");
     setCurrentUser(fullUser);
-    localStorage.setItem("currentUser", JSON.stringify(fullUser));
   };
 
   //Listen for Firebase auth changes

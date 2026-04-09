@@ -10,6 +10,11 @@ export const themes = {
     homeSectionBg: 'bg-gradient-to-br from-gray-800 via-indigo-950 to-black',
     contactSectionBg: 'bg-gradient-to-br from-gray-950 to-black',
 
+    chartPrimaryFill: '#6366f1', // indigo
+    chartAxisStroke: '#a5b4fc',
+    tooltipBg: '#111827',
+    tooltipText: '#e0e7ff',
+
     textDefault: 'text-indigo-200',
     textSubtle: 'text-indigo-300',
     textCardDescription: 'text-indigo-400',
@@ -81,7 +86,7 @@ export const themes = {
     aiButtonBorder: 'border-indigo-700/50',
     aiButtonHoverBg: 'hover:bg-indigo-800/40',
   },
-  'synthwave': {
+  synthwave: {
     name: 'Synthwave',
     appBg: 'bg-gradient-to-br from-fuchsia-950 via-black to-blue-950',
     navBg: 'bg-fuchsia-900 bg-opacity-80',
@@ -90,6 +95,11 @@ export const themes = {
     sectionBgTranslucent: 'bg-fuchsia-900/70',
     homeSectionBg: 'bg-gradient-to-br from-purple-900 via-fuchsia-900 to-black',
     contactSectionBg: 'bg-gradient-to-br from-fuchsia-900 to-black',
+
+    chartPrimaryFill: '#ec4899', // pink
+    chartAxisStroke: '#f9a8d4',
+    tooltipBg: '#1a001f',
+    tooltipText: '#fbcfe8',
 
     textDefault: 'text-pink-300',
     textSubtle: 'text-pink-400',
@@ -162,7 +172,7 @@ export const themes = {
     aiButtonBorder: 'border-fuchsia-700/50',
     aiButtonHoverBg: 'hover:bg-fuchsia-800/40',
   },
-  'cyberpunk': {
+  cyberpunk: {
     name: 'Cyberpunk',
     appBg: 'bg-gradient-to-br from-gray-900 via-green-950 to-purple-950',
     navBg: 'bg-green-900 bg-opacity-80',
@@ -252,6 +262,11 @@ export const themes = {
     sectionBgTranslucent: 'bg-blue-50/70',
     homeSectionBg: 'bg-gradient-to-br from-white via-blue-50 to-indigo-50',
     contactSectionBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
+
+    chartPrimaryFill: '#2563eb',
+    chartAxisStroke: '#374151',
+    tooltipBg: '#ffffff',
+    tooltipText: '#111827',
 
     textDefault: 'text-gray-900',
     textSubtle: 'text-gray-700',
@@ -412,7 +427,8 @@ export const themes = {
     navBorder: 'border-gray-700/50',
     sectionBg: 'bg-green-900',
     sectionBgTranslucent: 'bg-gray-900/70',
-    homeSectionBg: 'bg-gradient-to-br from-green-800 via-gray-900 to-emerald-900',
+    homeSectionBg:
+      'bg-gradient-to-br from-green-800 via-gray-900 to-emerald-900',
     contactSectionBg: 'bg-gradient-to-br from-green-900 to-emerald-900',
 
     textDefault: 'text-lime-200',
@@ -492,244 +508,242 @@ export const themes = {
     navBg: 'bg-gray-800 bg-opacity-70',
     navBorder: 'border-gray-700/50',
     sectionBg: 'bg-gray-900',
-sectionBgTranslucent: 'bg-gray-900/70',
-homeSectionBg: 'bg-gradient-to-tr from-gray-700 via-black to-gray-800',
-contactSectionBg: 'bg-gradient-to-tr from-black to-gray-900',
+    sectionBgTranslucent: 'bg-gray-900/70',
+    homeSectionBg: 'bg-gradient-to-tr from-gray-700 via-black to-gray-800',
+    contactSectionBg: 'bg-gradient-to-tr from-black to-gray-900',
 
-textDefault: 'text-gray-200',
-textSubtle: 'text-gray-300',
-textCardDescription: 'text-gray-400',
-textSkillName: 'text-gray-100',
-primaryAccentText: 'text-white',
-secondaryAccentText: 'text-gray-500',
-primaryAccentTextSubtle: 'text-gray-200',
+    textDefault: 'text-gray-200',
+    textSubtle: 'text-gray-300',
+    textCardDescription: 'text-gray-400',
+    textSkillName: 'text-gray-100',
+    primaryAccentText: 'text-white',
+    secondaryAccentText: 'text-gray-500',
+    primaryAccentTextSubtle: 'text-gray-200',
 
-headingGradientFrom: 'from-gray-200',
-headingGradientTo: 'to-gray-400',
-headingGradientFromSecondary: 'from-gray-400',
-headingGradientToSecondary: 'to-gray-200',
+    headingGradientFrom: 'from-gray-200',
+    headingGradientTo: 'to-gray-400',
+    headingGradientFromSecondary: 'from-gray-400',
+    headingGradientToSecondary: 'to-gray-200',
 
-buttonPrimaryBgFrom: 'from-gray-600',
-buttonPrimaryBgTo: 'to-gray-700',
-buttonPrimaryHoverBgFrom: 'hover:from-gray-700',
-buttonPrimaryHoverBgTo: 'hover:to-gray-800',
-buttonPrimaryBeforeFrom: 'from-gray-400',
-buttonPrimaryBeforeTo: 'to-gray-500',
-buttonPrimaryText: 'text-white',
+    buttonPrimaryBgFrom: 'from-gray-600',
+    buttonPrimaryBgTo: 'to-gray-700',
+    buttonPrimaryHoverBgFrom: 'hover:from-gray-700',
+    buttonPrimaryHoverBgTo: 'hover:to-gray-800',
+    buttonPrimaryBeforeFrom: 'from-gray-400',
+    buttonPrimaryBeforeTo: 'to-gray-500',
+    buttonPrimaryText: 'text-white',
 
-buttonSecondaryBgFrom: 'from-gray-500',
-buttonSecondaryBgTo: 'to-gray-600',
-buttonSecondaryHoverBgFrom: 'hover:from-gray-600',
-buttonSecondaryHoverBgTo: 'hover:to-gray-700',
-buttonSecondaryBeforeFrom: 'from-gray-300',
-buttonSecondaryBeforeTo: 'to-gray-400',
-buttonSecondaryText: 'text-white',
+    buttonSecondaryBgFrom: 'from-gray-500',
+    buttonSecondaryBgTo: 'to-gray-600',
+    buttonSecondaryHoverBgFrom: 'hover:from-gray-600',
+    buttonSecondaryHoverBgTo: 'hover:to-gray-700',
+    buttonSecondaryBeforeFrom: 'from-gray-300',
+    buttonSecondaryBeforeTo: 'to-gray-400',
+    buttonSecondaryText: 'text-white',
 
-navButtonHoverBg: 'hover:bg-gray-700/60',
-navActiveBg: 'bg-gray-800/40',
-navActiveBorder: 'border-gray-400/60',
-navActiveShadow: 'shadow-gray-500/30',
+    navButtonHoverBg: 'hover:bg-gray-700/60',
+    navActiveBg: 'bg-gray-800/40',
+    navActiveBorder: 'border-gray-400/60',
+    navActiveShadow: 'shadow-gray-500/30',
 
-cardBg: 'bg-gray-800',
-cardBorder: 'border-gray-700/30',
-cardShadow: 'shadow-lg shadow-black/40',
-cardHoverShadow: 'hover:shadow-2xl hover:shadow-gray-800/50',
-cardHoverBorder: 'hover:border-gray-400/50',
+    cardBg: 'bg-gray-800',
+    cardBorder: 'border-gray-700/30',
+    cardShadow: 'shadow-lg shadow-black/40',
+    cardHoverShadow: 'hover:shadow-2xl hover:shadow-gray-800/50',
+    cardHoverBorder: 'hover:border-gray-400/50',
 
-imageBorder: 'border-gray-500',
-imageShadow: 'shadow-gray-500/40',
+    imageBorder: 'border-gray-500',
+    imageShadow: 'shadow-gray-500/40',
 
-footerBg: 'bg-black',
-footerText: 'text-gray-500',
-footerBorder: 'border-gray-600/60',
+    footerBg: 'bg-black',
+    footerText: 'text-gray-500',
+    footerBorder: 'border-gray-600/60',
 
-skillIconColor: (index) => {
-if (index % 3 === 0) return 'text-gray-300 group-hover:text-white';
-if (index % 3 === 1) return 'text-gray-400 group-hover:text-gray-200';
-return 'text-gray-500 group-hover:text-gray-100';
-},
+    skillIconColor: (index) => {
+      if (index % 3 === 0) return 'text-gray-300 group-hover:text-white';
+      if (index % 3 === 1) return 'text-gray-400 group-hover:text-gray-200';
+      return 'text-gray-500 group-hover:text-gray-100';
+    },
 
-cursorDefault: 'rgba(128, 128, 128, 0.6)',
-cursorNav: 'rgba(220, 220, 220, 0.6)',
-cursorSkill: 'rgba(192, 192, 192, 0.6)',
-cursorProject: 'rgba(169, 169, 169, 0.6)',
-cursorContact: 'rgba(105, 105, 105, 0.6)',
-cursorLink: 'rgba(119, 136, 153, 0.6)',
-cursorAI: 'rgba(170, 170, 170, 0.6)',
+    cursorDefault: 'rgba(128, 128, 128, 0.6)',
+    cursorNav: 'rgba(220, 220, 220, 0.6)',
+    cursorSkill: 'rgba(192, 192, 192, 0.6)',
+    cursorProject: 'rgba(169, 169, 169, 0.6)',
+    cursorContact: 'rgba(105, 105, 105, 0.6)',
+    cursorLink: 'rgba(119, 136, 153, 0.6)',
+    cursorAI: 'rgba(170, 170, 170, 0.6)',
 
-linkTextAccent: 'text-white',
-linkHoverTextAccent: 'hover:text-gray-300',
-socialLinkHoverPrimary: 'hover:text-gray-300',
-socialLinkHoverSecondary: 'hover:text-gray-400',
-socialLinkHoverTertiary: 'hover:text-gray-500',
+    linkTextAccent: 'text-white',
+    linkHoverTextAccent: 'hover:text-gray-300',
+    socialLinkHoverPrimary: 'hover:text-gray-300',
+    socialLinkHoverSecondary: 'hover:text-gray-400',
+    socialLinkHoverTertiary: 'hover:text-gray-500',
 
-aiButtonBg: 'bg-gray-800/30',
-aiButtonBorder: 'border-gray-600/50',
-aiButtonHoverBg: 'hover:bg-gray-700/40',
-},
-
-
-'circuit-core': {
-name: 'Circuit Core ⚙️',
-appBg: 'bg-gray-900',
-navBg: 'bg-black bg-opacity-90',
-navBorder: 'border-gray-700',
-sectionBg: 'bg-gray-800',
-sectionBgTranslucent: 'bg-gray-800/80',
-homeSectionBg: 'bg-gradient-to-br from-black via-gray-900 to-gray-800',
-contactSectionBg: 'bg-gradient-to-br from-gray-900 to-black',
-
-textDefault: 'text-gray-300',
-textSubtle: 'text-gray-400',
-textCardDescription: 'text-gray-500',
-textSkillName: 'text-gray-200',
-primaryAccentText: 'text-white',
-secondaryAccentText: 'text-gray-400',
-primaryAccentTextSubtle: 'text-gray-100',
-
-headingGradientFrom: 'from-gray-300',
-headingGradientTo: 'to-gray-500',
-headingGradientFromSecondary: 'from-gray-500',
-headingGradientToSecondary: 'to-gray-300',
-
-buttonPrimaryBgFrom: 'from-gray-700',
-buttonPrimaryBgTo: 'to-gray-800',
-buttonPrimaryHoverBgFrom: 'hover:from-gray-800',
-buttonPrimaryHoverBgTo: 'hover:to-gray-900',
-buttonPrimaryBeforeFrom: 'from-gray-500',
-buttonPrimaryBeforeTo: 'to-gray-600',
-buttonPrimaryText: 'text-white',
-
-buttonSecondaryBgFrom: 'from-gray-500',
-buttonSecondaryBgTo: 'to-gray-600',
-buttonSecondaryHoverBgFrom: 'hover:from-gray-600',
-buttonSecondaryHoverBgTo: 'hover:to-gray-700',
-buttonSecondaryBeforeFrom: 'from-gray-300',
-buttonSecondaryBeforeTo: 'to-gray-400',
-buttonSecondaryText: 'text-white',
-
-navButtonHoverBg: 'hover:bg-gray-700/80',
-navActiveBg: 'bg-gray-800/60',
-navActiveBorder: 'border-white/40',
-navActiveShadow: 'shadow-white/20',
-
-cardBg: 'bg-gray-850',
-cardBorder: 'border-gray-700',
-cardShadow: 'shadow-lg shadow-black/50',
-cardHoverShadow: 'hover:shadow-2xl hover:shadow-gray-700/40',
-cardHoverBorder: 'hover:border-gray-500',
-
-imageBorder: 'border-gray-600',
-imageShadow: 'shadow-gray-600/30',
-
-footerBg: 'bg-black',
-footerText: 'text-gray-600',
-footerBorder: 'border-gray-700',
-
-skillIconColor: (index) => {
-if (index % 3 === 0) return 'text-gray-400 group-hover:text-white';
-if (index % 3 === 1) return 'text-gray-500 group-hover:text-gray-300';
-return 'text-gray-600 group-hover:text-gray-100';
-},
-
-cursorDefault: 'rgba(156, 163, 175, 0.6)',
-cursorNav: 'rgba(255, 255, 255, 0.6)',
-cursorSkill: 'rgba(209, 213, 219, 0.6)',
-cursorProject: 'rgba(173, 181, 189, 0.6)',
-cursorContact: 'rgba(142, 142, 147, 0.6)',
-cursorLink: 'rgba(112, 128, 144, 0.6)',
-cursorAI: 'rgba(190, 190, 190, 0.6)',
-
-linkTextAccent: 'text-white',
-linkHoverTextAccent: 'hover:text-gray-300',
-socialLinkHoverPrimary: 'hover:text-gray-300',
-socialLinkHoverSecondary: 'hover:text-gray-400',
-socialLinkHoverTertiary: 'hover:text-gray-500',
-
-aiButtonBg: 'bg-gray-800/30',
-aiButtonBorder: 'border-gray-700/50',
-aiButtonHoverBg: 'hover:bg-gray-700/40',
-},
-'techno-glitch': {
-  name: 'Techno Glitch 👾',
-  appBg: 'bg-gray-950',
-  navBg: 'bg-black bg-opacity-80',
-  navBorder: 'border-purple-500/50',
-  sectionBg: 'bg-gray-900',
-  sectionBgTranslucent: 'bg-gray-900/70',
-  homeSectionBg: 'bg-black',
-  contactSectionBg: 'bg-gray-950',
-
-  textDefault: 'text-gray-300',
-  textSubtle: 'text-gray-400',
-  textCardDescription: 'text-gray-500',
-  textSkillName: 'text-gray-200',
-  primaryAccentText: 'text-cyan-400',
-  secondaryAccentText: 'text-purple-400',
-  primaryAccentTextSubtle: 'text-cyan-300',
-
-  headingGradientFrom: 'from-cyan-400',
-  headingGradientTo: 'to-purple-400',
-  headingGradientFromSecondary: 'from-purple-400',
-  headingGradientToSecondary: 'to-cyan-400',
-
-  buttonPrimaryBgFrom: 'from-purple-600',
-  buttonPrimaryBgTo: 'to-cyan-600',
-  buttonPrimaryHoverBgFrom: 'hover:from-purple-700',
-  buttonPrimaryHoverBgTo: 'hover:to-cyan-700',
-  buttonPrimaryBeforeFrom: 'from-purple-400',
-  buttonPrimaryBeforeTo: 'to-cyan-400',
-  buttonPrimaryText: 'text-white',
-
-  buttonSecondaryBgFrom: 'from-cyan-600',
-  buttonSecondaryBgTo: 'to-purple-600',
-  buttonSecondaryHoverBgFrom: 'hover:from-cyan-700',
-  buttonSecondaryHoverBgTo: 'hover:to-purple-700',
-  buttonSecondaryBeforeFrom: 'from-cyan-400',
-  buttonSecondaryBeforeTo: 'to-purple-400',
-  buttonSecondaryText: 'text-white',
-
-  navButtonHoverBg: 'hover:bg-purple-800/60',
-  navActiveBg: 'bg-purple-900/40',
-  navActiveBorder: 'border-cyan-500/60',
-  navActiveShadow: 'shadow-cyan-500/30',
-
-  cardBg: 'bg-gray-800',
-  cardBorder: 'border-cyan-700/30',
-  cardShadow: 'shadow-lg shadow-cyan-900/30',
-  cardHoverShadow: 'hover:shadow-2xl hover:shadow-cyan-700/50',
-  cardHoverBorder: 'hover:border-cyan-500/50',
-
-  imageBorder: 'border-cyan-500',
-  imageShadow: 'shadow-cyan-500/40',
-
-  footerBg: 'bg-black',
-  footerText: 'text-gray-500',
-  footerBorder: 'border-gray-800/60',
-
-  skillIconColor: (index) => {
-    if (index % 3 === 0) return 'text-cyan-400 group-hover:text-purple-400';
-    if (index % 3 === 1) return 'text-purple-400 group-hover:text-cyan-400';
-    return 'text-gray-400 group-hover:text-cyan-400';
+    aiButtonBg: 'bg-gray-800/30',
+    aiButtonBorder: 'border-gray-600/50',
+    aiButtonHoverBg: 'hover:bg-gray-700/40',
   },
 
-  cursorDefault: 'rgba(52, 211, 245, 0.6)',
-  cursorNav: 'rgba(192, 132, 252, 0.6)',
-  cursorSkill: 'rgba(52, 211, 245, 0.6)',
-  cursorProject: 'rgba(192, 132, 252, 0.6)',
-  cursorContact: 'rgba(142, 142, 147, 0.6)',
-  cursorLink: 'rgba(56, 189, 248, 0.6)',
-  cursorAI: 'rgba(129, 140, 248, 0.6)',
+  'circuit-core': {
+    name: 'Circuit Core ⚙️',
+    appBg: 'bg-gray-900',
+    navBg: 'bg-black bg-opacity-90',
+    navBorder: 'border-gray-700',
+    sectionBg: 'bg-gray-800',
+    sectionBgTranslucent: 'bg-gray-800/80',
+    homeSectionBg: 'bg-gradient-to-br from-black via-gray-900 to-gray-800',
+    contactSectionBg: 'bg-gradient-to-br from-gray-900 to-black',
 
-  linkTextAccent: 'text-cyan-400',
-  linkHoverTextAccent: 'hover:text-purple-300',
-  socialLinkHoverPrimary: 'hover:text-cyan-400',
-  socialLinkHoverSecondary: 'hover:text-purple-400',
-  socialLinkHoverTertiary: 'hover:text-gray-400',
+    textDefault: 'text-gray-300',
+    textSubtle: 'text-gray-400',
+    textCardDescription: 'text-gray-500',
+    textSkillName: 'text-gray-200',
+    primaryAccentText: 'text-white',
+    secondaryAccentText: 'text-gray-400',
+    primaryAccentTextSubtle: 'text-gray-100',
 
-  aiButtonBg: 'bg-gray-800/30',
-  aiButtonBorder: 'border-cyan-700/50',
-  aiButtonHoverBg: 'hover:bg-gray-700/40',
-},
-  
+    headingGradientFrom: 'from-gray-300',
+    headingGradientTo: 'to-gray-500',
+    headingGradientFromSecondary: 'from-gray-500',
+    headingGradientToSecondary: 'to-gray-300',
+
+    buttonPrimaryBgFrom: 'from-gray-700',
+    buttonPrimaryBgTo: 'to-gray-800',
+    buttonPrimaryHoverBgFrom: 'hover:from-gray-800',
+    buttonPrimaryHoverBgTo: 'hover:to-gray-900',
+    buttonPrimaryBeforeFrom: 'from-gray-500',
+    buttonPrimaryBeforeTo: 'to-gray-600',
+    buttonPrimaryText: 'text-white',
+
+    buttonSecondaryBgFrom: 'from-gray-500',
+    buttonSecondaryBgTo: 'to-gray-600',
+    buttonSecondaryHoverBgFrom: 'hover:from-gray-600',
+    buttonSecondaryHoverBgTo: 'hover:to-gray-700',
+    buttonSecondaryBeforeFrom: 'from-gray-300',
+    buttonSecondaryBeforeTo: 'to-gray-400',
+    buttonSecondaryText: 'text-white',
+
+    navButtonHoverBg: 'hover:bg-gray-700/80',
+    navActiveBg: 'bg-gray-800/60',
+    navActiveBorder: 'border-white/40',
+    navActiveShadow: 'shadow-white/20',
+
+    cardBg: 'bg-gray-850',
+    cardBorder: 'border-gray-700',
+    cardShadow: 'shadow-lg shadow-black/50',
+    cardHoverShadow: 'hover:shadow-2xl hover:shadow-gray-700/40',
+    cardHoverBorder: 'hover:border-gray-500',
+
+    imageBorder: 'border-gray-600',
+    imageShadow: 'shadow-gray-600/30',
+
+    footerBg: 'bg-black',
+    footerText: 'text-gray-600',
+    footerBorder: 'border-gray-700',
+
+    skillIconColor: (index) => {
+      if (index % 3 === 0) return 'text-gray-400 group-hover:text-white';
+      if (index % 3 === 1) return 'text-gray-500 group-hover:text-gray-300';
+      return 'text-gray-600 group-hover:text-gray-100';
+    },
+
+    cursorDefault: 'rgba(156, 163, 175, 0.6)',
+    cursorNav: 'rgba(255, 255, 255, 0.6)',
+    cursorSkill: 'rgba(209, 213, 219, 0.6)',
+    cursorProject: 'rgba(173, 181, 189, 0.6)',
+    cursorContact: 'rgba(142, 142, 147, 0.6)',
+    cursorLink: 'rgba(112, 128, 144, 0.6)',
+    cursorAI: 'rgba(190, 190, 190, 0.6)',
+
+    linkTextAccent: 'text-white',
+    linkHoverTextAccent: 'hover:text-gray-300',
+    socialLinkHoverPrimary: 'hover:text-gray-300',
+    socialLinkHoverSecondary: 'hover:text-gray-400',
+    socialLinkHoverTertiary: 'hover:text-gray-500',
+
+    aiButtonBg: 'bg-gray-800/30',
+    aiButtonBorder: 'border-gray-700/50',
+    aiButtonHoverBg: 'hover:bg-gray-700/40',
+  },
+  'techno-glitch': {
+    name: 'Techno Glitch 👾',
+    appBg: 'bg-gray-950',
+    navBg: 'bg-black bg-opacity-80',
+    navBorder: 'border-purple-500/50',
+    sectionBg: 'bg-gray-900',
+    sectionBgTranslucent: 'bg-gray-900/70',
+    homeSectionBg: 'bg-black',
+    contactSectionBg: 'bg-gray-950',
+
+    textDefault: 'text-gray-300',
+    textSubtle: 'text-gray-400',
+    textCardDescription: 'text-gray-500',
+    textSkillName: 'text-gray-200',
+    primaryAccentText: 'text-cyan-400',
+    secondaryAccentText: 'text-purple-400',
+    primaryAccentTextSubtle: 'text-cyan-300',
+
+    headingGradientFrom: 'from-cyan-400',
+    headingGradientTo: 'to-purple-400',
+    headingGradientFromSecondary: 'from-purple-400',
+    headingGradientToSecondary: 'to-cyan-400',
+
+    buttonPrimaryBgFrom: 'from-purple-600',
+    buttonPrimaryBgTo: 'to-cyan-600',
+    buttonPrimaryHoverBgFrom: 'hover:from-purple-700',
+    buttonPrimaryHoverBgTo: 'hover:to-cyan-700',
+    buttonPrimaryBeforeFrom: 'from-purple-400',
+    buttonPrimaryBeforeTo: 'to-cyan-400',
+    buttonPrimaryText: 'text-white',
+
+    buttonSecondaryBgFrom: 'from-cyan-600',
+    buttonSecondaryBgTo: 'to-purple-600',
+    buttonSecondaryHoverBgFrom: 'hover:from-cyan-700',
+    buttonSecondaryHoverBgTo: 'hover:to-purple-700',
+    buttonSecondaryBeforeFrom: 'from-cyan-400',
+    buttonSecondaryBeforeTo: 'to-purple-400',
+    buttonSecondaryText: 'text-white',
+
+    navButtonHoverBg: 'hover:bg-purple-800/60',
+    navActiveBg: 'bg-purple-900/40',
+    navActiveBorder: 'border-cyan-500/60',
+    navActiveShadow: 'shadow-cyan-500/30',
+
+    cardBg: 'bg-gray-800',
+    cardBorder: 'border-cyan-700/30',
+    cardShadow: 'shadow-lg shadow-cyan-900/30',
+    cardHoverShadow: 'hover:shadow-2xl hover:shadow-cyan-700/50',
+    cardHoverBorder: 'hover:border-cyan-500/50',
+
+    imageBorder: 'border-cyan-500',
+    imageShadow: 'shadow-cyan-500/40',
+
+    footerBg: 'bg-black',
+    footerText: 'text-gray-500',
+    footerBorder: 'border-gray-800/60',
+
+    skillIconColor: (index) => {
+      if (index % 3 === 0) return 'text-cyan-400 group-hover:text-purple-400';
+      if (index % 3 === 1) return 'text-purple-400 group-hover:text-cyan-400';
+      return 'text-gray-400 group-hover:text-cyan-400';
+    },
+
+    cursorDefault: 'rgba(52, 211, 245, 0.6)',
+    cursorNav: 'rgba(192, 132, 252, 0.6)',
+    cursorSkill: 'rgba(52, 211, 245, 0.6)',
+    cursorProject: 'rgba(192, 132, 252, 0.6)',
+    cursorContact: 'rgba(142, 142, 147, 0.6)',
+    cursorLink: 'rgba(56, 189, 248, 0.6)',
+    cursorAI: 'rgba(129, 140, 248, 0.6)',
+
+    linkTextAccent: 'text-cyan-400',
+    linkHoverTextAccent: 'hover:text-purple-300',
+    socialLinkHoverPrimary: 'hover:text-cyan-400',
+    socialLinkHoverSecondary: 'hover:text-purple-400',
+    socialLinkHoverTertiary: 'hover:text-gray-400',
+
+    aiButtonBg: 'bg-gray-800/30',
+    aiButtonBorder: 'border-cyan-700/50',
+    aiButtonHoverBg: 'hover:bg-gray-700/40',
+  },
 };

@@ -17,7 +17,7 @@ export const NotificationProvider = ({ children }) => {
       if (!currentUser?._id) return;
       const token = localStorage.getItem("idToken");
       try {
-        const res = await fetch("http://localhost:5001/api/v1/notifications", {
+        const res = await fetch("http://localhost:5000/api/v1/notifications", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -59,7 +59,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("idToken");
       await fetch(
-        `http://localhost:5001/api/v1/notifications/${id}/read`,
+        `http://localhost:5000/api/v1/notifications/${id}/read`,
         {
           method: "PATCH",
           headers: {
@@ -83,7 +83,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("idToken");
 
-      await fetch("http://localhost:5001/api/v1/notifications/read-all", {
+      await fetch("http://localhost:5000/api/v1/notifications/read-all", {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,

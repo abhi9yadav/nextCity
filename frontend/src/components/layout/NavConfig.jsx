@@ -1,4 +1,5 @@
-import { MdDashboard, MdPeople, MdAssignment, MdAnalytics, MdPerson } from "react-icons/md";
+import { MdDashboard, MdPeople,MdBuild, MdAssignment, MdAnalytics, MdPerson } from "react-icons/md";
+
 const navConfig = {
   citizen: [
     {
@@ -40,11 +41,11 @@ const navConfig = {
   ],
 
   super_admin: [
-    { name: "Dashboard", href: "/super-admin", icon: "📊" },
-    { name: "Cities", href: "/super-admin/cities", icon: "🏙️" },
-    { name: "City Admins", href: "/super-admin/city-admins", icon: "🧑‍💼" },
-    { name: "Departments", href: "/super-admin/departments", icon: "🏢" },
-    { name: "Profile", href: "/super-admin/profile", icon: "👤" },
+    { name: "Dashboard", href: "/super-admin", icon: <MdDashboard /> },
+    { name: "Cities", href: "/super-admin/cities", icon: <MdBuild /> },
+    { name: "City Admins", href: "/super-admin/city-admins", icon: <MdPeople /> },
+    { name: "Departments", href: "/super-admin/departments", icon: <MdBuild /> },
+    { name: "Profile", href: "/super-admin/profile", icon: <MdPerson /> },
   ],
 
   city_admin: [
@@ -62,11 +63,10 @@ const navConfig = {
   ],
 
   worker: [
-    {name: "Dashboard", href: "/worker", icon: "📊"},
-    { name: "Tasks", href: "/worker/tasks", icon: "🧰" },
-    
-    { name: "Profile", href: "/worker/profile", icon: "👤" },
-  ],
+  { name: "Dashboard", href: "/worker", icon: <MdDashboard />},
+  { name: "Tasks", href: "/worker/tasks", icon: <MdBuild /> },
+  { name: "Profile", href: "/worker/profile", icon: <MdPerson /> },
+],
 };
 
 export default navConfig;
