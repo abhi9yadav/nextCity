@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const app = require("./app"); 
 
 
+
 process.on("uncaughtException", (err) => {
   console.error("UNCAUGHT EXCEPTION 💥 Shutting down...");
   console.error(err.name, err.message, err.stack);
@@ -13,6 +14,8 @@ process.on("uncaughtException", (err) => {
 
 // Load environment variables
 dotenv.config({ path: "./.env" });
+
+const port = process.env.PORT || 3000;
 
 // MongoDB connection
 const DB = process.env.DATABASE_URL
@@ -37,9 +40,8 @@ const io = new Server(server, {
 
 global.io = io;
 
-// Store worker locations
+// Store worker locations (In-memory storage)
 let workerLocations = {};
-
 
 io.on("connection", (socket) => {
   console.log("🔌 User connected:", socket.id);
@@ -63,7 +65,6 @@ io.on("connection", (socket) => {
     };
 
     workerLocations[data.workerId] = payload;
-
     io.emit("location-update", payload);
   });
 
@@ -77,9 +78,7 @@ io.on("connection", (socket) => {
   });
 });
 
-
-// Start server after DB connection
-const port = process.env.PORT || 5000;
+// 2. Simplified start-up (Removed await redisClient.connect())
 server.listen(port, () => {
   console.log(`🚀 Server running on port ${port}...`);
 });
@@ -88,5 +87,7 @@ server.listen(port, () => {
 process.on("unhandledRejection", (err) => {
   console.log("UNHANDLED REJECTION! 💥 Shutting down...");
   console.log(err.name, err.message);
+  
+  
   server.close(() => process.exit(1));
 });

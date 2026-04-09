@@ -1,17 +1,8 @@
 import React from 'react';
-import { useTheme } from '../../hooks/useTheme'; // 1. Import useTheme
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../hooks/useTheme';
 import StatusBadge from './StatusBadge';
-
-const Icon = ({ path, className = 'w-5 h-5' }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    className={className}
-  >
-    <path fillRule="evenodd" d={path} clipRule="evenodd" />
-  </svg>
-);
+import { ArrowUpDown, ChevronRight } from 'lucide-react';
 
 const ComplaintsTable = ({
   complaints,
@@ -19,74 +10,117 @@ const ComplaintsTable = ({
   sortConfig,
   requestSort,
 }) => {
-  const { theme } = useTheme(); // 2. Get the theme object
+  const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  // 🔥 FIX 1: Pass the entire object 'c' into the route state
+  const handleRowClick = (c) => {
+    navigate(`complaints/${c._id}`, { state: { complaintData: c } });
+  };
 
   const SortableHeader = ({ label, field }) => {
-    const isSorted = sortConfig.key === field;
-    const iconPath =
-      sortConfig.direction === 'ascending'
-        ? 'M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
-        : 'M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z';
+    const isSorted = sortConfig?.key === field;
 
     return (
-      <th className="p-3 cursor-pointer" onClick={() => requestSort(field)}>
-        <div className="flex items-center">
+      <th
+        className="p-4 font-semibold text-sm cursor-pointer select-none hover:bg-gray-50/50 transition-colors"
+        onClick={() => requestSort(field)}
+      >
+        <div className="flex items-center gap-2">
           {label}
-          {isSorted && <Icon path={iconPath} className="w-4 h-4 ml-1" />}
+          <ArrowUpDown 
+            size={14} 
+            className={`${isSorted ? 'text-indigo-600' : 'text-gray-400'}`} 
+          />
         </div>
       </th>
     );
   };
 
   return (
-    // 3. Wrap table in a themed container
-    <div className={`rounded-lg overflow-hidden ${theme.cardBg} ${theme.cardBorder} ${theme.cardShadow}`}>
+    <div
+      className={`rounded-xl overflow-hidden border ${theme.cardBorder} ${theme.cardBg} ${theme.cardShadow}`}
+    >
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-left border-collapse">
+
+          {/* HEADER */}
           <thead>
-            {/* 4. Themed table header */}
-            <tr className={`border-b ${theme.sectionBgTranslucent} ${theme.footerBorder} ${theme.textSubtle}`}>
-              <th className="p-3">Complaint ID</th>
-              <th className="p-3">Title</th>
-              <SortableHeader label="Created At" field="createdAt" />
+            <tr className={`border-b border-gray-100 ${theme.sectionBgTranslucent} text-gray-600`}>
+              <th className="p-4 font-semibold text-sm">ID</th>
+              <th className="p-4 font-semibold text-sm">Title</th>
+              <SortableHeader label="Created" field="createdAt" />
               <SortableHeader label="Status" field="status" />
-              <th className="p-3">Actions</th>
+              <th className="p-4 font-semibold text-sm text-right">Action</th>
             </tr>
           </thead>
-          <tbody className={theme.textDefault}>
+
+          {/* BODY */}
+          <tbody className={`divide-y divide-gray-100 ${theme.textDefault}`}>
             {complaints.length > 0 ? (
               complaints.map((c) => (
-                // 5. Themed table rows
-                <tr key={c._id} className={`border-b ${theme.footerBorder} hover:${theme.navButtonHoverBg}`}>
-                  <td className="p-3 font-mono text-sm">{c._id}</td>
-                  <td className="p-3">{c.title}</td>
-                  <td className={`p-3 text-sm ${theme.textSubtle}`}>
-                    {new Date(c.createdAt).toLocaleDateString()}
+                <tr
+                  key={c._id}
+                  // 🔥 FIX 2: Send 'c', not 'c._id'
+                  onClick={() => handleRowClick(c)}
+                  className="group cursor-pointer hover:bg-gray-50 transition-colors duration-150 ease-in-out"
+                >
+                  {/* Truncated ID for cleaner look */}
+                  <td className="p-4 text-sm font-mono text-gray-500">
+                    #{c._id.slice(-6).toUpperCase()}
                   </td>
-                  <td className="p-3">
+
+                  <td className="p-4 font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    {c.title}
+                  </td>
+
+                  <td className="p-4 text-sm text-gray-600">
+                    {new Intl.DateTimeFormat('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    }).format(new Date(c.createdAt))}
+                  </td>
+
+                  <td className="p-4">
                     <StatusBadge status={c.status} />
                   </td>
-                  <td className="p-3">
-                    {/* 6. Themed action button */}
+
+                  <td className="p-4 flex items-center justify-end gap-3">
+                    {/* Quick Update Button */}
                     <button
-                      onClick={() => handleOpenModal(c)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents the row click from firing
+                        handleOpenModal(c);
+                      }}
                       disabled={c.status === 'RESOLVED'}
-                      className={`font-semibold py-1 px-3 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed ${theme.buttonPrimaryText} bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} ${theme.buttonPrimaryHoverBgFrom} ${theme.buttonPrimaryHoverBgTo}`}
+                      className={`px-3 py-1.5 rounded-lg transition-all text-xs font-semibold
+                        ${
+                          c.status === 'RESOLVED'
+                            ? 'opacity-50 cursor-not-allowed bg-gray-100 text-gray-400'
+                            : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 hover:scale-[1.02]'
+                        }`}
                     >
-                      Update
+                      {c.status === "RESOLVED" ? "Completed" : "Quick Update"}
                     </button>
+                    
+                    {/* Arrow to indicate navigation */}
+                    <ChevronRight size={18} className="text-gray-300 group-hover:text-indigo-500 transition-colors" />
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                {/* 7. Themed "no data" message */}
-                <td colSpan="5" className={`text-center p-10 ${theme.textSubtle}`}>
-                  No tasks match your current filters.
+                <td colSpan="5" className="text-center p-8 text-gray-500">
+                  <div className="flex flex-col items-center justify-center">
+                    <p className="font-medium text-gray-900 mb-1">No complaints found</p>
+                    <p className="text-sm">There are no records to display at this time.</p>
+                  </div>
                 </td>
               </tr>
             )}
           </tbody>
+
         </table>
       </div>
     </div>

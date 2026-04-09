@@ -1,8 +1,10 @@
 const Complaint = require("../models/complaintModel");
 const User = require("../models/userModel");
-const cloudinary = require("cloudinary").v2;
 const Zone = require("../models/zoneModel");
 const Department = require("../models/departmentModel");
+const cloudinary = require("../config/cloudinary");
+
+// Redis import hata diya gaya hai
 
 cloudinary.config();
 
@@ -10,14 +12,15 @@ const bufferToDataUri = (file) => {
   return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 };
 
+// --------------------------------------------------------
+// 1. CREATE COMPLAINT
+// --------------------------------------------------------
 exports.createComplaint = async (req, res) => {
   try {
     const user = await User.findOne({ firebaseUid: req.user.uid });
     if (!user) return res.status(404).json({ error: "User not found" });
     if (user.role !== 'citizen') {
-      return res
-        .status(403)
-        .json({ error: "Only Citizens can create complaints." });
+      return res.status(403).json({ error: "Only Citizens can create complaints." });
     }
 
     const uploadedFiles = req.files || [];
@@ -73,94 +76,145 @@ exports.createComplaint = async (req, res) => {
     
     if (zone) { 
       finalComplaintData.zone_id = zone._id;
-      const city_id = zone ? zone.city_id : null;
-      finalComplaintData.city_id = city_id;
+      finalComplaintData.city_id = zone.city_id;
     }
 
     const complaint = new Complaint(finalComplaintData);
     await complaint.save();
 
+    // Redis Invalidation logic yahan se hata diya gaya hai
+
     res.status(201).json(complaint);
   } catch (error) {
     console.error("File upload/Complaint creation failed:", error);
-    res
-      .status(400)
-      .json({ error: "Failed to create complaint: " + error.message });
+    res.status(400).json({ error: "Failed to create complaint: " + error.message });
   }
 };
 
+// --------------------------------------------------------
+// 2. GET ALL COMPLAINTS
+// --------------------------------------------------------
 exports.getAllComplaints = async (req, res) => {
   try {
+    // Cache check hata diya, ab direct MongoDB se data aayega
+    console.log("🐌 Serving All Complaints from MongoDB");
     const complaints = await Complaint.find();
+
     res.json(complaints);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// --------------------------------------------------------
+// 3. UPVOTE COMPLAINT
+// --------------------------------------------------------
 exports.upvoteComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id);
-    if (!complaint)
-      return res.status(404).json({ message: "Complaint not found" });
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
 
-    if (complaint.votes.includes(req.user.id)) {
-      return res
-        .status(400)
-        .json({ message: "You already voted this complaint" });
+    const userId = req.user._id || req.user.id; 
+
+    if (complaint.votes.includes(userId)) {
+      return res.status(400).json({ message: "You already voted" });
     }
-    console.log("al;foahif eii😵‍💫🚫🚫🚫❤️❤️❤️",req.user.id);
-    complaint.votes.push(req.user._id);
-    console.log("data is pushed");
+
+    complaint.votes.push(userId);
     await complaint.save();
-    console.log("now saved in database is pushed");
-    res.json({ message: "Vote added", votes: complaint.votes.length });
+
+    // Redis Invalidation logic yahan se hata diya gaya hai
+
+    res.json({ message: "Vote added", votes: complaint.votes }); 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// --------------------------------------------------------
+// 4. UPDATE COMPLAINT
+// --------------------------------------------------------
 exports.updateComplaint = async (req, res) => {
   try {
-    const complaint = await Complaint.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!complaint)
-      return res.status(404).json({ message: "Complaint not found" });
+    let imageUrl = null;
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload_stream(
+        { folder: "complaints" },
+        (error, result) => {
+          if (error) throw error;
+          imageUrl = result.secure_url;
+        }
+      );
+
+      const stream = require("stream");
+      const bufferStream = new stream.PassThrough();
+      bufferStream.end(req.file.buffer);
+      bufferStream.pipe(result);
+    }
+
+    const updateData = { ...req.body };
+    if (imageUrl) updateData.photo = imageUrl;
+
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    Object.assign(complaint, updateData);
+
+    if (req.body.status === 'RESOLVED') {
+      complaint.history.push({
+        by: req.user._id,
+        action: 'status_changed',
+        from: complaint.status,
+        to: 'RESOLVED',
+        note: req.body.remarks || '',
+        attachments: imageUrl ? [{ url: imageUrl, type: 'image' }] : [],
+      });
+    }
+
+    await complaint.save(); 
+
+    // Redis Invalidation logic yahan se hata diya gaya hai
+
     res.json(complaint);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
+// --------------------------------------------------------
+// 5. DELETE COMPLAINT
+// --------------------------------------------------------
 exports.deleteComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findByIdAndDelete(req.params.id);
-    if (!complaint)
-      return res.status(404).json({ message: "Complaint not found" });
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    // Redis Invalidation logic yahan se hata diya gaya hai
+
     res.json({ message: "Complaint deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-//mycomplaints
+// --------------------------------------------------------
+// 6. GET MY COMPLAINTS
+// --------------------------------------------------------
 exports.getMyComplaints = async (req, res) => {
   const { id } = req.params;
  
   try {
-    
-    
+    // Cache check hata diya gaya hai
+    console.log(`🐌 Serving User ${id} Complaints from MongoDB`);
     const myComplaints = await Complaint.find({ createdBy: id })
       .sort({ createdAt: -1 })
       .populate("createdBy", "name email role");
+
     res.status(200).json(myComplaints);
   } catch (error) {
     console.error("Error fetching user's complaints:", error);
     res.status(500).json({ error: "Failed to fetch user complaints" });
   }
 };
-
-

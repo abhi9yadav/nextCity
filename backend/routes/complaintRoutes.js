@@ -4,10 +4,11 @@ const complaintController = require("../controllers/complaintController");
 const multer = require("multer");
 const authenticateUser = require("../middlewares/authMiddleware");
 const {authenticate }=require('../middlewares/firebaseAuthRoleMiddleware')
+const upload = require("../middlewares/uploadMiddleware");
 
 // Configure Multer to store files in memory.
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 
 // Upvote a complaint
 console.log("we are lhere to go post resul");
@@ -17,15 +18,15 @@ router.post(
   complaintController.upvoteComplaint
 );
 // Get all complaints
-router.get("/allcomplaints", complaintController.getAllComplaints);
+router.get("/allcomplaints",authenticate, complaintController.getAllComplaints);
 
 // Getmy all complaints
-router.get("/:id/my", complaintController.getMyComplaints);
+router.get("/:id/my", authenticate, complaintController.getMyComplaints);
 
 // Create a new complaint
 router.post(
   "/",
-  authenticateUser.verifyToken,
+  authenticate,
   upload.array("attachments", 5),
   complaintController.createComplaint
 );
@@ -33,9 +34,17 @@ router.post(
 
 
 // Update complaint
-router.patch("/:id", complaintController.updateComplaint);
+console.log("we are here to go patch result🤣🤣🤣");
+
+
+router.patch(
+  "/:id",authenticate,
+  upload.single("photo"), // 🔥 important
+  complaintController.updateComplaint
+);
+//router.patch("/:id", complaintController.updateComplaint);
 
 // Delete complaint
-router.delete("/:id", complaintController.deleteComplaint);
+router.delete("/:id", authenticate, complaintController.deleteComplaint);
 
 module.exports = router;

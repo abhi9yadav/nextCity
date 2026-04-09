@@ -20,11 +20,11 @@ const StatsGrid = ({ stats }) => {
 
   // Map stats to their titles and theme border properties
   const statCards = [
-    { title: 'Pending Assignment', value: stats.pendingAssignment || 0, borderColor: theme.statusPendingBorder },
+    
     { title: 'In Progress', value: stats.inProgress || 0, borderColor: theme.statusInProgressBorder },
     { title: 'Reopened', value: stats.reopened || 0, borderColor: theme.statusReopenedBorder },
     { title: 'Resolved', value: stats.resolved || 0, borderColor: theme.statusResolvedBorder },
-    { title: 'Total Assigned', value: stats.totalAssigned || 0, borderColor: theme.statusTotalBorder },
+    { title: 'Total Assigned', value: stats.inProgress + stats.resolved || 0, borderColor: theme.statusTotalBorder },
   ];
 
   return (
