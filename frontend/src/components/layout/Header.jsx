@@ -43,8 +43,8 @@ const Header = () => {
       case "super_admin":
         navigate("/super-admin/profile");
         break;
-      case "cityadmin":
-        navigate("/cityadmin-dashboard/profile");
+      case "city_admin":
+        navigate("/city-admin/profile");
         break;
       case "dept_admin":
         navigate("/dept-admin/profile");
