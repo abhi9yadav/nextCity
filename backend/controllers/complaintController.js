@@ -4,8 +4,6 @@ const Zone = require("../models/zoneModel");
 const Department = require("../models/departmentModel");
 const cloudinary = require("../config/cloudinary");
 
-// Redis import hata diya gaya hai
-
 cloudinary.config();
 
 const bufferToDataUri = (file) => {
@@ -17,7 +15,7 @@ const bufferToDataUri = (file) => {
 // --------------------------------------------------------
 exports.createComplaint = async (req, res) => {
   try {
-    const user = await User.findOne({ firebaseUid: req.user.uid });
+    const user = await User.findOne({ firebaseUid: req.user.firebaseUid });
     if (!user) return res.status(404).json({ error: "User not found" });
     if (user.role !== 'citizen') {
       return res.status(403).json({ error: "Only Citizens can create complaints." });
@@ -82,8 +80,6 @@ exports.createComplaint = async (req, res) => {
     const complaint = new Complaint(finalComplaintData);
     await complaint.save();
 
-    // Redis Invalidation logic yahan se hata diya gaya hai
-
     res.status(201).json(complaint);
   } catch (error) {
     console.error("File upload/Complaint creation failed:", error);
@@ -96,9 +92,15 @@ exports.createComplaint = async (req, res) => {
 // --------------------------------------------------------
 exports.getAllComplaints = async (req, res) => {
   try {
-    // Cache check hata diya, ab direct MongoDB se data aayega
-    console.log("🐌 Serving All Complaints from MongoDB");
-    const complaints = await Complaint.find();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const skip = (page - 1) * limit;
+
+    const complaints = await Complaint.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json(complaints);
   } catch (error) {
@@ -109,25 +111,38 @@ exports.getAllComplaints = async (req, res) => {
 // --------------------------------------------------------
 // 3. UPVOTE COMPLAINT
 // --------------------------------------------------------
-exports.upvoteComplaint = async (req, res) => {
+exports.toggleVote = async (req, res) => {
   try {
-    const complaint = await Complaint.findById(req.params.id);
-    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+    const userId = req.user._id;
+    const complaintId = req.params.id;
 
-    const userId = req.user._id || req.user.id; 
+    const complaint = await Complaint.findById(complaintId);
 
-    if (complaint.votes.includes(userId)) {
-      return res.status(400).json({ message: "You already voted" });
+    if (!complaint) {
+      return res.status(404).json({ message: "Complaint not found" });
     }
 
-    complaint.votes.push(userId);
+    const alreadyVoted = complaint.votes.some(
+      (id) => id.toString() === userId.toString()
+    );
+
+    if (alreadyVoted) {
+      complaint.votes = complaint.votes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      complaint.votes.push(userId);
+    }
+
     await complaint.save();
 
-    // Redis Invalidation logic yahan se hata diya gaya hai
+    res.json({
+      votes: complaint.votes,
+      hasUpvoted: !alreadyVoted, // new state
+    });
 
-    res.json({ message: "Vote added", votes: complaint.votes }); 
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -206,8 +221,6 @@ exports.getMyComplaints = async (req, res) => {
   const { id } = req.params;
  
   try {
-    // Cache check hata diya gaya hai
-    console.log(`🐌 Serving User ${id} Complaints from MongoDB`);
     const myComplaints = await Complaint.find({ createdBy: id })
       .sort({ createdAt: -1 })
       .populate("createdBy", "name email role");
