@@ -9,6 +9,8 @@ const CitizenComplaintCard = ({ complaint }) => {
   const { theme } = useTheme();
   const { currentUser } = useAuth();
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const {
     title,
     description,
@@ -16,7 +18,7 @@ const CitizenComplaintCard = ({ complaint }) => {
     createdAt,
     attachments = [],
     location,
-    votes = [], // Backend array of user IDs
+    votes = [],
     _id,
   } = complaint;
 
@@ -28,11 +30,10 @@ const CitizenComplaintCard = ({ complaint }) => {
   const [hasUpvoted, setHasUpvoted] = useState(false);
 
   // User ID normalize (Firebase uid or MongoDB _id)
-  const userId = currentUser?.uid || currentUser?._id;
+  const userId = currentUser?._id;
 
-  // 🔥 FIX: Refresh hone par ya complaint change hone par upvote status check karo
   useEffect(() => {
-    if (userId && votes && Array.isArray(votes)) {
+    if (userId && Array.isArray(votes)) {
       // Check if user ID exists in the votes array
       const alreadyVoted = votes.some(id => String(id) === String(userId));
       setHasUpvoted(alreadyVoted);
@@ -53,28 +54,28 @@ const CitizenComplaintCard = ({ complaint }) => {
   // --- Upvote Logic ---
   const handleUpvote = async () => {
     // Agar user logged in nahi hai, ya voting process mein hai, ya pehle hi vote kar chuka hai
-    if (!currentUser || isVoting || hasUpvoted) return;
+    if (!currentUser || isVoting) return;
 
     setIsVoting(true);
-
-    // 🚀 Optimistic Update (UI pe turant dikhao)
-    const prevCount = upvotesCount;
-    setHasUpvoted(true);
-    setUpvotesCount(prevCount + 1);
 
     try {
       const idToken = currentUser.accessToken;
       const res = await axios.post(
-        `http://localhost:5000/api/v1/complaints/${_id}/vote`, 
+        `${API_BASE_URL}/complaints/${_id}/vote`, 
         {}, 
         { headers: { Authorization: `Bearer ${idToken}` } }
       );
       
-      // Backend response se sync karo
+      //  Update from backend
       if (res.data?.votes) {
-        // Agar backend pura array bhej raha hai:
-        const updatedVotes = Array.isArray(res.data.votes) ? res.data.votes : [];
-        setUpvotesCount(updatedVotes.length || res.data.votes); // count handling
+        setUpvotesCount(res.data.votes.length);
+      }
+
+      if (typeof res.data.hasUpvoted !== "undefined") {
+        setHasUpvoted(res.data.hasUpvoted);
+      } else {
+        setHasUpvoted(prev => !prev);
+        setUpvotesCount(prev => prev + (hasUpvoted ? -1 : 1));
       }
     } catch (err) {
       console.error('Error upvoting:', err);

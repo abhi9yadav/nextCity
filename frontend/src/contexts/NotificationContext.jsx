@@ -8,16 +8,17 @@ const NotificationContext = createContext();
 export const useNotification = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, token } = useAuth();
   const [notifications, setNotifications] = useState([]);
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   //  1. Fetch old notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!currentUser?._id) return;
-      const token = localStorage.getItem("idToken");
       try {
-        const res = await fetch("http://localhost:5000/api/v1/notifications", {
+        const res = await fetch(`${API_BASE_URL}/notifications`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -57,9 +58,8 @@ export const NotificationProvider = ({ children }) => {
   // 3. Mark as read
   const markAsRead = async (id) => {
     try {
-      const token = localStorage.getItem("idToken");
       await fetch(
-        `http://localhost:5000/api/v1/notifications/${id}/read`,
+        `${API_BASE_URL}1/notifications/${id}/read`,
         {
           method: "PATCH",
           headers: {
@@ -83,7 +83,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("idToken");
 
-      await fetch("http://localhost:5000/api/v1/notifications/read-all", {
+      await fetch(`${API_BASE_URL}/notifications/read-all`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,

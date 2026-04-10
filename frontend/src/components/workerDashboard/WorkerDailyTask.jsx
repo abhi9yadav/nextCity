@@ -16,18 +16,18 @@ export default function WorkerDailyTasks() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [workerPosition, setWorkerPosition] = useState(null);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [isMapVisible, setIsMapVisible] = useState(false); // Mobile ke liye
+  const [isMapVisible, setIsMapVisible] = useState(false);
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Fetch tasks for the worker
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/worker/complaints", {
+        const res = await axios.get(`${API_BASE_URL}/worker/complaints`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        console.log("Fetched tasks:", res.data);
-        // Sirf wahi tasks dikhao jo open ya in-progress hain
         const activeTasks = res.data.filter(t => t.status !== "RESOLVED");
         setTasks(activeTasks);
       } catch (error) {
@@ -37,13 +37,11 @@ export default function WorkerDailyTasks() {
     fetchTasks();
   }, [token]);
 
-  console.log("Fetched tasks:", tasks);
-
   // Update Status API function
   const updateStatus = async (newStatus) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/v1/worker/complaints/${selectedTask._id}/status`,
+        `${API_BASE_URL}/worker/complaints/${selectedTask._id}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -57,10 +55,9 @@ export default function WorkerDailyTasks() {
     }
   };
 
-  // Jab list me task select ho
   const handleSelectTask = (task) => {
     setSelectedTask(task);
-    setIsMapVisible(true); // Mobile pe map kholne ke liye
+    setIsMapVisible(true);
   };
 
   return (

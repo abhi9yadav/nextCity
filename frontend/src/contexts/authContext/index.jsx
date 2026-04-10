@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
+import { setAuthToken } from "../../api/base";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -17,6 +18,7 @@ export function AuthProvider({ children }) {
   const fetchBackendUser = async (firebaseUser) => {
     const idToken = await firebaseUser.getIdToken();
     setToken(idToken);
+    setAuthToken(idToken);
     let BASE_URL = import.meta.env.VITE_API_BASE_URL;
     if (!BASE_URL) {
       console.error("VITE_API_BASE_URL is not defined in the environment variables.");
@@ -45,7 +47,7 @@ export function AuthProvider({ children }) {
           setCurrentUser(null);
           setToken(null);
           setRole(null);
-          localStorage.clear();
+          setAuthToken(null);
         }
       } catch (err) {
         console.error("Auth error:", err);

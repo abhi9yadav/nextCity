@@ -13,6 +13,7 @@ router.post("/login", authenticate, login);
 
 router.post("/forgot-password", passwordController.forgotPassword);
 router.post('/set-password', passwordController.setPasswordWithToken);
+router.put("/change-password", authenticate, passwordController.changePassword);
 
 router.get('/validate-token', tokenController.validateToken);
 

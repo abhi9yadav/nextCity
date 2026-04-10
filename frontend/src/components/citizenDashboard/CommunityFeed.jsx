@@ -5,34 +5,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import FeedComplaintCard from "./FeedComplaintCard";
 import CardSkeleton from "../skeletons/SkeletonCard";
 import PageSkeleton from "../skeletons/PageSkeleton";
-import { useTheme } from "../../hooks/useTheme"; // 1. Import useTheme
+import { useTheme } from "../../hooks/useTheme";
+import { useAuth } from "../../contexts/authContext/index";
+import { useRef } from "react";
 
 const PAGE_SIZE = 5;
 
 const CommunityFeedPage = () => {
-  const { theme } = useTheme(); // 2. Get the theme object
+  const { theme } = useTheme();
+  const { token } = useAuth();
+
   const [complaints, setComplaints] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [direction, setDirection] = useState(0);
   const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const isFetchingRef = useRef(false);
+  const pageRef = useRef(1);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   const isMobile = window.innerWidth < 768;
 
-  // ... (rest of your logic remains the same)
   const fetchComplaints = async (pageNum = 1) => {
     try {
-      const idToken = localStorage.getItem("idToken");
       const res = await axios.get(
         `${BASE_URL}/complaints/allcomplaints?page=${pageNum}&limit=${PAGE_SIZE}`,
         {
           headers: {
-            Authorization: `Bearer ${idToken}`,
+            Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // optional if using cookies/session also
+          withCredentials: true,
         }
       );
       return res.data || [];
@@ -45,30 +50,47 @@ const CommunityFeedPage = () => {
   useEffect(() => {
     const loadInitial = async () => {
       setLoading(true);
-      const initial = await fetchComplaints(1);
-      setComplaints(initial);
+      const data = await fetchComplaints(1);
+      setComplaints(data);
+      setPage(1);
+
+      if (data.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
+
       setLoading(false);
     };
     loadInitial();
   }, []);
 
   const loadMoreComplaints = async () => {
-    setLoadingMore(true);
-    const nextPage = page + 1;
-    const more = await fetchComplaints(nextPage);
-    if (more.length > 0) {
-      setComplaints((prev) => [...prev, ...more]);
-      setPage(nextPage);
-    }
-    setLoadingMore(false);
-  };
+    if (isFetchingRef.current || !hasMore) return;
 
-  const handleUpvote = async (id) => {
-    setComplaints((prev) =>
-      prev.map((c) =>
-        c._id === id ? { ...c, votes: [...c.votes, "localUser"] } : c
-      )
-    );
+    isFetchingRef.current = true;
+    setLoadingMore(true);
+
+    const nextPage = pageRef.current + 1;
+    const more = await fetchComplaints(nextPage);
+
+    if (more.length > 0) {
+      setComplaints((prev) => {
+        const ids = new Set(prev.map((c) => c._id));
+        const filtered = more.filter((c) => !ids.has(c._id));
+        return [...prev, ...filtered];
+      });
+
+       pageRef.current = nextPage;
+        setPage(nextPage);
+
+      if (more.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
+    }else {
+      setHasMore(false);
+    }
+
+    setLoadingMore(false);
+    isFetchingRef.current = false;
   };
 
   const handlers = useSwipeable({
@@ -88,23 +110,30 @@ const CommunityFeedPage = () => {
     trackMouse: true,
   });
 
-  useEffect(() => {
-    if (!isMobile) {
-      const handleScroll = () => {
-        if (
-          window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 100
-        ) {
-          loadMoreComplaints();
-        }
-      };
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [page, complaints, isMobile]);
+  //  Scroll (Desktop)
+    useEffect(() => {
+      if (!isMobile) {
+        const handleScroll = () => {
+          const scrollPosition = window.innerHeight + window.scrollY;
+          const threshold = document.body.offsetHeight - 150;
+
+          if (
+            scrollPosition >= threshold &&
+            !isFetchingRef.current &&
+            hasMore
+          ) {
+            loadMoreComplaints();
+          }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+      }
+    }, [isMobile, hasMore]);
 
 
   if (loading) return <PageSkeleton count={4} />;
+
   // 3. Apply theme to "no complaints" message
   if (!complaints.length)
     return <div className={`text-center p-10 ${theme.textSubtle}`}>No complaints yet.</div>;
@@ -153,7 +182,6 @@ const CommunityFeedPage = () => {
           <FeedComplaintCard
             key={complaint._id}
             complaint={complaint}
-            onUpvote={() => handleUpvote(complaint._id)}
           />
         ))}
         {loadingMore && (

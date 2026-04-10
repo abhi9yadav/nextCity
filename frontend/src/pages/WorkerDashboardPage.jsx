@@ -25,13 +25,15 @@ const WorkerDashboardPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   // We keep selectedTask for the "Quick Update" inline modal
   const [selectedTask, setSelectedTask] = useState(null);
 
   const api = useMemo(
     () =>
       axios.create({
-        baseURL: 'http://localhost:5000/api/v1/worker',
+        baseURL: `${API_BASE_URL}/worker`,
         headers: { Authorization: token ? `Bearer ${token}` : '' },
       }),
     [token]

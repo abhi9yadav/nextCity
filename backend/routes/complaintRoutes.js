@@ -11,11 +11,10 @@ const upload = require("../middlewares/uploadMiddleware");
 // const upload = multer({ storage: storage });
 
 // Upvote a complaint
-console.log("we are lhere to go post resul");
 router.post(
   "/:id/vote",
   authenticate,
-  complaintController.upvoteComplaint
+  complaintController.toggleVote
 );
 // Get all complaints
 router.get("/allcomplaints",authenticate, complaintController.getAllComplaints);
@@ -31,17 +30,15 @@ router.post(
   complaintController.createComplaint
 );
 
-
-
 // Update complaint
 console.log("we are here to go patch result🤣🤣🤣");
 
-
 router.patch(
   "/:id",authenticate,
-  upload.single("photo"), // 🔥 important
+  upload.single("photo"),
   complaintController.updateComplaint
 );
+
 //router.patch("/:id", complaintController.updateComplaint);
 
 // Delete complaint

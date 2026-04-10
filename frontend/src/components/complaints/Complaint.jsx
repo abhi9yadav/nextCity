@@ -29,14 +29,13 @@ const CreateComplaint = () => {
     location: { lat: 0, lng: 0, address: "" },
   });
 
-  // Derived State for Validation (Industry Practice)
   const isFormInvalid = useMemo(() => {
     return (
       !formData.title ||
       !formData.description ||
       !formData.concernedDepartment ||
       !formData.location.address ||
-      fileState.length === 0 // 🚀 Photo upload is mandatory
+      fileState.length === 0
     );
   }, [formData, fileState]);
 
@@ -87,7 +86,7 @@ const CreateComplaint = () => {
     e.preventDefault();
     if (isFormInvalid || isSubmitting) return;
 
-    setIsSubmitting(true); // 🚀 Lock the button immediately
+    setIsSubmitting(true);
 
     try {
       const auth = getAuth();
@@ -138,10 +137,14 @@ const CreateComplaint = () => {
             <label className={`block mb-2 font-bold text-sm ${theme.textSubtle}`}>Department</label>
             <select name="concernedDepartment" value={formData.concernedDepartment} onChange={handleChange} className={inputClasses} required>
               <option value="" className="bg-slate-900">-- Select --</option>
-              <option value="Electricity">Department of Power Supply</option>
-              <option value="Water">Department of Water Management</option>
-              <option value="Roads">Department of Roads and Infrastructure</option>
-              <option value="Sanitation">Department of Sanitation</option>
+              <option value="Department of Power Supply">Department of Power Supply</option>
+              <option value="Department of Water Management">Department of Water Management</option>
+              <option value="Department of Roads and Infrastructure">Department of Roads and Infrastructure</option>
+              <option value="Department of Sanitation and Waste Management">Department of Sanitation and Waste Management</option>
+              <option value="Department of Drainage and Sewage">Department of Drainage and Sewage</option>
+              <option value="Department of Parks and Green Spaces">Department of Parks and Green Spaces</option>
+              <option value="Department of Public Health">Department of Public Health</option>
+              <option value="Department of General Services">Department of General Services</option>
             </select>
           </div>
 
