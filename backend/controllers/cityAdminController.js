@@ -8,6 +8,7 @@ const Complaint = require("../models/complaintModel");
 const Zone = require("../models/zoneModel");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
+const { sendInvitation } = require("./invitationController");
 
 const uploadToCloudinary = async (fileBuffer, folder) => {
   return await new Promise((resolve, reject) => {
@@ -274,10 +275,9 @@ exports.createDepartmentAdmin = async (req, res) => {
 
     const newDeptAdmin = await DeptAdmin.create(deptAdminData);
 
-    res.status(201).json({
-      message: "DepartmentAdmin created successfully.",
-      deptAdmin: newDeptAdmin,
-    });
+    //email invitation
+    req.params.firebaseUid = firebaseUid;
+    return await sendInvitation(req, res, false);
   } catch (error) {
     console.error("Error creating DepartmentAdmin:", error);
     res

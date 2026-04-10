@@ -14,13 +14,15 @@ export default function WorkerDashboard() {
   const [workerPosition, setWorkerPosition] = useState(null);
   const [showCompletion, setShowCompletion] = useState(false);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
 
     const fetchTasks = async () => {
       try {
 
         const res = await axios.get(
-          "http://localhost:5000/api/v1/worker/complaints",
+          `${API_BASE_URL}/worker/complaints`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -44,7 +46,7 @@ export default function WorkerDashboard() {
     try {
 
       await axios.patch(
-        `http://localhost:5000/api/v1/complaints/${selectedTask._id}`,
+        `${API_BASE_URL}/complaints/${selectedTask._id}`,
         { status },
         {
           headers: { Authorization: `Bearer ${token}` },

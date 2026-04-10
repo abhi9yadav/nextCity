@@ -282,7 +282,6 @@ exports.createWorker = catchAsync(async (req, res, next) => {
 
   // 2️ Create temporary Firebase account
   let tempPassword = Math.random().toString(36).slice(-8);
-  tempPassword = "user@123"; // Hardcoded for testing
   let firebaseUser;
 
   try {

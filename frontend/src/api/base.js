@@ -8,6 +8,14 @@ if (!BASE_URL) {
   BASE_URL = "http://localhost:5001/api/v1/";
 }
 
+// global token variable
+let authToken = null;
+
+//setter function
+export const setAuthToken = (token) => {
+  authToken = token;
+};
+
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -15,9 +23,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("idToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
     return config;
   },
