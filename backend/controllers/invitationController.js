@@ -45,8 +45,7 @@ exports.sendInvitation = async (req, res, isResend = false) => {
       return res.status(200).json({
         message: isResend
           ? `Invitation resent successfully to ${user.email}.`
-          : `User (${user.role}) created successfully. Invitation email sent.`,
-        inviteLink, // for testing, remove in production
+          : `${user.role} created successfully. Invitation email sent.`,
       });
 
     } catch (emailError) {

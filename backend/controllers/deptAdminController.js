@@ -10,7 +10,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Worker = mongoose.model("worker");
 const Notification = require("../models/notificationModel");
-const Email = require('../utils/email');
+const Email = require("../utils/email");
 
 //For Dashboard Data
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
@@ -343,12 +343,6 @@ exports.createWorker = catchAsync(async (req, res, next) => {
     // 4️ Send invitation email
     req.params.firebaseUid = firebaseUser.uid;
     await sendInvitation(req, res, false);
-
-    return res.status(201).json({
-      status: "success",
-      message: `Worker created successfully. Invitation email will be sent to ${email} later.`,
-      worker: newWorker,
-    });
   } catch (err) {
     // Rollback Firebase user if MongoDB save fails
     if (firebaseUser?.uid) {
