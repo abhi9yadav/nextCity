@@ -16,7 +16,7 @@ const WorkerDashboardPage = () => {
 
   const [complaints, setComplaints] = useState([]);
   const [stats, setStats] = useState({});
-  const [timeframe, setTimeframe] = useState('Monthly');
+  const [timeframe, setTimeframe] = useState('Yearly');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -140,7 +140,7 @@ const WorkerDashboardPage = () => {
           setSearchTerm={setSearchTerm}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          complaints={paginated}
+          complaints={complaints}
         />
 
         <ComplaintsTable
@@ -148,8 +148,6 @@ const WorkerDashboardPage = () => {
           handleOpenModal={handleOpenModal}
           sortConfig={sortConfig}
           requestSort={requestSort}
-          // Note: handleOpenDrawer is gone! 
-          // Navigation happens inside ComplaintsTable now.
         />
 
         <Pagination

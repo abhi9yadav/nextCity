@@ -1,11 +1,9 @@
-// src/contexts/ThemeProvider.js
 import React, { useState, useMemo } from 'react';
 import { ThemeContext } from './themeContext';
 import { themes } from '../../constants/Themes';
 
 export const ThemeProvider = ({ children }) => {
-  // State to hold the current theme key
-  const [themeKey, setThemeKey] = useState('deep-space');
+  const [themeKey, setThemeKey] = useState('bright-mode');
 
   // Function to change the theme
   const toggleTheme = (key) => {

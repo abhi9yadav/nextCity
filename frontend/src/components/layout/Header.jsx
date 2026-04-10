@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { doSignOut } from "../../firebase/auth";
-import { Bell, LogOut, Palette } from "lucide-react"; // Added Palette icon
+import { Bell, LogOut, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import nextcityLogo from "../../assets/logo.png";
 import { useNotification } from "../../contexts/NotificationContext";
 import { useLocation } from "react-router-dom";
 
@@ -87,7 +86,7 @@ const Header = () => {
         navigate("/dept-admin/profile");
         break;
       case "worker":
-        navigate("/worker-dashboard/profile");
+        navigate("/worker/profile");
         break;
       default:
         navigate("/citizen/profile");
@@ -114,7 +113,6 @@ const Header = () => {
             <div className="flex items-center gap-3">
               <a href="/" className="flex items-center gap-2">
                 <svg
-                  // Use a theme color for the logo icon
                   className={`h-8 w-8 ${theme.primaryAccentText}`}
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -203,9 +201,6 @@ const Header = () => {
                             key={n._id}
                             onClick={() => {
                               if (!n.isRead) markAsRead(n._id);
-
-                              // Optional: navigate to complaint
-                              // navigate(`/citizen/complaint/${n.complaintId}`);
                             }}
                             className={`p-3 border-b cursor-pointer hover:bg-gray-50 transition ${
                               !n.isRead ? "bg-blue-50" : "bg-white"
