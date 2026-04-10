@@ -23,7 +23,7 @@ const colorMap = {
   },
 };
 
-export const KPICard = ({ title, value, subtitle, icon, color, rating }) => {
+export const KPICard = ({ title, value, subtitle, icon, color, noOfReview, rating }) => {
   const isRatingCard = rating !== undefined;
   const colors = colorMap[color] || colorMap.blue;
 
@@ -59,7 +59,7 @@ export const KPICard = ({ title, value, subtitle, icon, color, rating }) => {
       <div className="mt-5 pt-4 border-t-2 border-white border-opacity-30">
         {isRatingCard ? (
           <>
-            <div className="text-sm font-medium">Based on 120 reviews</div>
+            <div className="text-sm font-medium">Based on {noOfReview} reviews</div>
             <div className="mt-1 flex items-center text-yellow-300 text-3xl drop-shadow-md">
               {"★".repeat(Math.floor(value))}
               {"☆".repeat(5 - Math.floor(value))}
@@ -98,6 +98,7 @@ export const kpiData = [
   {
     title: "Average Worker Rating",
     value: 4.7,
+    noOfReview : 3,
     subtitle: "Next review due next wk",
     icon: "fas fa-star",
     color: "yellow",

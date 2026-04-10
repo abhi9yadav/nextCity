@@ -6,7 +6,7 @@ const useDeptAdminData = () => {
     totalComplaints: 0, 
     complaintsInProgress: 0, 
     totalWorkers: 0, 
-    averageWorkerRating: 4.0 
+    averageWorkerRating: 0.0 
   });
   const [complaints, setComplaints] = useState([]);
   const [topWorkers, setTopWorkers] = useState([]);

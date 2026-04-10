@@ -48,7 +48,7 @@ const DashboardPage = () => {
     { ...kpiStaticData[0], value: stats.totalComplaints },
     { ...kpiStaticData[1], value: stats.complaintsInProgress },
     { ...kpiStaticData[2], value: stats.totalWorkers },
-    { ...kpiStaticData[3], value: stats.averageWorkerRating, rating: true },
+    { ...kpiStaticData[3], value: stats.averageWorkerRating, noOfReview:stats.totalWorkers, rating: true },
   ];
 
   if (loading) {

@@ -9,11 +9,12 @@ import ChangePasswordModal from "./../ChangePasswordModal";
 const Profile = () => {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { currentUser, token } = useAuth();
-  const { theme } = useTheme(); // 2. Get the theme object
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [newProfileImageFile, setNewProfileImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -61,7 +62,9 @@ const Profile = () => {
     e.preventDefault();
     if (!currentUser) return;
 
-    toast.loading("Updating profile...");
+    setLoading(true);
+
+    const toastId = toast.loading("Updating profile...");
 
     try {
       const payload = new FormData();
@@ -80,11 +83,15 @@ const Profile = () => {
           },
         }
       );
+
+      toast.success("Profile updated successfully!", { id: toastId });
+
+      setIsEditing(!isEditing);
     } catch (err) {
       console.error("Error updating profile:", err.response?.data || err);
-      toast.error("Failed to update profile. Please try again.");
-    } finally {
-      toast.dismiss();
+      toast.error("Failed to update profile. Please try again.", { id: toastId });
+    }finally {
+      setLoading(false);
     }
   }
 
@@ -151,9 +158,13 @@ const Profile = () => {
                     type={field === "email" ? "email" : "text"}
                     name={field}
                     value={formData[field] || ""}
+                    disabled={field === "email"}
                     onChange={handleChange}
                     // 9. Themed input fields
-                    className={`w-full p-2 border rounded-md focus:ring-2 bg-transparent ${theme.cardBorder} ${theme.textDefault} focus:${theme.navActiveBorder}`}
+                    className={`w-full p-2 border rounded-md bg-transparent 
+                    ${theme.cardBorder} ${theme.textDefault} 
+                    ${field === "email" ? "cursor-not-allowed opacity-60" : ""} 
+                    focus:${theme.navActiveBorder}`}
                   />
                 ) : (
                   <p className={theme.textDefault}>{formData[field]}</p>
@@ -174,16 +185,23 @@ const Profile = () => {
             {isEditing ? (
               <>
                 {/* 10. Themed secondary button */}
-                <button type="button" onClick={handleEditToggle} className={`px-4 py-2 rounded-lg font-semibold ${theme.buttonSecondaryText} bg-gradient-to-r ${theme.buttonSecondaryBgFrom} ${theme.buttonSecondaryBgTo} ${theme.buttonSecondaryHoverBgFrom} ${theme.buttonSecondaryHoverBgTo}`}>
+                <button type="button" onClick={handleEditToggle} className={`px-4 py-2 rounded-lg font-semibold ${theme.buttonSecondaryText} bg-gradient-to-r ${theme.buttonSecondaryBgFrom} ${theme.buttonSecondaryBgTo} ${theme.buttonSecondaryHoverBgFrom} ${theme.buttonSecondaryHoverBgTo} cursor-pointer`}>
                   Cancel
                 </button>
                 {/* 11. Themed primary button */}
-                <button type="submit" className={`px-4 py-2 rounded-lg font-semibold ${theme.buttonPrimaryText} bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} ${theme.buttonPrimaryHoverBgFrom} ${theme.buttonPrimaryHoverBgTo}`}>
-                  Save
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`px-4 py-2 rounded-lg font-semibold 
+                    ${theme.buttonPrimaryText} 
+                    bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} 
+                    ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                >
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </>
             ) : (
-              <button type="button" onClick={handleEditToggle} className={`px-4 py-2 rounded-lg font-semibold ${theme.buttonPrimaryText} bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} ${theme.buttonPrimaryHoverBgFrom} ${theme.buttonPrimaryHoverBgTo}`}>
+              <button type="button" onClick={handleEditToggle} className={`px-4 py-2 rounded-lg font-semibold ${theme.buttonPrimaryText} bg-gradient-to-r ${theme.buttonPrimaryBgFrom} ${theme.buttonPrimaryBgTo} ${theme.buttonPrimaryHoverBgFrom} ${theme.buttonPrimaryHoverBgTo} cursor-pointer`}>
                 Edit Profile
               </button>
             )}
