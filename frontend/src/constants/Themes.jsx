@@ -1,7 +1,92 @@
-// src/constants/themes.js
 export const themes = {
+  'bright-mode': {
+    name: 'Bright Mode',
+    appBg: 'bg-gradient-to-br from-gray-200 via-white to-blue-100',
+    navBg: 'bg-white bg-opacity-90',
+    navBorder: 'border-blue-200/50',
+    sectionBg: 'bg-white',
+    sectionBgTranslucent: 'bg-blue-50/70',
+    homeSectionBg: 'bg-gradient-to-br from-white via-blue-50 to-indigo-50',
+    contactSectionBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
+
+    chartPrimaryFill: '#2563eb',
+    chartAxisStroke: '#374151',
+    tooltipBg: '#ffffff',
+    tooltipText: '#111827',
+
+    textDefault: 'text-gray-900',
+    textSubtle: 'text-gray-700',
+    textCardDescription: 'text-gray-600',
+    textSkillName: 'text-gray-800',
+    primaryAccentText: 'text-blue-600',
+    secondaryAccentText: 'text-indigo-600',
+    primaryAccentTextSubtle: 'text-blue-500',
+
+    headingGradientFrom: 'from-blue-600',
+    headingGradientTo: 'to-indigo-600',
+    headingGradientFromSecondary: 'from-indigo-600',
+    headingGradientToSecondary: 'to-blue-600',
+
+    buttonPrimaryBgFrom: 'from-blue-500',
+    buttonPrimaryBgTo: 'to-indigo-600',
+    buttonPrimaryHoverBgFrom: 'hover:from-blue-600',
+    buttonPrimaryHoverBgTo: 'hover:to-indigo-700',
+    buttonPrimaryBeforeFrom: 'from-blue-400',
+    buttonPrimaryBeforeTo: 'to-indigo-500',
+    buttonPrimaryText: 'text-white-500',
+
+    buttonSecondaryBgFrom: 'from-indigo-500',
+    buttonSecondaryBgTo: 'to-blue-600',
+    buttonSecondaryHoverBgFrom: 'hover:from-indigo-600',
+    buttonSecondaryHoverBgTo: 'hover:to-blue-700',
+    buttonSecondaryBeforeFrom: 'from-indigo-400',
+    buttonSecondaryBeforeTo: 'to-blue-500',
+    buttonSecondaryText: 'text-white',
+
+    navButtonHoverBg: 'hover:bg-blue-50/60',
+    navActiveBg: 'bg-blue-100/40',
+    navActiveBorder: 'border-blue-300/60',
+    navActiveShadow: 'shadow-blue-300/20',
+
+    cardBg: 'bg-white',
+    cardBorder: 'border-blue-200/30',
+    cardShadow: 'shadow-md shadow-blue-100/20',
+    cardHoverShadow: 'hover:shadow-lg hover:shadow-blue-300/40',
+    cardHoverBorder: 'hover:border-blue-300/50',
+
+    imageBorder: 'border-blue-500',
+    imageShadow: 'shadow-blue-500/30',
+
+    footerBg: 'bg-gray-100',
+    footerText: 'text-gray-700',
+    footerBorder: 'border-gray-200/60',
+
+    skillIconColor: (index) => {
+      if (index % 3 === 0) return 'text-blue-600 group-hover:text-indigo-600';
+      if (index % 3 === 1) return 'text-indigo-600 group-hover:text-blue-600';
+      return 'text-green-600 group-hover:text-indigo-600';
+    },
+
+    cursorDefault: 'rgba(59, 130, 246, 0.5)',
+    cursorNav: 'rgba(99, 102, 241, 0.5)',
+    cursorSkill: 'rgba(34, 197, 94, 0.5)',
+    cursorProject: 'rgba(245, 158, 11, 0.5)',
+    cursorContact: 'rgba(59, 130, 246, 0.5)',
+    cursorLink: 'rgba(99, 102, 241, 0.5)',
+    cursorAI: 'rgba(245, 158, 11, 0.5)',
+
+    linkTextAccent: 'text-indigo-600',
+    linkHoverTextAccent: 'hover:text-indigo-700',
+    socialLinkHoverPrimary: 'hover:text-blue-600',
+    socialLinkHoverSecondary: 'hover:text-indigo-600',
+    socialLinkHoverTertiary: 'hover:text-green-600',
+
+    aiButtonBg: 'bg-blue-100/30',
+    aiButtonBorder: 'border-blue-300/50',
+    aiButtonHoverBg: 'hover:bg-blue-200/40',
+  },
   'deep-space': {
-    name: 'Deep Space 🚀',
+    name: 'Deep Space',
     appBg: 'bg-gradient-to-br from-black via-indigo-950 to-purple-950',
     navBg: 'bg-gray-950 bg-opacity-80',
     navBorder: 'border-indigo-500/50',
@@ -253,92 +338,6 @@ export const themes = {
     aiButtonBorder: 'border-green-700/50',
     aiButtonHoverBg: 'hover:bg-green-800/40',
   },
-  'bright-mode': {
-    name: 'Bright Mode',
-    appBg: 'bg-gradient-to-br from-gray-50 via-white to-blue-50',
-    navBg: 'bg-white bg-opacity-90',
-    navBorder: 'border-blue-200/50',
-    sectionBg: 'bg-white',
-    sectionBgTranslucent: 'bg-blue-50/70',
-    homeSectionBg: 'bg-gradient-to-br from-white via-blue-50 to-indigo-50',
-    contactSectionBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
-
-    chartPrimaryFill: '#2563eb',
-    chartAxisStroke: '#374151',
-    tooltipBg: '#ffffff',
-    tooltipText: '#111827',
-
-    textDefault: 'text-gray-900',
-    textSubtle: 'text-gray-700',
-    textCardDescription: 'text-gray-600',
-    textSkillName: 'text-gray-800',
-    primaryAccentText: 'text-blue-600',
-    secondaryAccentText: 'text-indigo-600',
-    primaryAccentTextSubtle: 'text-blue-500',
-
-    headingGradientFrom: 'from-blue-600',
-    headingGradientTo: 'to-indigo-600',
-    headingGradientFromSecondary: 'from-indigo-600',
-    headingGradientToSecondary: 'to-blue-600',
-
-    buttonPrimaryBgFrom: 'from-blue-500',
-    buttonPrimaryBgTo: 'to-indigo-600',
-    buttonPrimaryHoverBgFrom: 'hover:from-blue-600',
-    buttonPrimaryHoverBgTo: 'hover:to-indigo-700',
-    buttonPrimaryBeforeFrom: 'from-blue-400',
-    buttonPrimaryBeforeTo: 'to-indigo-500',
-    buttonPrimaryText: 'text-white',
-
-    buttonSecondaryBgFrom: 'from-indigo-500',
-    buttonSecondaryBgTo: 'to-blue-600',
-    buttonSecondaryHoverBgFrom: 'hover:from-indigo-600',
-    buttonSecondaryHoverBgTo: 'hover:to-blue-700',
-    buttonSecondaryBeforeFrom: 'from-indigo-400',
-    buttonSecondaryBeforeTo: 'to-blue-500',
-    buttonSecondaryText: 'text-white',
-
-    navButtonHoverBg: 'hover:bg-blue-50/60',
-    navActiveBg: 'bg-blue-100/40',
-    navActiveBorder: 'border-blue-300/60',
-    navActiveShadow: 'shadow-blue-300/20',
-
-    cardBg: 'bg-white',
-    cardBorder: 'border-blue-200/30',
-    cardShadow: 'shadow-md shadow-blue-100/20',
-    cardHoverShadow: 'hover:shadow-lg hover:shadow-blue-300/40',
-    cardHoverBorder: 'hover:border-blue-300/50',
-
-    imageBorder: 'border-blue-500',
-    imageShadow: 'shadow-blue-500/30',
-
-    footerBg: 'bg-gray-100',
-    footerText: 'text-gray-700',
-    footerBorder: 'border-gray-200/60',
-
-    skillIconColor: (index) => {
-      if (index % 3 === 0) return 'text-blue-600 group-hover:text-indigo-600';
-      if (index % 3 === 1) return 'text-indigo-600 group-hover:text-blue-600';
-      return 'text-green-600 group-hover:text-indigo-600';
-    },
-
-    cursorDefault: 'rgba(59, 130, 246, 0.5)',
-    cursorNav: 'rgba(99, 102, 241, 0.5)',
-    cursorSkill: 'rgba(34, 197, 94, 0.5)',
-    cursorProject: 'rgba(245, 158, 11, 0.5)',
-    cursorContact: 'rgba(59, 130, 246, 0.5)',
-    cursorLink: 'rgba(99, 102, 241, 0.5)',
-    cursorAI: 'rgba(245, 158, 11, 0.5)',
-
-    linkTextAccent: 'text-indigo-600',
-    linkHoverTextAccent: 'hover:text-indigo-700',
-    socialLinkHoverPrimary: 'hover:text-blue-600',
-    socialLinkHoverSecondary: 'hover:text-indigo-600',
-    socialLinkHoverTertiary: 'hover:text-green-600',
-
-    aiButtonBg: 'bg-blue-100/30',
-    aiButtonBorder: 'border-blue-300/50',
-    aiButtonHoverBg: 'hover:bg-blue-200/40',
-  },
   'oceanic-depths': {
     name: 'Oceanic Depths',
     appBg: 'bg-gradient-to-br from-blue-950 via-teal-950 to-gray-950',
@@ -503,7 +502,7 @@ export const themes = {
     aiButtonHoverBg: 'hover:bg-lime-800/40',
   },
   'steel-streamline': {
-    name: 'Steel Streamline 🤖',
+    name: 'Steel Streamline',
     appBg: 'bg-gradient-to-br from-gray-800 via-gray-900 to-black',
     navBg: 'bg-gray-800 bg-opacity-70',
     navBorder: 'border-gray-700/50',
@@ -585,7 +584,7 @@ export const themes = {
   },
 
   'circuit-core': {
-    name: 'Circuit Core ⚙️',
+    name: 'Circuit Core',
     appBg: 'bg-gray-900',
     navBg: 'bg-black bg-opacity-90',
     navBorder: 'border-gray-700',
@@ -666,7 +665,7 @@ export const themes = {
     aiButtonHoverBg: 'hover:bg-gray-700/40',
   },
   'techno-glitch': {
-    name: 'Techno Glitch 👾',
+    name: 'Techno Glitch',
     appBg: 'bg-gray-950',
     navBg: 'bg-black bg-opacity-80',
     navBorder: 'border-purple-500/50',
