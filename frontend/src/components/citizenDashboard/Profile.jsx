@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../contexts/authContext/index";
 import toast, { Toaster } from "react-hot-toast";
-import { useTheme } from "../../hooks/useTheme"; // 1. Import useTheme
+import { useTheme } from "../../hooks/useTheme";
+import ChangePasswordModal from "./../ChangePasswordModal";
 
 
 const Profile = () => {
@@ -15,7 +16,7 @@ const Profile = () => {
   const [newProfileImageFile, setNewProfileImageFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -87,10 +88,9 @@ const Profile = () => {
     }
   }
 
-  const handleChangePassword = () => {
-    toast("Redirecting to change password flow...", { icon: "🔒" });
-  };
-
+  const handleChangePassword = () => {
+    setShowPasswordModal(true);
+  };
 
   return (
     // 3. Removed bg-gray-50 to inherit from layout
@@ -164,7 +164,7 @@ const Profile = () => {
           
           {/* Change Password */}
           <div className={`p-6 border-t ${theme.footerBorder}`}>
-              <button type="button" onClick={handleChangePassword} className={`${theme.primaryAccentText} hover:underline font-semibold`}>
+              <button type="button" onClick={handleChangePassword} className={`${theme.primaryAccentText} hover:underline font-semibold cursor-pointer`}>
                   Change Password
               </button>
           </div>
@@ -190,6 +190,13 @@ const Profile = () => {
           </div>
         </form>
       </div>
+
+      <ChangePasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        token={token}
+        BASE_URL={BASE_URL}
+      />
     </div>
   );
 };

@@ -13,6 +13,8 @@ export default function CompletionModal({ task, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const fileInputRef = useRef();
 
   // 🟢 Handle file select
@@ -56,10 +58,8 @@ export default function CompletionModal({ task, onClose, onSuccess }) {
       form.append("remarks", message);
       if (photo) form.append("photo", photo);
 
-      console.log(form.get("status"), form.get("remarks"), form.get("photo"));
-
       await axios.patch(
-        `http://localhost:5000/api/v1/complaints/${task._id}`,
+        `${API_BASE_URL}/complaints/${task._id}`,
         form,
         {
           headers: {

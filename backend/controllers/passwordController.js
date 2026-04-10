@@ -105,3 +105,22 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+exports.changePassword = async (req, res) => {
+  try {
+    const uid = req.user.firebaseUid;
+    const { newPassword } = req.body;
+
+    await admin.auth().updateUser(uid, {
+      password: newPassword,
+    });
+
+    const user = await User.findOne({ firebaseUid: uid });
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to change password" });
+  }
+};
+
