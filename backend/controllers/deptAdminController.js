@@ -10,6 +10,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Worker = mongoose.model("worker");
 const Notification = require("../models/notificationModel");
+const Email = require('../utils/email');
 
 //For Dashboard Data
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
@@ -1028,6 +1029,9 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
         process.env.APP_URL || ""
       }/complaints/${complaintId}`;
 
+      const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
+      console.log(logoUrl);
+
       if (citizen?.email) {
         const citizenEmail = new Email(
           { email: citizen.email, name: citizen.name || "" },
@@ -1039,34 +1043,12 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
             workerPhone: assignedWorker.phone || "",
             workerEmail: assignedWorker.email || "",
             appName: process.env.APP_NAME || "NextCity",
+            logoUrl
           }
         );
         await citizenEmail.send(
           "workerAssignedCitizen",
           `Your complaint has been assigned — ${
-            process.env.APP_NAME || "NextCity"
-          }`
-        );
-      }
-
-      if (assignedWorker?.email) {
-        const workerEmail = new Email(
-          { email: assignedWorker.email, name: assignedWorker.name || "" },
-          complaintUrl,
-          {
-            complaintTitle: complaint.title || "",
-            complaintDescription: complaint.description || "",
-            citizenName: citizen?.name || "Citizen",
-            citizenEmail: citizen?.email || "",
-            location: complaint.location?.coordinates
-              ? `Latitude: ${complaint.location.coordinates[1]}, Longitude: ${complaint.location.coordinates[0]}`
-              : "Location not available",
-            appName: process.env.APP_NAME || "NextCity",
-          }
-        );
-        await workerEmail.send(
-          "workerAssignedWorker",
-          `You have been assigned a new complaint — ${
             process.env.APP_NAME || "NextCity"
           }`
         );
