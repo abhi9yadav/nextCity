@@ -275,11 +275,6 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
 
 exports.createWorker = catchAsync(async (req, res, next) => {
   let { email, name, phone, photoURL, zone_id } = req.body;
-  if (!photoURL) {
-    photoURL = `${
-      process.env.BACKEND_URL || "http://localhost:5001/api/v1/"
-    }images/default-profile.jpg`;
-  }
 
   if (!zone_id)
     return next(new AppError("zone_id is required to create a worker.", 400));
