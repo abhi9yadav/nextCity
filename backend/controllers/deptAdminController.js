@@ -190,18 +190,30 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
       complaintsReopened: 0,
     };
 
-    const totalComplaints = complaintData.totalComplaints || 1;
+    const totalComplaints = complaintData.totalComplaints ||0;
     const complaintsOpen = complaintData.complaintsOpen || 0;
     const complaintsInProgress = complaintData.complaintsInProgress || 0;
     const complaintsResolved = complaintData.complaintsResolved || 0;
     const complaintsReopened = complaintData.complaintsReopened || 0;
 
     // Calculate percentages safely
+    let open = 0.0;
+    let inProgress = 0.0;
+    let resolved = 0.0;
+    let reopened = 0.0;
+
+    if (totalComplaints > 0) {
+      open = ((complaintsOpen / totalComplaints) * 100).toFixed(2),
+      inProgress = ((complaintsInProgress / totalComplaints) * 100).toFixed(2),
+      resolved = ((complaintsResolved / totalComplaints) * 100).toFixed(2),
+      reopened = ((complaintsReopened / totalComplaints) * 100).toFixed(2)
+    }
+
     const percentages = {
-      open: ((complaintsOpen / totalComplaints) * 100).toFixed(2),
-      inProgress: ((complaintsInProgress / totalComplaints) * 100).toFixed(2),
-      resolved: ((complaintsResolved / totalComplaints) * 100).toFixed(2),
-      reopened: ((complaintsReopened / totalComplaints) * 100).toFixed(2),
+      open,
+      inProgress,
+      resolved,
+      reopened
     };
 
     const statusBreakdown = [
@@ -233,7 +245,7 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
 
     const workerData = workerAggResult[0] || {
       totalWorkers: 0,
-      avgRating: 4.0,
+      avgRating: 0.0,
       zoneWorkers: [],
     };
 
@@ -1010,61 +1022,61 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
     });
 
     // 7️ Send notification emails (best-effort)
-    // try {
-    //   const citizen = complaint.createdBy;
-    //   const complaintUrl = `${
-    //     process.env.APP_URL || ""
-    //   }/complaints/${complaintId}`;
+    try {
+      const citizen = complaint.createdBy;
+      const complaintUrl = `${
+        process.env.APP_URL || ""
+      }/complaints/${complaintId}`;
 
-    //   if (citizen?.email) {
-    //     const citizenEmail = new Email(
-    //       { email: citizen.email, name: citizen.name || "" },
-    //       complaintUrl,
-    //       {
-    //         complaintTitle: complaint.title || "",
-    //         complaintDescription: complaint.description || "",
-    //         workerName: assignedWorker.name || "",
-    //         workerPhone: assignedWorker.phone || "",
-    //         workerEmail: assignedWorker.email || "",
-    //         appName: process.env.APP_NAME || "NextCity",
-    //       }
-    //     );
-    //     await citizenEmail.send(
-    //       "workerAssignedCitizen",
-    //       `Your complaint has been assigned — ${
-    //         process.env.APP_NAME || "NextCity"
-    //       }`
-    //     );
-    //   }
+      if (citizen?.email) {
+        const citizenEmail = new Email(
+          { email: citizen.email, name: citizen.name || "" },
+          complaintUrl,
+          {
+            complaintTitle: complaint.title || "",
+            complaintDescription: complaint.description || "",
+            workerName: assignedWorker.name || "",
+            workerPhone: assignedWorker.phone || "",
+            workerEmail: assignedWorker.email || "",
+            appName: process.env.APP_NAME || "NextCity",
+          }
+        );
+        await citizenEmail.send(
+          "workerAssignedCitizen",
+          `Your complaint has been assigned — ${
+            process.env.APP_NAME || "NextCity"
+          }`
+        );
+      }
 
-    //   if (assignedWorker?.email) {
-    //     const workerEmail = new Email(
-    //       { email: assignedWorker.email, name: assignedWorker.name || "" },
-    //       complaintUrl,
-    //       {
-    //         complaintTitle: complaint.title || "",
-    //         complaintDescription: complaint.description || "",
-    //         citizenName: citizen?.name || "Citizen",
-    //         citizenEmail: citizen?.email || "",
-    //         location: complaint.location?.coordinates
-    //           ? `Latitude: ${complaint.location.coordinates[1]}, Longitude: ${complaint.location.coordinates[0]}`
-    //           : "Location not available",
-    //         appName: process.env.APP_NAME || "NextCity",
-    //       }
-    //     );
-    //     await workerEmail.send(
-    //       "workerAssignedWorker",
-    //       `You have been assigned a new complaint — ${
-    //         process.env.APP_NAME || "NextCity"
-    //       }`
-    //     );
-    //   }
-    // } catch (emailErr) {
-    //   console.error(
-    //     "⚠️ Failed to send one or more assignment emails:",
-    //     emailErr
-    //   );
-    // }
+      if (assignedWorker?.email) {
+        const workerEmail = new Email(
+          { email: assignedWorker.email, name: assignedWorker.name || "" },
+          complaintUrl,
+          {
+            complaintTitle: complaint.title || "",
+            complaintDescription: complaint.description || "",
+            citizenName: citizen?.name || "Citizen",
+            citizenEmail: citizen?.email || "",
+            location: complaint.location?.coordinates
+              ? `Latitude: ${complaint.location.coordinates[1]}, Longitude: ${complaint.location.coordinates[0]}`
+              : "Location not available",
+            appName: process.env.APP_NAME || "NextCity",
+          }
+        );
+        await workerEmail.send(
+          "workerAssignedWorker",
+          `You have been assigned a new complaint — ${
+            process.env.APP_NAME || "NextCity"
+          }`
+        );
+      }
+    } catch (emailErr) {
+      console.error(
+        "⚠️ Failed to send one or more assignment emails:",
+        emailErr
+      );
+    }
 
     const refreshedAssignedWorker = await Worker.findById(assignedWorker._id)
       .select("-password -__v")
