@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useNotification } from "../../contexts/NotificationContext";
 import { useLocation } from "react-router-dom";
-
-
 import { useTheme } from '../../hooks/useTheme';
 import { themes } from '../../constants/Themes'; 
 import { useAuth } from "../../contexts/authContext";
+import logo from "../../assets/logo.png";
+
+
 const roleTitles = {
   citizen: "Citizen Dashboard",
   superadmin: "Super Admin Panel",
@@ -112,22 +113,17 @@ const Header = () => {
             {/* Left: Logo and Role Label */}
             <div className="flex items-center gap-3">
               <a href="/" className="flex items-center gap-2">
-                <svg
-                  className={`h-8 w-8 ${theme.primaryAccentText}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                <img
+                  src={logo}
+                  alt="NextCity Logo"
+                  className="h-14 w-14 object-contain"
+                />
+
+                <span
+                  className={`text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${theme.headingGradientFrom} ${theme.headingGradientTo}`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-                {/* Use theme text colors */}
-                <span className={`text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${theme.headingGradientFrom} ${theme.headingGradientTo}`}>NextCity</span>
+                  NextCity
+                </span>
               </a>
             </div>
 
@@ -138,7 +134,7 @@ const Header = () => {
               <div className="relative" ref={themeDropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!isDropdownOpen)}
-                  className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors`}
+                  className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors cursor-pointer`}
                   title="Change Theme"
                 >
                   <Palette className={`h-6 w-6 ${theme.textSubtle}`} />
@@ -237,7 +233,7 @@ const Header = () => {
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors`}
+                className={`p-2 rounded-full ${theme.navButtonHoverBg} transition-colors cursor-pointer`}
                 title="Logout"
               >
                 <LogOut className={`h-6 w-6 ${theme.textSubtle}`} />
