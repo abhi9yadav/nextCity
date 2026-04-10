@@ -186,6 +186,7 @@ exports.getDepartmentAdminByDepartmentId = async (req, res) => {
   try {
     const cityAdminUid = req.user.firebaseUid;
     const cityAdmin = await CityAdmin.findOne({ firebaseUid: cityAdminUid });
+
     if (!cityAdmin) {
       return res
         .status(403)
@@ -273,7 +274,7 @@ exports.createDepartmentAdmin = async (req, res) => {
       department_id: departmentId,
     };
 
-    const newDeptAdmin = await DeptAdmin.create(deptAdminData);
+    await DeptAdmin.create(deptAdminData);
 
     //email invitation
     req.params.firebaseUid = firebaseUid;
@@ -289,23 +290,29 @@ exports.createDepartmentAdmin = async (req, res) => {
 exports.updateDepartmentAdmin = async (req, res) => {
   try {
     const cityAdminUid = req.user.firebaseUid;
+
     const cityAdmin = await CityAdmin.findOne({ firebaseUid: cityAdminUid });
+    
     if (!cityAdmin)
       return res
         .status(403)
         .json({ message: "CityAdmin not found or unauthorized." });
 
-    const { firebaseUid } = req.params;
+    const { _id } = req.params;
+
     const { name, email, phone, department_id } = req.body;
 
     const deptAdmin = await DeptAdmin.findOne({
-      firebaseUid,
+      _id,
       city_id: cityAdmin.city_id,
-    });
+    }).select("+firebaseUid");
+    
     if (!deptAdmin)
       return res
         .status(404)
         .json({ message: "DepartmentAdmin not found in your city." });
+
+    const firebaseUid = deptAdmin.firebaseUid;
 
     // Upload new photo if provided
     if (req.file) {
@@ -353,17 +360,19 @@ exports.deleteDepartmentAdmin = async (req, res) => {
         .json({ message: "CityAdmin not found or unauthorized." });
     }
 
-    const { firebaseUid } = req.params;
+    const { _id } = req.params;
 
     const deptAdmin = await DeptAdmin.findOne({
-      firebaseUid,
+      _id,
       city_id: cityAdmin.city_id,
-    });
+    }).select("firebaseUid");
     if (!deptAdmin) {
       return res
         .status(404)
         .json({ message: "DepartmentAdmin not found in your city." });
     }
+
+    const firebaseUid = deptAdmin.firebaseUid;
 
     await admin
       .auth()
