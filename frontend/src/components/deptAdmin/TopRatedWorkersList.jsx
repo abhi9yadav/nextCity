@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
+import defaultAvatar from "../../assets/nextCity_defaultProfilePic.webp";
+
 const WorkerRatingItem = ({ worker }) => (
   <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
     <div className="flex items-center">
       <img
         className="w-10 h-10 rounded-full object-cover mr-3"
-        src={worker.photoURL}
+        src={worker.photoURL || defaultAvatar}
         alt={worker.name}
       />
       <div>

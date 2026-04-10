@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useTheme } from "../../hooks/useTheme";
 import ChangePasswordModal from "./../ChangePasswordModal";
 
+import defaultAvatar from "../../assets/nextCity_defaultProfilePic.webp";
 
 const Profile = () => {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -118,10 +119,10 @@ const Profile = () => {
           <div className={`flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 border-b ${theme.footerBorder}`}>
             <div className="relative">
               <img
-                src={profileImagePreview || currentUser?.photoURL}
+                src={currentUser?.photoURL || defaultAvatar}
                 alt="Profile"
                 // 6. Themed profile image border
-                className={`w-28 h-28 rounded-full object-cover border-4 ${theme.imageBorder} ${theme.imageShadow}`}
+                className={`w-28 h-28 rounded-full object-cover border-1 ${theme.imageBorder} ${theme.imageShadow}`}
               />
               {isEditing && (
                 <button
