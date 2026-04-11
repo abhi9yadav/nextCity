@@ -3,23 +3,22 @@ import Navbar from './Navbar';
 import HeroSection from './HeroSection';
 import ProblemSolutionSection from './ProblemSolutionSection';
 import HowItWorksSection from './HowItWorksSection';
-import FlowerAnimation from '../flowerAnimation/FlowerAnimation';
-//import Footer from './components/Footer'; // You'll create this later
+import AIFeatureSection from './AIFeatureSection';
+import WorkerMapSection from './WorkerMapSection';
 import VideoBackground from './VideoBackground';
-
+import Footer from './Footer';
 function LandingPage() {
   return (
-    <div className="min-h-screen font-sans antialiased">
+    <div className="min-h-screen font-sans antialiased overflow-x-hidden">
       <VideoBackground />
-
       
-      <div className='top-40 relative'>
+      <div className='relative z-10'>
         <ProblemSolutionSection />
-      </div>
-      <div className='top-40 relative  bg-orange-900'>
+        <AIFeatureSection />
+        <WorkerMapSection />
         <HowItWorksSection />
+        <Footer/>
       </div>
-      {/* <Footer /> */} {/* Add footer component later */}
     </div>
   );
 }
