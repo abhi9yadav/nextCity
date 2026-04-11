@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/authContext";
 import { useNavigate, Link } from "react-router-dom";
 
 const UserRegister = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, role, loading } = useAuth();
   const userLoggedIn = !!currentUser;
   const navigate = useNavigate();
 
@@ -14,11 +14,19 @@ const UserRegister = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const redirectMap = {
+    super_admin: "/super-admin",
+    city_admin: "/city-admin",
+    dept_admin: "/dept-admin",
+    worker: "/worker",
+    citizen: "/citizen",
+  };
+
   useEffect(() => {
-    if (userLoggedIn) {
-      navigate("/citizen");
+    if (!loading && currentUser && role) {
+      navigate(redirectMap[role] || "/");
     }
-  }, [userLoggedIn, navigate]);
+  }, [loading, currentUser, role, navigate]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -95,8 +103,10 @@ const UserRegister = () => {
   const handleGoogleSignup = async () => {
     setErrorMessage("");
 
+    let user = null;
+
     try {
-      const user = await signInWithGoogle();
+      user = await signInWithGoogle();
 
       if (!user) {
         throw new Error("Google sign-in failed.");
@@ -111,7 +121,7 @@ const UserRegister = () => {
         BASE_URL = "http://localhost:5001/api/v1";
       }
 
-      const res = await fetch(`${BASE_URL}/users/signup`, {
+      const res = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +146,14 @@ const UserRegister = () => {
     }
   };
 
-  // Prevent rendering the form if the user is already logged in
+  if (loading|| (currentUser && !role)) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   if (userLoggedIn) {
     return null;
   }

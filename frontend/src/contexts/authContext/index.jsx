@@ -7,11 +7,9 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser")) || null
-  );
-  const [token, setToken] = useState(localStorage.getItem("idToken") || null);
-  const [role, setRole] = useState(localStorage.getItem("role") || null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Helper to fetch and store user data from backend
