@@ -15,10 +15,12 @@ module.exports = class Email {
   newTransport() {
     if (process.env.NODE_ENV === "production") {
       return nodemailer.createTransport({
-        service: "SendGrid",
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: false,
         auth: {
-          user: process.env.SENDPLATEFORM_USER,
-          pass: process.env.SENDPLATEFORM_PASSWORD,
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
         },
       });
     }
@@ -73,7 +75,6 @@ module.exports = class Email {
       html,
       text: htmlToText.convert(html),
     };
-
     await this.newTransport().sendMail(mailOptions);
   }
 
