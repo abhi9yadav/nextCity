@@ -93,7 +93,7 @@ router.post(
 );
 
 router.patch(
-  "/updateDeptAdmin/:firebaseUid",
+  "/updateDeptAdmin/:_id",
   authenticate,
   roleCheck(["city_admin"]),
   upload.single("photo"),
@@ -101,7 +101,7 @@ router.patch(
 );
 
 router.delete(
-  "/deleteDeptAdmin/:firebaseUid",
+  "/deleteDeptAdmin/:_id",
   authenticate,
   roleCheck(["city_admin"]),
   cityAdminController.deleteDepartmentAdmin

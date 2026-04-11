@@ -70,10 +70,7 @@ exports.forgotPassword = async (req, res) => {
 
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetLink = `${frontendUrl}/set-password?token=${encodeURIComponent(token)}`;
-    
-    // console.log(resetLink);
 
-    // 4️ Try sending the email
     try {
       const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
       const emailInstance = new Email(

@@ -44,12 +44,9 @@ global.io = io;
 let workerLocations = {};
 
 io.on("connection", (socket) => {
-  console.log("🔌 User connected:", socket.id);
-
   // Join room
   socket.on("join", (userId) => {
     socket.join(userId);
-    console.log(`User joined room: ${userId}`);
   });
 
   // Worker sends live location
@@ -73,9 +70,7 @@ io.on("connection", (socket) => {
     socket.emit("last-locations", Object.values(workerLocations));
   });
 
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
-  });
+  socket.on("disconnect", () => {});
 });
 
 // 2. Simplified start-up (Removed await redisClient.connect())

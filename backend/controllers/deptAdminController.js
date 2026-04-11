@@ -10,12 +10,10 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Worker = mongoose.model("worker");
 const Notification = require("../models/notificationModel");
-const Email = require('../utils/email');
+const Email = require("../utils/email");
 
-//For Dashboard Data
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
   try {
-    // 1️ DeptAdmin scope
     const deptAdmin = await DeptAdmin.findOne({
       firebaseUid: req.user.firebaseUid,
     })
@@ -32,7 +30,7 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
     const city_id = new mongoose.Types.ObjectId(deptAdmin.city_id);
     const department_id = new mongoose.Types.ObjectId(deptAdmin.department_id);
 
-    // 2️ Run all aggregations in parallel
+    // Run all aggregations in parallel
     const [
       workerAggResult,
       complaintAggResult,
@@ -40,7 +38,6 @@ exports.getDashboardStats = catchAsync(async (req, res, next) => {
       topWorkers,
       zoneLoadAgg,
     ] = await Promise.all([
-      // Worker aggregation
       Worker.aggregate([
         { $match: { city_id, department_id } },
         {
@@ -297,7 +294,7 @@ exports.createWorker = catchAsync(async (req, res, next) => {
       email,
       displayName: name,
       password: tempPassword,
-      disabled: false, // true in production
+      disabled: true,
     });
   } catch (error) {
     if (error.code === "auth/email-already-exists") {
@@ -325,7 +322,6 @@ exports.createWorker = catchAsync(async (req, res, next) => {
     const newWorker = new Worker(workerData);
     await newWorker.save();
 
-    // Log activity
     try {
       await logActivity({
         req,
@@ -343,12 +339,6 @@ exports.createWorker = catchAsync(async (req, res, next) => {
     // 4️ Send invitation email
     req.params.firebaseUid = firebaseUser.uid;
     await sendInvitation(req, res, false);
-
-    return res.status(201).json({
-      status: "success",
-      message: `Worker created successfully. Invitation email will be sent to ${email} later.`,
-      worker: newWorker,
-    });
   } catch (err) {
     // Rollback Firebase user if MongoDB save fails
     if (firebaseUser?.uid) {
@@ -362,7 +352,6 @@ exports.createWorker = catchAsync(async (req, res, next) => {
 });
 
 exports.getWorkers = catchAsync(async (req, res, next) => {
-  // 1️ Fetch DeptAdmin
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   })
@@ -373,13 +362,12 @@ exports.getWorkers = catchAsync(async (req, res, next) => {
     return next(new AppError("DeptAdmin not found.", 403));
   }
 
-  // 2️ Base filter: city & department
   const filter = {
     city_id: deptAdmin.city_id,
     department_id: deptAdmin.department_id,
   };
 
-  // 3️ Optional zone filter
+  // Optional zone filter
   const zoneId = req.query.zoneId?.trim();
   if (zoneId) {
     if (!mongoose.Types.ObjectId.isValid(zoneId)) {
@@ -391,7 +379,7 @@ exports.getWorkers = catchAsync(async (req, res, next) => {
   const countQuery = Worker.find(filter);
   const totalResults = await countQuery.countDocuments();
 
-  // 4️ Build query with APIFeatures
+  // Build query with APIFeatures
   const WORKER_SEARCH_FIELDS = ["name", "email"];
   const features = new APIFeatures(
     Worker.find(filter),
@@ -404,10 +392,8 @@ exports.getWorkers = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  // 5️ Execute query
   const workers = await features.query.exec();
 
-  // 6️ Send response
   res.status(200).json({
     status: "success",
     results: totalResults,
@@ -477,14 +463,12 @@ exports.updateWorker = catchAsync(async (req, res, next) => {
 
   workerId = new mongoose.Types.ObjectId(workerId);
 
-  // 1️ Fetch DeptAdmin
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   }).select("+firebaseUid");
   if (!deptAdmin)
     return next(new AppError("Unauthorized: DeptAdmin not found.", 403));
 
-  // 2️ Fetch Worker within DeptAdmin scope
   const worker = await Worker.findOne({
     _id: workerId,
     city_id: deptAdmin.city_id,
@@ -494,7 +478,7 @@ exports.updateWorker = catchAsync(async (req, res, next) => {
   if (!worker)
     return next(new AppError("Worker not found or outside your scope.", 403));
 
-  // 3️ Prepare Firebase updates
+  // Prepare Firebase updates
   const firebaseUpdates = {};
   if (name) firebaseUpdates.displayName = name;
   if (email) firebaseUpdates.email = email;
@@ -517,7 +501,6 @@ exports.updateWorker = catchAsync(async (req, res, next) => {
     )
     .lean();
 
-  // Log activity
   try {
     await logActivity({
       req,
@@ -548,13 +531,11 @@ exports.deleteWorker = catchAsync(async (req, res, next) => {
 
   workerId = new mongoose.Types.ObjectId(workerId);
 
-  // 1️ Fetch DeptAdmin
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   }).select("+firebaseUid");
   if (!deptAdmin) return next(new AppError("DeptAdmin not found.", 403));
 
-  // 2️ Fetch Worker within DeptAdmin scope
   const worker = await Worker.findOne({
     _id: workerId,
     city_id: deptAdmin.city_id,
@@ -564,17 +545,14 @@ exports.deleteWorker = catchAsync(async (req, res, next) => {
   if (!worker)
     return next(new AppError("Worker not found or outside your scope.", 403));
 
-  // 3️ Delete Firebase user
   try {
     await admin.auth().deleteUser(worker.firebaseUid);
   } catch (error) {
     console.error("Failed to delete Firebase user:", error);
   }
 
-  // 4️ Delete Worker from MongoDB
   await Worker.findOneAndDelete({ _id:workerId });
 
-  // Log activity
   try {
     await logActivity({
       req,
@@ -602,13 +580,11 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
   }
   workerId = new mongoose.Types.ObjectId(workerId);
 
-  // 1️ Fetch DeptAdmin
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   }).select("+firebaseUid");
   if (!deptAdmin) return next(new AppError("DeptAdmin not found.", 403));
 
-  // 2️ Fetch Worker within DeptAdmin scope
   const worker = await Worker.findOne({
     _id: workerId,
     city_id: deptAdmin.city_id,
@@ -618,7 +594,7 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
   if (!worker)
     return next(new AppError("Worker not found or outside your scope.", 403));
 
-  // 3️ Resend invitation
+  // Resend invitation
   try {
     req.params.firebaseUid = worker.firebaseUid;
     await sendInvitation(req, res, true);
@@ -634,7 +610,7 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
       )
     );
   }
-  // Log activity
+  
   try {
     await logActivity({
       req,
@@ -657,7 +633,6 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
 //***************  Complaint Management **************** */
 
 exports.getComplaints = catchAsync(async (req, res, next) => {
-  //1️ Fetch DeptAdmin
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   }).select("+firebaseUid +city_id +department_id");
@@ -666,14 +641,12 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     return next(new AppError("DeptAdmin not found.", 403));
   }
 
-  // 2 Prepare base filter (by department and optional status)
   const baseFilter = {
     city_id: deptAdmin.city_id,
     department_id: deptAdmin.department_id,
   };
 
-  // 3 Handle zone-based filtering
-
+  //Handle zone-based filtering
   let zoneFilterStage = [];
   if (req.query.zoneId) {
     const zoneId = req.query.zoneId.trim();
@@ -697,7 +670,7 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     }
   }
 
-  // 4️ Initial Pipeline Setup
+  // Initial Pipeline Setup
   let pipeline = [{ $match: baseFilter }, ...zoneFilterStage];
   pipeline.push(
     {
@@ -713,7 +686,7 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     }
   );
 
-  // --- COUNTING (Total results matching all filters but NOT paginated) ---
+  // COUNTING (Total results matching all filters but NOT paginated)
   const COMPLAINT_SEARCH_FIELDS = [
     "_id",
     "title",
@@ -733,13 +706,12 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
   const totalResults = totalCountResult[0]?.totalCount || 0;
 
   // --- DATA FETCH (The actual paginated and sorted results) ---
-
-  // 5️ Add votes field for sorting
+  // Add votes field for sorting
   pipeline.push({
     $addFields: { votesCount: { $size: { $ifNull: ["$votes", []] } } },
   });
 
-  // 6️ Apply remaining API features (pagination, sorting, etc.)
+  // Apply remaining API features (pagination, sorting, etc.)
   const features = new APIFeatures(
     pipeline,
     req.query,
@@ -751,7 +723,7 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     .sortByVotes()
     .paginate();
 
-  // 7️ Final Lookups and Projection
+  // Final Lookups and Projection
   features.query.push(
     {
       $lookup: {
@@ -775,7 +747,6 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     },
     { $unwind: { path: "$zoneDetail", preserveNullAndEmptyArrays: true } },
 
-    // Project final fields
     {
       $project: {
         _id: 1,
@@ -798,10 +769,8 @@ exports.getComplaints = catchAsync(async (req, res, next) => {
     }
   );
 
-  // 8️ Execute aggregation
   const complaints = await Complaint.aggregate(features.query);
 
-  // 9️ Send response
   res.status(200).json({
     status: "success",
     results: totalResults,
@@ -842,7 +811,6 @@ exports.getComplaintDetails = catchAsync(async (req, res, next) => {
   });
 });
 
-// 1) Get candidate workers for a particular complaint
 exports.getCandidateWorkers = catchAsync(async (req, res, next) => {
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
@@ -856,7 +824,6 @@ exports.getCandidateWorkers = catchAsync(async (req, res, next) => {
   const complaint = await Complaint.findById(complaintId).lean();
   if (!complaint) return next(new AppError("Complaint not found", 404));
 
-  // 1️ Find the zone that contains the complaint
   const zone = await Zone.findById(complaint.zone_id).exec();
 
   if (!zone)
@@ -864,7 +831,6 @@ exports.getCandidateWorkers = catchAsync(async (req, res, next) => {
       new AppError("No zone found that contains this complaint", 404)
     );
 
-  // 2️ Find candidate workers in that zone
   const limit = parseInt(req.query.limit, 10) || 5;
 
   const candidates = await Worker.find({
@@ -884,30 +850,25 @@ exports.getCandidateWorkers = catchAsync(async (req, res, next) => {
   });
 });
 
-// 2) Assign complaint to a worker
 exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
   const { complaintId } = req.params;
   const workerId = req.body?.workerId;
 
-  // 1️ DeptAdmin validation
   const deptAdmin = await DeptAdmin.findOne({
     firebaseUid: req.user.firebaseUid,
   }).select("+firebaseUid +city_id +department_id");
   if (!deptAdmin) return next(new AppError("DeptAdmin not found", 403));
 
-  // 2️ Complaint validation
   const complaint = await Complaint.findById(complaintId)
     .populate("createdBy", "name email")
     .lean();
   if (!complaint) return next(new AppError("Complaint not found", 404));
 
-  // 3️ Zone containing complaint
   const zone = await Zone.findById(complaint.zone_id);
 
   if (!zone)
     return next(new AppError("No zone found containing this complaint", 404));
 
-  // 4️ Candidate workers
   const candidates = await Worker.find({
     city_id: deptAdmin.city_id,
     department_id: deptAdmin.department_id,
@@ -920,7 +881,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
   if (!candidates.length)
     return next(new AppError("No available workers in this zone", 404));
 
-  // 5️ Determine assigned worker
   let assignedWorker;
   if (workerId) {
     assignedWorker = candidates.find((w) => w._id.toString() === workerId);
@@ -942,7 +902,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
     assignedWorker = candidates[0];
   }
 
-  // 6️ Transaction for DB updates
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
@@ -975,7 +934,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
       { session }
     );
 
-    //Safe activity logging
     try {
       await logActivity({
         req,
@@ -999,8 +957,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
 
-    //Real-time notification (Socket.IO)
-
     const newNotification = await Notification.create({
       userId: complaint.createdBy._id,
       complaintId: complaint._id,
@@ -1017,7 +973,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
       createdAt: newNotification.createdAt,
     });
 
-    // 7️ Send notification emails (best-effort)
     try {
       const citizen = complaint.createdBy;
       const complaintUrl = `${

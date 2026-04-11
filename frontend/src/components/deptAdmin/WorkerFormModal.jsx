@@ -102,13 +102,11 @@ const WorkerFormModal = ({
       );
 
       const firstName = formData.name.split(" ")[0];
-      const invitationStatus = res?.worker?.invitationSent
-        ? "and invitation sent ✉️"
-        : "and invitation not sent ❌";
+      const message = res?.message;
 
       if (!isEditMode) {
         toast.success(
-          `Staff member ${firstName} added successfully 🎉 ${invitationStatus}`,
+          `${message}`,
           {
             position: "top-right",
             style: {

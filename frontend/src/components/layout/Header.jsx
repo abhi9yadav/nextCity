@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useNotification } from "../../contexts/NotificationContext";
 import { useLocation } from "react-router-dom";
+
 import { useTheme } from '../../hooks/useTheme';
 import { themes } from '../../constants/Themes'; 
 import { useAuth } from "../../contexts/authContext";
-import logo from "../../assets/logo.png";
+import logo from '../../assets/logo.png';
 
+import defaultAvatar from "../../assets/nextCity_defaultProfilePic.webp";
 
 const roleTitles = {
   citizen: "Citizen Dashboard",
@@ -221,10 +223,7 @@ const Header = () => {
                 title="Profile"
               >
                 <img
-                  src={
-                    currentUser?.photoURL ||
-                    "https://placehold.co/40x40/E2E8F0/4A5568?text=U"
-                  }
+                  src={currentUser?.photoURL || defaultAvatar}
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
                 />

@@ -78,7 +78,7 @@ const ManageDeptAdminPage = () => {
         alert("Department Admin created successfully!");
       } else {
         await axios.patch(
-          `${BASE_URL}/cityAdmin/updateDeptAdmin/${deptAdmin.firebaseUid}`,
+          `${BASE_URL}/cityAdmin/updateDeptAdmin/${deptAdmin._id}`,
           form,
           {
             headers: {
@@ -103,7 +103,7 @@ const ManageDeptAdminPage = () => {
       const auth = getAuth();
       const idToken = await auth.currentUser.getIdToken(true);
       await axios.delete(
-        `${BASE_URL}/cityAdmin/deleteDeptAdmin/${deptAdmin.firebaseUid}`,
+        `${BASE_URL}/cityAdmin/deleteDeptAdmin/${deptAdmin._id}`,
         { headers: { Authorization: `Bearer ${idToken}` } }
       );
       alert("Department Admin deleted successfully!");

@@ -20,6 +20,7 @@ const AllCities = () => {
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [creatingAdmin, setCreatingAdmin] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -41,12 +42,9 @@ const AllCities = () => {
           return;
         }
         const token = await user.getIdToken();
-        const res = await axios.get(
-          `${BASE_URL}/superAdmin/cities`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get(`${BASE_URL}/superAdmin/cities`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setCities(res.data.cities || []);
       } catch (err) {
         console.error(err);
@@ -86,12 +84,9 @@ const AllCities = () => {
       const auth = getAuth();
       const user = auth.currentUser;
       const token = await user.getIdToken();
-      await axios.delete(
-        `${BASE_URL}/superAdmin/city/${cityId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`${BASE_URL}/superAdmin/city/${cityId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setCities((prev) => prev.filter((c) => c._id !== cityId));
       alert(`City "${cityName}" deleted successfully.`);
     } catch (err) {
@@ -109,7 +104,7 @@ const AllCities = () => {
 
       const res = await axios.get(
         `${BASE_URL}/superAdmin/cityAdmin/${cityAdminId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       setSelectedAdmin(res.data);
@@ -121,11 +116,15 @@ const AllCities = () => {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
+
     if (!adminCity) {
       alert("City not selected!");
       return;
     }
+
     try {
+      setCreatingAdmin(true); // ✅ START LOADING
+
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) throw new Error("User not logged in");
@@ -141,21 +140,20 @@ const AllCities = () => {
 
       if (newUser.photo) formData.append("photo", newUser.photo);
 
-      const res = await axios.post(
-        `${BASE_URL}/superAdmin/users/create`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.post(`${BASE_URL}/superAdmin/users/create`, formData, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       alert("City admin created successfully!");
       closeModal();
     } catch (err) {
-      console.error("Error in handleCreateUser:", err);
+      console.error("Error:", err);
       alert(err.response?.data?.message || "Failed to create city admin.");
+    } finally {
+      setCreatingAdmin(false); // ✅ STOP LOADING
     }
   };
 
@@ -176,8 +174,8 @@ const AllCities = () => {
       statusFilter === "all"
         ? true
         : statusFilter === "assigned"
-        ? !!city.city_admin
-        : !city.city_admin;
+          ? !!city.city_admin
+          : !city.city_admin;
 
     return matchesSearch && matchesStatus;
   });
@@ -342,7 +340,7 @@ const AllCities = () => {
                 {selectedCity.boundary?.coordinates?.[0] && (
                   <Polygon
                     positions={selectedCity.boundary.coordinates[0].map(
-                      (coord) => [coord[1], coord[0]]
+                      (coord) => [coord[1], coord[0]],
                     )}
                     pathOptions={{
                       color: "blue",
@@ -369,6 +367,8 @@ const AllCities = () => {
         isOpen={isModalOpen.type === "admin"}
         onClose={closeModal}
         title={`Add City Admin for ${adminCity?.city_name || "City"}`}
+        loading={creatingAdmin}
+        loadingText="Creating City Admin..."
       >
         <form onSubmit={handleCreateUser} className="space-y-5">
           {/* Name Input */}
@@ -454,9 +454,17 @@ const AllCities = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-3 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            disabled={creatingAdmin}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold py-3 rounded-2xl shadow-lg disabled:opacity-50"
           >
-            Create Admin
+            {creatingAdmin ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Creating...
+              </>
+            ) : (
+              "Create Admin"
+            )}
           </button>
         </form>
       </CreateCityAdminModal>

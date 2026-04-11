@@ -15,7 +15,6 @@ exports.getMyNotifications = async (req, res, next) => {
   });
 };
 
-//2. Mark single notification as read
 exports.markAsRead = async (req, res, next) => {
   const notification = await Notification.findOneAndUpdate(
     {
@@ -36,7 +35,6 @@ exports.markAsRead = async (req, res, next) => {
   });
 };
 
-//mark all notification as read
 exports.markAllAsRead = async (req, res, next) => {
   await Notification.updateMany(
     { userId: req.user._id, isRead: false },

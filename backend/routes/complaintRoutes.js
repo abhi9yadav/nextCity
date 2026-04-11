@@ -31,7 +31,6 @@ router.post(
 );
 
 // Update complaint
-console.log("we are here to go patch result🤣🤣🤣");
 
 router.patch(
   "/:id",authenticate,

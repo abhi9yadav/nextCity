@@ -4,6 +4,8 @@ import { useAuth } from "../../contexts/authContext";
 import navConfig from "./NavConfig";
 import { useTheme } from '../../hooks/useTheme'; // 1. Import useTheme
 
+import defaultAvatar from "../../assets/nextCity_defaultProfilePic.webp";
+
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const { currentUser } = useAuth();
   const location = useLocation();
@@ -62,10 +64,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       <div className={`px-3 py-4 border-t ${theme.footerBorder} flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
         <img
           className="h-10 w-10 rounded-full object-cover"
-          src={
-            currentUser?.photoURL ||
-            "https://placehold.co/100x100/E2E8F0/4A5568?text=U"
-          }
+          src={currentUser?.photoURL || defaultAvatar}
           alt="User"
         />
         {!isCollapsed && (

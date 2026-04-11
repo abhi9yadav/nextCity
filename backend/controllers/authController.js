@@ -32,13 +32,13 @@ const signup = async (req, res) => {
     user = await User.create(userData);
 
     // Send welcome email
-    // try {
-    //   const logoUrl = process.env.APP_LOGO_URL;
-    //   const dashboardURL = `${process.env.CLIENT_URL}`;
-    //   await new Email(user, dashboardURL, {logoUrl}).sendWelcome();
-    // } catch (err) {
-    //   console.error("WELCOME EMAIL FAILED 💥", err);
-    // }
+    try {
+      const logoUrl = process.env.APP_LOGO_URL;
+      const dashboardURL = `${process.env.CLIENT_URL}`;
+      await new Email(user, dashboardURL, {logoUrl}).sendWelcome();
+    } catch (err) {
+      console.error("WELCOME EMAIL FAILED", err);
+    }
     res.status(201).json({ message: "Signup successful", user });
   } catch (err) {
     console.error("Signup error:", err);

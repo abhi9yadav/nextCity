@@ -16,6 +16,7 @@ const AllCityAdmins = () => {
   const [showModal, setShowModal] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [updatingAdmin, setUpdatingAdmin] = useState(false);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,10 +29,9 @@ const AllCityAdmins = () => {
         if (!user) return setLoading(false);
 
         const token = await user.getIdToken(true);
-        const res = await axios.get(
-          `${BASE_URL}/superAdmin/cityAdmins`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await axios.get(`${BASE_URL}/superAdmin/cityAdmins`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         setAdmins(res.data.admins);
       } catch (error) {
@@ -58,13 +58,12 @@ const AllCityAdmins = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken(true);
 
-      await axios.delete(
-        `${BASE_URL}/superAdmin/users/${firebaseUid}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.delete(`${BASE_URL}/superAdmin/users/${firebaseUid}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setAdmins((prev) =>
-        prev.filter((admin) => admin.firebaseUid !== firebaseUid)
+        prev.filter((admin) => admin.firebaseUid !== firebaseUid),
       );
       alert("Admin deleted successfully!");
     } catch (error) {
@@ -96,6 +95,8 @@ const AllCityAdmins = () => {
     }
 
     try {
+      setUpdatingAdmin(true); // ✅ START LOADING
+
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken(true);
 
@@ -105,7 +106,7 @@ const AllCityAdmins = () => {
       formData.append("phone", selectedAdmin.phone || "");
       if (photo) formData.append("photo", photo);
 
-      const res = await axios.patch(
+      await axios.patch(
         `${BASE_URL}/superAdmin/users/${selectedAdmin.firebaseUid}`,
         formData,
         {
@@ -113,7 +114,7 @@ const AllCityAdmins = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       setAdmins((prev) =>
@@ -124,15 +125,17 @@ const AllCityAdmins = () => {
                 ...selectedAdmin,
                 photoURL: photoPreview || admin.photoURL,
               }
-            : admin
-        )
+            : admin,
+        ),
       );
 
-      setShowModal(false);
       alert("Admin updated successfully!");
+      setShowModal(false);
     } catch (error) {
-      console.error("Error updating admin:", error.response || error);
-      alert("Failed to update admin. Check console for details.");
+      console.error("Error updating admin:", error);
+      alert("Failed to update admin.");
+    } finally {
+      setUpdatingAdmin(false); // ✅ STOP LOADING
     }
   };
 
@@ -147,8 +150,8 @@ const AllCityAdmins = () => {
       statusFilter === ""
         ? true
         : statusFilter === "active"
-        ? admin.isActive
-        : !admin.isActive;
+          ? admin.isActive
+          : !admin.isActive;
 
     return matchesSearch && matchesStatus;
   });
@@ -265,6 +268,8 @@ const AllCityAdmins = () => {
         title={`Update City Admin for ${
           selectedAdmin?.city_id?.city_name || "City"
         }`}
+        loading={updatingAdmin}
+        loadingText="Updating City Admin..."
       >
         {selectedAdmin && (
           <div className="flex flex-col gap-4">
@@ -325,9 +330,17 @@ const AllCityAdmins = () => {
 
             <button
               onClick={handleSaveUpdate}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-all"
+              disabled={updatingAdmin}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold shadow-lg disabled:opacity-50"
             >
-              Update Admin
+              {updatingAdmin ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Updating City Admin...
+                </>
+              ) : (
+                "Update Admin"
+              )}
             </button>
           </div>
         )}

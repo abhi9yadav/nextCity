@@ -1,6 +1,4 @@
-//get my city complaints
 const Complaint = require('../models/complaintModel');
-
 
 exports.getCitizenCityComplaints = async (req, res) => {
   try {
@@ -8,7 +6,6 @@ exports.getCitizenCityComplaints = async (req, res) => {
 
     let complaints;
 
-    // If city name is available → get all complaints in same city
     if (city) {
       complaints = await Complaint.find({ city })
         .populate('citizen', 'name')

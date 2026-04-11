@@ -33,7 +33,6 @@ app.use(express.urlencoded({ extended: true }));
 app.set('json spaces', 2);
 
 // Routes
-console.log("Setting up routes...");
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/superAdmin", superAdminRoutes);
 app.use("/api/v1/cityAdmin", cityAdminRoutes);

@@ -41,7 +41,7 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
             Authorization: `Bearer ${idToken}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       alert(res.data.message || "Department created successfully!");
@@ -56,7 +56,7 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
       console.error("Error creating department:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to create department. Please try again."
+          "Failed to create department. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -119,7 +119,9 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
               </label>
-              <p className="text-xs text-gray-500 mt-2">Click to upload photo</p>
+              <p className="text-xs text-gray-500 mt-2">
+                Click to upload photo
+              </p>
             </div>
 
             {/* Inputs */}
@@ -170,11 +172,28 @@ const CreateDepartmentModal = ({ isOpen, onClose, onCreate }) => {
               <button
                 onClick={handleCreate}
                 disabled={loading}
-                className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/25 transition disabled:opacity-50"
+                className="px-6 py-2.5 flex items-center justify-center gap-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg transition disabled:opacity-50"
               >
-                {loading ? "Creating..." : "Create"}
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Creating...
+                  </>
+                ) : (
+                  "Create"
+                )}
               </button>
             </div>
+            {loading && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center rounded-3xl z-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Creating Department...
+                  </span>
+                </div>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}
