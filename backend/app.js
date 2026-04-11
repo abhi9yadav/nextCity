@@ -26,7 +26,7 @@ app.use(helmet());
 app.use(express.static(path.join(rootDir, "public")));
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+    origin: ["https://nextcity1.onrender.com", process.env.CLIENT_URL],
     credentials: true,
   }),
 );
