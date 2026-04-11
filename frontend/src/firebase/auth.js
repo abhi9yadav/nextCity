@@ -13,7 +13,6 @@ import {
 export const registerUser = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(userCredential.user);
     return userCredential;
   } catch (error) {
     throw error;

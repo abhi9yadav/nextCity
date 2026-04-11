@@ -980,7 +980,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
       }/complaints/${complaintId}`;
 
       const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
-      console.log(logoUrl);
 
       if (citizen?.email) {
         const citizenEmail = new Email(

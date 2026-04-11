@@ -64,7 +64,6 @@ const ComplaintDetailPage = () => {
     setIsUpdating(true);
     try {
       // API Call Here
-      console.log("Update requested for:", complaint._id);
     } catch (error) {
       console.error("Failed to update complaint:", error);
     } finally {
