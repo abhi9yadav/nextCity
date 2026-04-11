@@ -39,6 +39,7 @@ const CitySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "city_admin",
       unique: true,
+      sparse: true,
     },
   },
   { timestamps: true }
