@@ -118,7 +118,7 @@ const Header = () => {
                 <img
                   src={logo}
                   alt="NextCity Logo"
-                  className="h-14 w-14 object-contain"
+                  className="h-10 w-10 rounded-full object-contain "
                 />
 
                 <span

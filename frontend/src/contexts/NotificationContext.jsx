@@ -59,7 +59,7 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (id) => {
     try {
       await fetch(
-        `${API_BASE_URL}1/notifications/${id}/read`,
+        `${API_BASE_URL}/notifications/${id}/read`,
         {
           method: "PATCH",
           headers: {
