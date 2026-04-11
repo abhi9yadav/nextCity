@@ -14,6 +14,8 @@ const CreateZone = () => {
   const [zoneData, setZoneData] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleBoundarySelect = (data) => {
     setZoneData(data);
     setShowPicker(false);
@@ -50,7 +52,7 @@ const CreateZone = () => {
         geographical_boundary: geoJSON,
       };
 
-      await axios.post("/api/v1/zones", payload, {
+      await axios.post(`${BASE_URL}/zones`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

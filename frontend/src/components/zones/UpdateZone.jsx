@@ -18,6 +18,8 @@ const UpdateZone = () => {
   const [address, setAddress] = useState("");
   const [showPicker, setShowPicker] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     fetchZones();
   }, []);
@@ -27,7 +29,7 @@ const UpdateZone = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      const res = await axios.get(`/api/v1/zones/${dept_id}`, {
+      const res = await axios.get(`${BASE_URL}/zones/${dept_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setZones(res.data.zones);
@@ -80,7 +82,7 @@ const UpdateZone = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      await axios.patch(`/api/v1/zones/${selectedZoneId}`, updates, {
+      await axios.patch(`${BASE_URL}/zones/${selectedZoneId}`, updates, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
