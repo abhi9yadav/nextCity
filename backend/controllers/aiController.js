@@ -1,8 +1,6 @@
 const axios = require('axios');
 
-/**
- * Controller to handle AI analysis of a complaint image using Gemini.
- */
+// Controller to handle AI analysis of a complaint image using Gemini.
 const geminiAnalyze = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No image file uploaded.' });
@@ -14,7 +12,7 @@ const geminiAnalyze = async (req, res) => {
             return res.status(500).json({ error: 'API key is not configured on the server.' });
         }
         
-        // ✅ FIXED MODEL HERE
+        // FIXED MODEL HERE
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
         const base64ImageData = req.file.buffer.toString('base64');

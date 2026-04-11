@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const rootDir = require("../utils/rootDir");
 
-//when idlength is small or big
+// when id length is small or big
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
@@ -23,7 +23,6 @@ const handleValidationErrorDB = (err) => {
 
 //DEV Mode Error
 const sendErrorDev = (err, req, res) => {
-  //API
   if (req.originalUrl.startsWith("/api")) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -41,9 +40,8 @@ const sendErrorDev = (err, req, res) => {
 };
 
 const sendErrorProd = (err, req, res) => {
-  //API
   if (req.originalUrl.startsWith("/api")) {
-    //Operational, trusted error: send message to client
+    // Operational, trusted error: send message to client
     if (err.isOperational) {
       return res.status(err.statusCode).json({
         status: err.status,
@@ -55,13 +53,11 @@ const sendErrorProd = (err, req, res) => {
     // 1) Log error
     console.log("ERROR 💥", err);
 
-    // 2) Send generic message
     return res.status(500).json({
       status: "error",
       message: "Something went wrong",
     });
   }
-  // B) RENDERED WEBSITE
   if (err.isOperational) {
     const htmlPath = path.join(rootDir, "views/error/error.html");
     let html = fs.readFileSync(htmlPath, "utf-8");
@@ -73,17 +69,14 @@ const sendErrorProd = (err, req, res) => {
   }
 
   //Programming or other unknown error: don't leak error details
-  // 1) Log error
   console.log("ERROR 💥", err);
 
-  // 2) Send generic message
   const htmlPath = path.join(rootDir, "views/error/error.html");
   let html = fs.readFileSync(htmlPath, "utf-8");
   html = html.replace("{{ERROR_MESSAGE}}", "Please try again later.");
   return res.status(err.statusCode || 500).send(html);
 };
 
-// Firebase errors handler
 const handleFirebaseError = (err) => {
   if (err.code === "auth/invalid-id-token")
     return new AppError("Invalid Firebase token", 401);

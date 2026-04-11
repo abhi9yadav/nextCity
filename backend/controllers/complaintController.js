@@ -10,9 +10,8 @@ const bufferToDataUri = (file) => {
   return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 };
 
-// --------------------------------------------------------
 // 1. CREATE COMPLAINT
-// --------------------------------------------------------
+
 exports.createComplaint = async (req, res) => {
   try {
     const user = await User.findOne({ firebaseUid: req.user.firebaseUid });
@@ -87,9 +86,8 @@ exports.createComplaint = async (req, res) => {
   }
 };
 
-// --------------------------------------------------------
 // 2. GET ALL COMPLAINTS
-// --------------------------------------------------------
+
 exports.getAllComplaints = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -108,9 +106,8 @@ exports.getAllComplaints = async (req, res) => {
   }
 };
 
-// --------------------------------------------------------
 // 3. UPVOTE COMPLAINT
-// --------------------------------------------------------
+
 exports.toggleVote = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -146,9 +143,8 @@ exports.toggleVote = async (req, res) => {
   }
 };
 
-// --------------------------------------------------------
 // 4. UPDATE COMPLAINT
-// --------------------------------------------------------
+
 exports.updateComplaint = async (req, res) => {
   try {
     let imageUrl = null;
@@ -187,9 +183,7 @@ exports.updateComplaint = async (req, res) => {
       });
     }
 
-    await complaint.save(); 
-
-    // Redis Invalidation logic yahan se hata diya gaya hai
+    await complaint.save();
 
     res.json(complaint);
   } catch (error) {
@@ -198,15 +192,12 @@ exports.updateComplaint = async (req, res) => {
   }
 };
 
-// --------------------------------------------------------
 // 5. DELETE COMPLAINT
-// --------------------------------------------------------
+
 exports.deleteComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findByIdAndDelete(req.params.id);
     if (!complaint) return res.status(404).json({ message: "Complaint not found" });
-
-    // Redis Invalidation logic yahan se hata diya gaya hai
 
     res.json({ message: "Complaint deleted successfully" });
   } catch (error) {
@@ -214,9 +205,8 @@ exports.deleteComplaint = async (req, res) => {
   }
 };
 
-// --------------------------------------------------------
 // 6. GET MY COMPLAINTS
-// --------------------------------------------------------
+
 exports.getMyComplaints = async (req, res) => {
   const { id } = req.params;
  

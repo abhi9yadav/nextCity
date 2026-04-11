@@ -1,8 +1,6 @@
 const Complaint = require('../models/complaintModel');
 const mongoose = require('mongoose');
 
-// Redis import hata diya gaya hai
-
 // --------------------------------------------------------
 // 1. GET ASSIGNED COMPLAINTS
 // --------------------------------------------------------
@@ -105,8 +103,6 @@ exports.updateComplaintStatus = async (req, res) => {
 
     await complaint.save();
 
-    // Redis Invalidation logic yahan se hata diya gaya hai
-
     res.status(200).json({
       message: `Complaint status updated to ${status} successfully.`,
       complaint,
@@ -179,8 +175,6 @@ exports.resolveComplaint = async (req, res) => {
       },
       { new: true, runValidators: true }
     ).populate('history.by', 'name');
-
-    // Redis Invalidation logic yahan se hata diya gaya hai
 
     res.status(200).json({
       success: true,

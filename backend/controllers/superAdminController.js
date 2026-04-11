@@ -108,7 +108,6 @@ exports.createUser = async (req, res) => {
   const { email, name, role, city_id, phone } = req.body;
   const photoFile = req.file;
 
-  // 1. Basic validation and role check
   if (!email || !name || !role) {
     return res
       .status(400)
@@ -128,30 +127,25 @@ exports.createUser = async (req, res) => {
       .json({ message: `Invalid target role specified: ${role}.` });
   }
 
-  // 2. Check if required hierarchy IDs are provided for the target role
   if (["city_admin"].includes(role) && !city_id) {
     return res
       .status(400)
       .json({ message: `${role} creation requires a city_id.` });
   }
 
-  // 3. Create Temporary Firebase Account
   let firebaseUser;
   try {
-    // Check if city exists
     const city = await City.findById(city_id);
     if (!city) {
       return res.status(404).json({ message: "City not found." });
     }
 
-    // Check if city already has an admin
     if (city.city_admin) {
       return res.status(400).json({
         message: `This city already has an assigned admin.`,
       });
     }
 
-    // Upload photo to Cloudinary if exists
     let photoURL = null;
     if (photoFile) {
       const uploadResult = await new Promise((resolve, reject) => {
@@ -178,7 +172,6 @@ exports.createUser = async (req, res) => {
 
     const firebaseUid = firebaseUser.uid;
 
-    // Create Mongoose user
     const userData = {
       firebaseUid,
       email,
@@ -194,15 +187,12 @@ exports.createUser = async (req, res) => {
     const newUserDocument = new TargetModel(userData);
     await newUserDocument.save();
 
-    // Step 3: Update city with city_admin reference
     city.city_admin = newUserDocument._id;
     await city.save();
 
-    //email invitation
     req.params.firebaseUid = firebaseUid;
     return await sendInvitation(req, res, false);
   } catch (error) {
-    // Rollback Firebase user if something fails
     if (firebaseUser) {
       await admin
         .auth()
@@ -302,14 +292,12 @@ exports.updateUser = async (req, res) => {
   const photoFile = req.file;
 
   try {
-    // 1. Find the Mongoose user to verify existence
     const userDocument = await User.findOne({ firebaseUid });
 
     if (!userDocument) {
       return res.status(404).json({ message: "User not found in database." });
     }
 
-    // Handle photo upload if a new file is provided
     let photoURL = undefined;
     if (photoFile) {
       const uploadToCloudinary = (fileBuffer) => {
@@ -329,7 +317,6 @@ exports.updateUser = async (req, res) => {
       photoURL = uploadResult.secure_url;
     }
 
-    // 2. Prepare updates for Firebase Auth
     const firebaseUpdates = {};
     if (name) firebaseUpdates.displayName = name;
     if (email) firebaseUpdates.email = email;
@@ -340,11 +327,9 @@ exports.updateUser = async (req, res) => {
       await admin.auth().updateUser(firebaseUid, firebaseUpdates);
     }
 
-    // 3. Prepare updates for Mongoose
     const mongooseUpdates = { name, email, phone, photoURL };
     if (photoURL) mongooseUpdates.photoURL = photoURL;
 
-    // Super Admin can change a City Admin's city linkage
     if (userDocument.role === "city_admin" && city_id) {
       mongooseUpdates.city_id = city_id;
       if (!mongoose.Types.ObjectId.isValid(city_id)) {
@@ -391,12 +376,10 @@ exports.updateDepartment = async (req, res) => {
     const { departmentId } = req.params;
     const { department_name, description } = req.body;
 
-    // Find existing department
     const department = await Department.findById(departmentId);
     if (!department)
       return res.status(404).json({ message: "Department not found." });
 
-    // --- Upload new image to Cloudinary if provided ---
     if (req.file) {
       const uploadToCloudinary = (fileBuffer) => {
         return new Promise((resolve, reject) => {
@@ -412,10 +395,9 @@ exports.updateDepartment = async (req, res) => {
       };
 
       const uploadResult = await uploadToCloudinary(req.file.buffer);
-      department.photoURL = uploadResult.secure_url; // save Cloudinary URL
+      department.photoURL = uploadResult.secure_url;
     }
 
-    // Update text fields
     if (department_name) department.department_name = department_name;
     if (description) department.description = description;
 
@@ -445,7 +427,6 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findOne({ firebaseUid });
 
     if (!user) {
-      // still try to remove from Firebase to keep consistent
       try {
         await admin.auth().deleteUser(firebaseUid);
       } catch (e) {
@@ -454,22 +435,18 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ message: "User not found in database." });
     }
 
-    // If the user is a city_admin, unlink from city
     if (user.role === "city_admin" && user.city_id) {
       await City.findByIdAndUpdate(user.city_id, {
         $unset: { city_admin: "" },
       });
     }
 
-    // Delete from Firebase Auth first
     try {
       await admin.auth().deleteUser(firebaseUid);
     } catch (e) {
-      // Ignore if user not found in Firebase
       if (e.code !== "auth/user-not-found") throw e;
     }
 
-    // Delete the corresponding Mongoose document
     await User.findOneAndDelete({ firebaseUid });
 
     res.status(200).json({
