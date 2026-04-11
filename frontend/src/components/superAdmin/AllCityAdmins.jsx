@@ -52,11 +52,18 @@ const AllCityAdmins = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  const handleDelete = async (firebaseUid) => {
+  const handleDelete = async (admin) => {
+    if (!admin.firebaseUid) {
+      console.error("firebaseUid missing for admin:", admin);
+      alert("Cannot update this admin. Missing Firebase UID.");
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this admin?")) return;
     try {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken(true);
+
+      const firebaseUid = admin.firebaseUid;
 
       await axios.delete(`${BASE_URL}/superAdmin/users/${firebaseUid}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -239,7 +246,7 @@ const AllCityAdmins = () => {
                     <Tooltip id={`update-${admin._id}`} place="top" />
 
                     <button
-                      onClick={() => handleDelete(admin.firebaseUid)}
+                      onClick={() => handleDelete(admin)}
                       className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-md transition"
                       data-tooltip-id={`delete-${admin._id}`}
                       data-tooltip-content="Delete Admin"
