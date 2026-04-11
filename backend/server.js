@@ -4,8 +4,6 @@ const http = require("http");
 const { Server } = require("socket.io");
 const app = require("./app"); 
 
-
-
 process.on("uncaughtException", (err) => {
   console.error("UNCAUGHT EXCEPTION 💥 Shutting down...");
   console.error(err.name, err.message, err.stack);
@@ -18,9 +16,7 @@ dotenv.config({ path: "./.env" });
 const port = process.env.PORT || 3000;
 
 // MongoDB connection
-const DB = process.env.DATABASE_URL
-  .replace("<USERNAME>", process.env.DATABASE_USER)
-  .replace("<PASSWORD>", process.env.DATABASE_PASSWORD);
+const DB = process.env.DATABASE_URL;
 
 mongoose
   .connect(DB)
@@ -36,6 +32,7 @@ const io = new Server(server, {
     credentials: true,
   },
   transports: ["websocket", "polling"],
+  pingTimeout: 60000,
 });
 
 global.io = io;
