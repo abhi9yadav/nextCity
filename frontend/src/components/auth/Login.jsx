@@ -37,6 +37,54 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    setErrorMessage("");
+
+    let user = null;
+
+    try {
+      user = await signInWithGoogle();
+
+      if (!user) {
+        throw new Error("Google sign-in failed.");
+      }
+
+      const idToken = await user.getIdToken();
+
+      let BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      if (!BASE_URL) {
+        console.error("VITE_API_BASE_URL not defined.");
+        BASE_URL = "http://localhost:5001/api/v1";
+      }
+
+      const res = await fetch(`${BASE_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          email: user.email,
+          role: "citizen",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Backend signup failed");
+      }
+
+      await user.getIdToken(true);
+
+    } catch (error) {
+      if (user) {
+        await user.delete();
+      }
+      setErrorMessage(error.message);
+    }
+  };
+
   if (currentUser) return null;
 
   return (
@@ -100,7 +148,7 @@ const Login = () => {
         </div>
 
         <button
-          onClick={() => handleLogin(signInWithGoogle)}
+          onClick={() => handleGoogleSignup()}
           disabled={isSigningIn}
           className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer"
         >
