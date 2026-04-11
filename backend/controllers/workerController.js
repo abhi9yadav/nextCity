@@ -8,8 +8,6 @@ exports.getMyAssignedComplaints = async (req, res) => {
   try {
     const workerId = req.user._id;
 
-    // Direct DB se fetch kar rahe hain
-    console.log(`🐌 Serving Worker ${workerId} Complaints from DB`);
     const complaints = await Complaint.find({ assignedTo: workerId })
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 })
@@ -121,7 +119,6 @@ exports.getWorkerStats = async (req, res) => {
     const workerId = req.user._id;
 
     // Direct DB Calculations
-    console.log(`Calculating Worker ${workerId} Stats from DB`);
     const totalAssigned = await Complaint.countDocuments({ assigned_worker_id: workerId });
     const resolved = await Complaint.countDocuments({ assigned_worker_id: workerId, status: 'RESOLVED' });
     const inProgress = await Complaint.countDocuments({ assigned_worker_id: workerId, status: 'IN_PROGRESS' });

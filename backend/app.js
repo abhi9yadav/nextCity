@@ -19,6 +19,7 @@ const workerRoutes = require("./routes/workerRoutes");
 const deptAdminRoutes = require("./routes/deptAdminRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const aiRoutes =require("./routes/aiRoutes");
+const landingPageRoutes =require("./routes/landingPageRoutes");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/worker', workerRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use('/api/v1/ai', aiRoutes);
+app.use("/api/v1/landingPage", landingPageRoutes);
 
 
 // Catch-all for undefined routes

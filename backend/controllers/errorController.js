@@ -49,10 +49,6 @@ const sendErrorProd = (err, req, res) => {
       });
     }
 
-    //Programming or other unknown error: don't leak error details
-    // 1) Log error
-    console.log("ERROR 💥", err);
-
     return res.status(500).json({
       status: "error",
       message: "Something went wrong",
@@ -67,9 +63,6 @@ const sendErrorProd = (err, req, res) => {
     );
     return res.status(err.statusCode || 500).send(html);
   }
-
-  //Programming or other unknown error: don't leak error details
-  console.log("ERROR 💥", err);
 
   const htmlPath = path.join(rootDir, "views/error/error.html");
   let html = fs.readFileSync(htmlPath, "utf-8");

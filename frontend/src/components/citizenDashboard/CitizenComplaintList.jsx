@@ -64,9 +64,6 @@ const CitizenComplaintList = () => {
 
   };
 
-// console.log("myComplaints:", myComplaints);
-// console.log("type:", typeof myComplaints);
-
   const totalComplaints = myComplaints.length;
   const resolvedComplaints = myComplaints.filter(
     (c) => c.status === "RESOLVED"

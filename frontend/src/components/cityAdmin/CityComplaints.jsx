@@ -58,7 +58,6 @@ const CityComplaints = () => {
         const res = await axios.get(`${BASE_URL}/cityAdmin/complaints/stats`, {
           headers,
         });
-        // console.log("res:"+res);
 
         const deptRes = await axios.get(
           `${BASE_URL}/cityAdmin/departments/stats`,

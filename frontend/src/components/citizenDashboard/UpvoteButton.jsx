@@ -23,8 +23,6 @@ const UpvoteButton = ({ complaintId, initialVoted = false, initialCount = 0 }) =
         `${import.meta.env.VITE_API_BASE_URL}/api/complaints/${complaintId}/vote`,
         { vote: newVoted }
       );
-
-      console.log("Vote response:", res.data);
       setTimeout(() => setAnimating(false), 400);
     } catch (err) {
       console.error("Upvote failed:", err);

@@ -81,7 +81,6 @@ const UserRegister = () => {
       if (user) {
         try {
           await user.delete();
-          console.log("Firebase user rolled back.");
         } catch (deleteError) {
           console.error("Failed to delete Firebase user:", deleteError);
         }

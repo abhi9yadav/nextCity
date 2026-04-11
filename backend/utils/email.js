@@ -74,13 +74,6 @@ module.exports = class Email {
       text: htmlToText.convert(html),
     };
 
-    // Log mock email in dev mode
-    if (process.env.NODE_ENV !== "production") {
-      console.log(
-        `📧 Mock email to ${this.to} using template: ${templateName} + and mailoptions ${mailOptions}`
-      );
-    }
-
     await this.newTransport().sendMail(mailOptions);
   }
 
