@@ -8,6 +8,8 @@ const DeleteZone = () => {
   const navigate = useNavigate();
   const [zones, setZones] = useState([]);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     fetchZones();
   }, []);
@@ -17,7 +19,7 @@ const DeleteZone = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      const res = await axios.get(`/api/v1/zones/${dept_id}`, {
+      const res = await axios.get(`${BASE_URL}/zones/${dept_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setZones(res.data.zones);
@@ -33,7 +35,7 @@ const DeleteZone = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      await axios.delete(`/api/v1/zones/${id}`, {
+      await axios.delete(`${BASE_URL}/zones/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('✅ Zone deleted successfully!');

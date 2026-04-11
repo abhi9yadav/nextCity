@@ -20,6 +20,8 @@ const GetZones = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPosition, setSelectedPosition] = useState(null);
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     fetchZones();
   }, []);
@@ -29,7 +31,7 @@ const GetZones = () => {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
 
-      const res = await axios.get(`/api/v1/zones/${dept_id}`, {
+      const res = await axios.get(`${BASE_URL}/zones/${dept_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setZones(res.data.zones || []);

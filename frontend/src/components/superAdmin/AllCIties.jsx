@@ -123,7 +123,7 @@ const AllCities = () => {
     }
 
     try {
-      setCreatingAdmin(true); // ✅ START LOADING
+      setCreatingAdmin(true);
 
       const auth = getAuth();
       const user = auth.currentUser;
@@ -153,7 +153,7 @@ const AllCities = () => {
       console.error("Error:", err);
       alert(err.response?.data?.message || "Failed to create city admin.");
     } finally {
-      setCreatingAdmin(false); // ✅ STOP LOADING
+      setCreatingAdmin(false);
     }
   };
 
@@ -162,7 +162,6 @@ const AllCities = () => {
     setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Filters
   const filteredCities = cities.filter((city) => {
     const term = debouncedTerm.toLowerCase();
     const matchesSearch =

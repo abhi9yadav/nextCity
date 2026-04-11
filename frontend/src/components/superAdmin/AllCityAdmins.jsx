@@ -95,7 +95,7 @@ const AllCityAdmins = () => {
     }
 
     try {
-      setUpdatingAdmin(true); // ✅ START LOADING
+      setUpdatingAdmin(true);
 
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken(true);
@@ -135,7 +135,7 @@ const AllCityAdmins = () => {
       console.error("Error updating admin:", error);
       alert("Failed to update admin.");
     } finally {
-      setUpdatingAdmin(false); // ✅ STOP LOADING
+      setUpdatingAdmin(false);
     }
   };
 
