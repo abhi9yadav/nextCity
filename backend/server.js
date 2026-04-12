@@ -1,5 +1,7 @@
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
+
+const mongoose = require("mongoose");
 const http = require("http");
 const { Server } = require("socket.io");
 const app = require("./app"); 
@@ -9,9 +11,6 @@ process.on("uncaughtException", (err) => {
   console.error(err.name, err.message, err.stack);
   process.exit(1);
 });
-
-// Load environment variables
-dotenv.config({ path: "./.env" });
 
 const port = process.env.PORT || 3000;
 
