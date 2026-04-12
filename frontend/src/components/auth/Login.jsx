@@ -31,11 +31,11 @@ const Login = () => {
       await loginFn();
     } catch (error) {
       console.error(error);
-      if (error.code === "auth/invalid-credential") {
-        setErrorMessage("Email or password is incorrect.");
-      } else {
-        setErrorMessage("Something went wrong. Please try again.");
-      }
+      if (error.message === "auth/invalid-credential") {
+      setErrorMessage("Email or password is incorrect.");
+    } else {
+      setErrorMessage("Something went wrong. Please try again.");
+    }
     } finally {
       setIsSigningIn(false);
     }
