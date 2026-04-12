@@ -33,11 +33,21 @@ const signup = async (req, res) => {
 
     // Send welcome email
     try {
-      const logoUrl = process.env.APP_LOGO_URL;
+      const logoUrl = `${process.env.BACKEND_URL}/images/logo.png`;
       const dashboardURL = `${process.env.CLIENT_URL}`;
-      await new Email(user, dashboardURL, {logoUrl}).sendWelcome();
+
+      setImmediate(() => {
+        new Email(user, dashboardURL, { logoUrl })
+          .sendWelcome()
+          .then(() => {
+            console.log("Welcome email sent");
+          })
+          .catch((err) => {
+            console.error("WELCOME EMAIL FAILED", err.message);
+          });
+      });
     } catch (err) {
-      console.error("WELCOME EMAIL FAILED", err);
+      console.error("Email trigger failed:", err);
     }
     res.status(201).json({ message: "Signup successful", user });
   } catch (err) {

@@ -36,6 +36,7 @@ exports.setPasswordWithToken = async (req, res) => {
     // set any other flags in Mongo
     user.isActive = true;
     user.invitationSent = true;
+    user.isAvailable = true;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     user.passwordChangedAt = Date.now();
@@ -68,11 +69,11 @@ exports.forgotPassword = async (req, res) => {
     user.passwordResetExpires = Date.now() + tokenExpiryMinutes * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = process.env.CLIENT_URL || "http://localhost:5173";
     const resetLink = `${frontendUrl}/set-password?token=${encodeURIComponent(token)}`;
 
     try {
-      const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
+      const logoUrl = `${process.env.BACKEND_URL}/images/logo.png`;
       const emailInstance = new Email(
         { email: user.email, name: user.name },
         resetLink,

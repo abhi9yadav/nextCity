@@ -190,8 +190,14 @@ exports.createUser = async (req, res) => {
     city.city_admin = newUserDocument._id;
     await city.save();
 
-    req.params.firebaseUid = firebaseUid;
-    return await sendInvitation(req, res, false);
+    setImmediate(() => {
+      sendInvitation(firebaseUid, false)
+        .catch(err => console.error("Email failed:", err));
+    });
+  
+    return res.status(201).json({
+      message: "CityAdmin created successfully",
+    });
   } catch (error) {
     if (firebaseUser) {
       await admin
