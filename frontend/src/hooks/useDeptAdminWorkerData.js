@@ -166,18 +166,14 @@ const useDeptAdminWorkerData = () => {
   };
 
   const resendInvitation = async (workerId) => {
-    setLoading(true);
     try {
       const res = await apiResendInvitation(workerId);
       toast.info(res.data.message);
-      await loadWorkers();
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Failed to resend invitation!"
       );
       throw err;
-    } finally {
-      setLoading(false);
     }
   };
 

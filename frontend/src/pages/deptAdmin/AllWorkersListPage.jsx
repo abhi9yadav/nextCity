@@ -10,7 +10,8 @@ const WorkerRow = ({ worker, onEdit, onDelete, onResendInvite }) => {
   const navigate = useNavigate();
   let statusClasses = "";
   let statusIcon = "";
-  let statusText = worker.status ? worker.status.toLowerCase() : "unknown";
+  let isActive = worker.isActive ? 'Active' : "Inactive"
+  let statusText = isActive ? isActive.toLowerCase() : "unknown";
 
   switch (statusText) {
     case "active":
@@ -82,7 +83,7 @@ const WorkerRow = ({ worker, onEdit, onDelete, onResendInvite }) => {
             <i className="fas fa-trash-alt h-5 w-5"></i>
           </button>
           {/* Resend Invitation Button */}
-          {worker.status === "pending" && (
+          {worker.isActive != true && (
             <button
               onClick={() => onResendInvite(worker._id)}
               className="text-blue-600 hover:text-blue-900 p-1 rounded-sm cursor-pointer"

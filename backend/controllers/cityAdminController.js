@@ -276,9 +276,14 @@ exports.createDepartmentAdmin = async (req, res) => {
 
     await DeptAdmin.create(deptAdminData);
 
-    //email invitation
-    req.params.firebaseUid = firebaseUid;
-    return await sendInvitation(req, res, false);
+    setImmediate(() => {
+      sendInvitation(firebaseUid, false)
+        .catch(err => console.error("Email failed:", err));
+    });
+  
+    return res.status(201).json({
+      message: "DeptAdmin created successfully",
+    });
   } catch (error) {
     console.error("Error creating DepartmentAdmin:", error);
     res

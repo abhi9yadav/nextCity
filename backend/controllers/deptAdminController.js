@@ -10,7 +10,6 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Worker = mongoose.model("worker");
 const Notification = require("../models/notificationModel");
-const Email = require("../utils/email");
 
 exports.getDashboardStats = catchAsync(async (req, res, next) => {
   try {
@@ -315,7 +314,8 @@ exports.createWorker = catchAsync(async (req, res, next) => {
     department_id,
     zone_id,
     invitationSent: false,
-    isActive: true,
+    isActive: false,
+    isAvailable:false,
   };
 
   try {
@@ -336,11 +336,15 @@ exports.createWorker = catchAsync(async (req, res, next) => {
       console.error("Activity logging failed:", err);
     }
 
-    // 4️ Send invitation email
-    req.params.firebaseUid = firebaseUser.uid;
-    await sendInvitation(req, res, false);
+    setImmediate(() => {
+      sendInvitation(firebaseUser.uid, false)
+        .catch(err => console.error("Email failed:", err));
+    });
+  
+    return res.status(201).json({
+      message: "Worker created successfully",
+    });
   } catch (err) {
-    // Rollback Firebase user if MongoDB save fails
     if (firebaseUser?.uid) {
       await admin
         .auth()
@@ -594,22 +598,6 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
   if (!worker)
     return next(new AppError("Worker not found or outside your scope.", 403));
 
-  // Resend invitation
-  try {
-    req.params.firebaseUid = worker.firebaseUid;
-    await sendInvitation(req, res, true);
-  } catch (err) {
-    console.error(
-      "Invitation sending skipped due to Mailtrap/email limit.",
-      err
-    );
-    return next(
-      new AppError(
-        `Worker found, but invitation email could not be sent. (Mail system may be limited)`,
-        200
-      )
-    );
-  }
   
   try {
     await logActivity({
@@ -623,10 +611,18 @@ exports.resendWorkerInvitation = catchAsync(async (req, res, next) => {
   } catch (err) {
     console.error("Activity logging failed:", err);
   }
+  
+  setImmediate(() => {
+    sendInvitation(worker.firebaseUid, true)
+      .catch((err) => {
+        console.error("Email failed:", err.message);
+      });
+  });
 
-  res.status(200).json({
-    status: "success",
-    message: `Invitation process triggered for worker ${worker.name} (${worker.email}).`,
+
+  return res.status(200).json({
+    success: true,
+    message: "Invitation resend triggered successfully",
   });
 });
 
@@ -972,42 +968,6 @@ exports.assignComplaintToWorker = catchAsync(async (req, res, next) => {
       isRead: newNotification.isRead,
       createdAt: newNotification.createdAt,
     });
-
-    try {
-      const citizen = complaint.createdBy;
-      const complaintUrl = `${
-        process.env.APP_URL || ""
-      }/complaints/${complaintId}`;
-
-      const logoUrl = `${req.protocol}://${req.get("host")}/images/logo.png`;
-
-      if (citizen?.email) {
-        const citizenEmail = new Email(
-          { email: citizen.email, name: citizen.name || "" },
-          complaintUrl,
-          {
-            complaintTitle: complaint.title || "",
-            complaintDescription: complaint.description || "",
-            workerName: assignedWorker.name || "",
-            workerPhone: assignedWorker.phone || "",
-            workerEmail: assignedWorker.email || "",
-            appName: process.env.APP_NAME || "NextCity",
-            logoUrl
-          }
-        );
-        await citizenEmail.send(
-          "workerAssignedCitizen",
-          `Your complaint has been assigned — ${
-            process.env.APP_NAME || "NextCity"
-          }`
-        );
-      }
-    } catch (emailErr) {
-      console.error(
-        "⚠️ Failed to send one or more assignment emails:",
-        emailErr
-      );
-    }
 
     const refreshedAssignedWorker = await Worker.findById(assignedWorker._id)
       .select("-password -__v")
