@@ -141,8 +141,8 @@ This project is open-source and available under the MIT License.
 
 ---
 
-### 📞 Contact & Support
+### 📞 Support
 
-📧 Email: anuj.20233070@mnnit.ac.in
+For bug reports, feature requests, or questions, please open an Issue in this repository.
 
 🌐 GitHub Repo: [GitHub - NextCity](https://github.com/abhi9yadav/nextCity)
