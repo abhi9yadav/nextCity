@@ -18,10 +18,7 @@ function AIFeatureSection() {
               <div className="mt-1 bg-cyan-500 rounded-full p-1 text-white">✓</div>
               <p><strong>Smart Filling:</strong> Title, Description, and Category are filled instantly based on the image.</p>
             </li>
-            <li className="flex items-start gap-3">
-              <div className="mt-1 bg-cyan-500 rounded-full p-1 text-white">✓</div>
-              <p><strong>Precise Location:</strong> Automatically tags the exact geographic coordinates for the field workers.</p>
-            </li>
+            
           </ul>
         </div>
         

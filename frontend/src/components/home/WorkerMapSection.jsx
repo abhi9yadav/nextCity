@@ -27,7 +27,7 @@ function WorkerMapSection() {
             <h4 className="text-3xl font-bold text-slate-800 mb-6">Efficient Work Allocation</h4>
             <div className="space-y-6">
               {[
-                { title: "Smart Triage", desc: "Admins review complaints pre-sorted by AI into specific city departments." },
+                { title: "Smart Triage", desc: "Admins review complaints pre-sorted by specific city departments." },
                 { title: "One-Click Dispatch", desc: "Assign tasks to the nearest available worker with real-time availability tracking." },
                 { title: "Progress Monitoring", desc: "Oversee the entire city's resolution status from a centralized administrative dashboard." }
               ].map((item, i) => (

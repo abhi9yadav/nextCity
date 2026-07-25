@@ -12,8 +12,9 @@ const geminiAnalyze = async (req, res) => {
             return res.status(500).json({ error: 'API key is not configured on the server.' });
         }
         
-        // FIXED MODEL HERE
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        
+        const model = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const base64ImageData = req.file.buffer.toString('base64');
         const mimeType = req.file.mimetype;
@@ -40,7 +41,10 @@ const geminiAnalyze = async (req, res) => {
                         }
                     }
                 ]
-            }]
+            }],
+            generationConfig: {
+                responseMimeType: "application/json"
+            }
         };
 
         const response = await axios.post(apiUrl, payload);

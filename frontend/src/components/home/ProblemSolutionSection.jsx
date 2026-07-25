@@ -46,7 +46,7 @@ function ProblemSolutionSection() {
             Specialized <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-500">Solutions</span>
           </h2>
           <p className="mt-6 text-gray-500 text-lg">
-            We've segmented city management into dedicated departments. Report your issues, and our AI ensures they reach the right experts.
+            We've segmented city management into dedicated departments. Report your issues, and our system ensures they reach the right experts.
           </p>
         </div>
         

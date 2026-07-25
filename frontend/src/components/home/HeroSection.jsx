@@ -37,10 +37,7 @@ function HeroSection() {
               <div className="text-xs text-gray-400 uppercase tracking-widest">Departments</div>
             </div>
             <div className="w-px h-8 bg-white/10"></div>
-            <div>
-              <div className="text-2xl font-bold text-white">24/7</div>
-              <div className="text-xs text-gray-400 uppercase tracking-widest">AI Monitoring</div>
-            </div>
+            
           </div>
         </div>
 
