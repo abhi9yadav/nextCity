@@ -5,7 +5,7 @@ const options = {
   timestamps: true 
 };
 
-const userRoles = ['superAdmin', 'city_admin', 'dept_admin', 'worker', 'citizen'];
+const userRoles = ['super_admin', 'city_admin', 'dept_admin', 'worker', 'citizen'];
 
 const userSchema = new mongoose.Schema(
   {

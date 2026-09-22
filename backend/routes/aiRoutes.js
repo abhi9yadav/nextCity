@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
-
-// Import the controller function
+const {  authenticate } = require("../middlewares/firebaseAuthRoleMiddleware");
+const { chatWithAI } = require("../controllers/aiController");
 const { geminiAnalyze } = require('../controllers/aiController');
-// Import the file upload middleware
+
 const upload = require('../middlewares/uploadMiddleware');
 
-// Define the route for AI analysis, matching the frontend request
-// POST /api/v1/ai/gemini-analyze
-// The 'upload.single('file')' middleware processes the upload with the field name 'file'.
 router.post('/gemini-analyze', upload.single('file'), geminiAnalyze);
+
+router.post(
+    "/chat",
+    authenticate,
+    chatWithAI
+);
 
 module.exports = router;

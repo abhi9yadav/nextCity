@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { runAgent } = require("../ai-engine/agent/aiAgent");
 
 // Controller to handle AI analysis of a complaint image using Gemini.
 const geminiAnalyze = async (req, res) => {
@@ -76,6 +77,41 @@ const geminiAnalyze = async (req, res) => {
     }
 };
 
+const chatWithAI = async (req, res) => {
+
+    try {
+
+        const { message } = req.body;
+
+        if (!message || !message.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Message is required."
+            });
+        }
+
+        const answer = await runAgent({
+            message,
+            user: req.user
+        });
+
+        res.status(200).json({
+            success: true,
+            answer
+        });
+
+    } catch (error) {
+
+        console.error("AI Agent Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "AI agent failed."
+        });
+    }
+};
+
 module.exports = {
     geminiAnalyze,
+    chatWithAI,
 };
