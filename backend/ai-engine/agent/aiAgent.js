@@ -6,6 +6,8 @@ const {
   getDepartmentComplaints,
 } = require("../tools/complaintTools");
 
+const { searchKnowledge } = require("../rag/retriever");
+
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
@@ -36,6 +38,23 @@ const myComplaintsTool = {
   },
 };
 
+const knowledgeSearchTool = {
+  type: "function",
+  name: "search_knowledge_base",
+  description:
+    "Search the NextCity knowledge base for general information, platform guidance, complaint procedures, department information, FAQs, and other documented knowledge. Use this when the answer is not available from live MongoDB data.",
+  parameters: {
+    type: "object",
+    properties: {
+      query: {
+        type: "string",
+        description: "The question or information to search for.",
+      },
+    },
+    required: ["query"],
+  },
+};
+
 const departmentComplaintsTool = {
   type: "function",
   name: "get_department_complaints",
@@ -53,6 +72,7 @@ const runAgent = async ({ message, user }) => {
     complaintStatsTool,
     myComplaintsTool,
     departmentComplaintsTool,
+    knowledgeSearchTool,
   ];
 
   let interaction = await ai.interactions.create({
@@ -89,6 +109,33 @@ const runAgent = async ({ message, user }) => {
         case "get_department_complaints":
           result = await getDepartmentComplaints({ user });
           break;
+
+        case "search_knowledge_base": {
+          const rawArgs = call.arguments ?? call.args ?? call.input ?? {};
+
+          let args = {};
+          if (typeof rawArgs === "string") {
+            try {
+              args = JSON.parse(rawArgs);
+            } catch (e) {
+              console.error("Failed to parse tool call arguments:", rawArgs);
+              args = {};
+            }
+          } else if (typeof rawArgs === "object" && rawArgs !== null) {
+            args = rawArgs;
+          }
+
+          // Fallback to empty string if query is omitted or misnamed
+          const searchQuery = args.query || args.searchQuery || message || "";
+
+          result = await searchKnowledge({
+            query: searchQuery,
+            user,
+            limit: 5,
+          });
+
+          break;
+        }
 
         default:
           throw new Error(`Unknown AI tool: ${call.name}`);
